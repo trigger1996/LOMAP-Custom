@@ -1,0 +1,16 @@
+Run with Pycharm and Python 2.7
+Once the environment is good, run should be fine
+
+    sudo apt install python-pip
+    pip install six
+    pip install matplotlib
+    pip install numpy
+    sudo apt install python-tk
+    pip install networkx==1.11
+    pip install pyyaml
+    pip install pp # Optional
+    apt install cmake
+
+    pip insall lomap
+
+https://github.com/wasserfeder/lomap
