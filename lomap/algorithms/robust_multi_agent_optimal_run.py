@@ -91,7 +91,7 @@ def robust_multi_agent_optimal_run(ts_tuple, rhos, formula, opt_prop):
         b = Buchi()
         neg_formula = '! ({})'.format(formula)
         b.from_formula(neg_formula)
-        b.visualize()
+        #b.visualize()
 
     # Compute synchronization sequences
     with Timer('Sync Seq computation'):
