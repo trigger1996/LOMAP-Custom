@@ -29,7 +29,10 @@ import lomap
 from lomap import Ts, Timer
 import logging
 from collections import namedtuple
-import  view
+
+# custom packages
+import view
+import lomap.algorithms.multi_agent_optimal_run_ca as ca
 
 # Logger configuration
 logger = logging.getLogger(__name__)
@@ -53,7 +56,7 @@ def main():
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
         prefix_length, prefixes, suffix_cycle_cost, suffix_cycles = \
-            lomap.multi_agent_optimal_run(ts_tuple, formula, opt_prop)
+            ca.multi_agent_optimal_run(ts_tuple, formula, opt_prop)
         logger.info('Cost: %d', suffix_cycle_cost)
         logger.info('Prefix length: %d', prefix_length)
         # Find the controls that will produce this run
