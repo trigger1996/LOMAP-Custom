@@ -32,6 +32,15 @@ Linux (Ubuntu)
     sudo apt install spot libspot-dev spot-doc
     sudo apt install python3-spot # For python3 support
     ```
+    
+2.2. Install LTL2GBA
+  * Run the following lines in shell:
+    ```bash
+    git clone https://github.com/slivingston/LTL2GBA
+    cd LTL2GBA
+    make
+    sudo cp ltl2gba /usr/bin/
+    ```    
 
 3. Install necessary dependencies:
 
@@ -73,6 +82,11 @@ Linux (Ubuntu)
       mkdir ~/bin
       cp ltl2dstar ~/bin/
       echo 'export PATH="$PATH:$HOME/bin"' >> ~/.bashrc
+      ```
+  * OR add the binary to system folder
+  
+      ```bash
+      sudo cp ltl2dstar /usr/bin/
       ```
 
 5. Set `$PYTHONPATH` to include the location of the _lomap_ library:

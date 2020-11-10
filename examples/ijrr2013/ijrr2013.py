@@ -69,8 +69,8 @@ def main():
 
     # Case Study 2
     with Timer('IJRR 2013 Case-Study 2'):
-        r1 = Ts.load('./examples/ijrr2013/robot_1.yaml')
-        r2 = Ts.load('./examples/ijrr2013/robot_2.yaml')
+        r1 = Ts.load('./robot_1.yaml')
+        r2 = Ts.load('./robot_2.yaml')
 
         ts_tuple = (r1, r2)
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
@@ -101,8 +101,8 @@ def main():
 
     # Case Study 3
     with Timer('IJRR 2013 Case-Study 3'):
-        r1 = Ts.load('./examples/ijrr2013/robot_1.yaml')
-        r2 = Ts.load('./examples/ijrr2013/robot_2.yaml')
+        r1 = Ts.load('./robot_1.yaml')
+        r2 = Ts.load('./robot_2.yaml')
         ts_tuple = (r1, r2)
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
@@ -133,8 +133,8 @@ def main():
 
     # Case Study 4
     with Timer('IJRR 2013 Case-Study 4'):
-        r1 = Ts.load('./examples/ijrr2013/robot_1.yaml')
-        r2 = Ts.load('./examples/ijrr2013/robot_2.yaml')
+        r1 = Ts.load('./robot_1.yaml')
+        r2 = Ts.load('./robot_2.yaml')
         ts_tuple = (r1, r2)
         formula = ('[]<>gather && [](gather->(r1gather4 && r2gather2)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
@@ -163,8 +163,8 @@ def main():
 
     # Case Study 4 w/ sync
     with Timer('IJRR 2013 Case-Study 4 (w/ sync)'):
-        r1 = Ts.load('./examples/ijrr2013/robot_1.yaml')
-        r2 = Ts.load('./examples/ijrr2013/robot_2.yaml')
+        r1 = Ts.load('./robot_1.yaml')
+        r2 = Ts.load('./robot_2.yaml')
         ts_tuple = (r1, r2)
         formula = ('[]<>gather && [](gather->(r1gather4 && r2gather2)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
