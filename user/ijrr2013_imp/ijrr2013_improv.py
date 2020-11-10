@@ -46,13 +46,22 @@ def main():
     with Timer('IJRR 2013 Case-Study 2'):
         r1 = Ts.load('./robot_1.yaml')
         r2 = Ts.load('./robot_2.yaml')
+        r3 = Ts.load('./robot_3.yaml')
 
+        '''
         ts_tuple = (r1, r2)
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
                    '&& [](r2gather -> X(!r2gather U r2upload))')
-
         opt_prop = set(['r1gather','r2gather'])
+        '''
+
+        ts_tuple = (r1, r3)
+        formula = ('[]<>gather && [](gather->(r1gather && r3gather)) '
+                   '&& [](r1gather -> X(!r1gather U r1upload)) '
+                   '&& [](r3gather -> X(!r3gather U r3upload))')
+        opt_prop = set(['r1gather', 'r3gather'])
+
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
         prefix_length, prefixes, suffix_cycle_cost, suffix_cycles = \
