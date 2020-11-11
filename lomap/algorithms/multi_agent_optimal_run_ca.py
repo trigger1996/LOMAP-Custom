@@ -256,7 +256,7 @@ def min_bottleneck_cycle(g, s, f, pp_workers=4):
     -----
 
     """
-
+    '''
     global pp_installed
     if not pp_installed:
         raise Exception('This functionality is not enables because, '
@@ -264,22 +264,23 @@ def min_bottleneck_cycle(g, s, f, pp_workers=4):
 
     # Start job server
     job_server = pp.Server(ppservers=pp_servers, secret='trivial')
+    ####
     job_server.set_ncpus(pp_workers)
-
+    print("pp local server workers:", job_server.get_ncpus())
+    '''
     # Compute shortest S->S and S->F paths
     logger.info('S->S+F')
-    # d = subset_to_subset_dijkstra_path_value(g, s, s|f, degen_paths = False)
+    d = subset_to_subset_dijkstra_path_value(s, g, s | f, degen_paths = False)
+    '''
     jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(s), 1, '0',
                           (g, s | f, 'sum', False, 'weight'), data_source)
-
-    ####
-    print("pp local server workers:", job_server.get_ncpus())
-
+    print(type(s))
     d = dict()
     for i in range(0, len(jobs)):
         d.update(jobs[i]())
         jobs[i] = ''
     del jobs
+    '''
     logger.info('Collected results for S->S+F')
 
     # Create S->S, S->F dict of dicts
@@ -306,7 +307,8 @@ def min_bottleneck_cycle(g, s, f, pp_workers=4):
 
     # Compute shortest F->S paths
     logger.info('F->S')
-    # d_f_to_s = subset_to_subset_dijkstra_path_value(g, f, s, degen_paths = True)
+    d_f_to_s = subset_to_subset_dijkstra_path_value(f, g, s, degen_paths = True)
+    '''
     jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(f), 1, '1',
                           (g, s, 'sum', True, 'weight'), data_source)
     d_f_to_s = dict()
@@ -314,11 +316,13 @@ def min_bottleneck_cycle(g, s, f, pp_workers=4):
         d_f_to_s.update(jobs[i]())
         jobs[i] = ''
     del jobs
+    '''
     logger.info('Collected results for F->S')
 
     # Compute shortest S-bottleneck paths between verices in s
     logger.info('S-bottleneck')
-    # d_bot = subset_to_subset_dijkstra_path_value(g_s, s, s, combine_fn = (lambda a,b: max(a,b)), degen_paths = False)
+    d_bot = subset_to_subset_dijkstra_path_value(s, g_s, s, 'max', False, 'weight')   # s, g_s, s, combine_fn = (lambda a,b: max(a,b)), degen_paths = False
+    '''
     jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(s), 1, '2',
                           (g_s, s, 'max', False, 'weight'), data_source)
 
@@ -327,10 +331,13 @@ def min_bottleneck_cycle(g, s, f, pp_workers=4):
         d_bot.update(jobs[i]())
         jobs[i] = ''
     del jobs
+    '''
     logger.info('Collected results for S-bottleneck')
 
     # Find the triple \in F x S x S that minimizes C(f,s1,s2)
     logger.info('Path*')
+    (cost_star, len_star, cycle_star) = find_best_cycle(f, s, d_f_to_s, d_s_to_f, d_bot)
+    '''
     jobs = job_dispatcher(job_server, find_best_cycle, list(f), 1, '3', (s, d_f_to_s, d_s_to_f, d_bot), data_source)
     cost_star = float('inf')
     len_star = float('inf')
@@ -343,6 +350,7 @@ def min_bottleneck_cycle(g, s, f, pp_workers=4):
             len_star = this_len
             cycle_star = this_cycle
     del jobs
+    '''
     logger.info('Collected results for Path*')
     logger.info('Cost*: %d, Len*: %d, Cycle*: %s', cost_star, len_star, cycle_star)
 
