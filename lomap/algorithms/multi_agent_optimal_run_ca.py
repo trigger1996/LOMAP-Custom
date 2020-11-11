@@ -227,7 +227,7 @@ def job_dispatcher(job_server, func, arg_to_split, chunk_size, data_id, data, da
     return jobs
 
 
-def min_bottleneck_cycle(g, s, f):
+def min_bottleneck_cycle(g, s, f, pp_workers=4):
     """ Returns the minimum bottleneck cycle from s to f in graph g.
 
     An implementation of the Min-Bottleneck-Cycle Algortihm
@@ -264,12 +264,17 @@ def min_bottleneck_cycle(g, s, f):
 
     # Start job server
     job_server = pp.Server(ppservers=pp_servers, secret='trivial')
+    job_server.set_ncpus(pp_workers)
 
     # Compute shortest S->S and S->F paths
     logger.info('S->S+F')
     # d = subset_to_subset_dijkstra_path_value(g, s, s|f, degen_paths = False)
     jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(s), 1, '0',
                           (g, s | f, 'sum', False, 'weight'), data_source)
+
+    ####
+    print("pp local server workers:", job_server.get_ncpus())
+
     d = dict()
     for i in range(0, len(jobs)):
         d.update(jobs[i]())

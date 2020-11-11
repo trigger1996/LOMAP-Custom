@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import lomap
+import lomap.algorithms.multi_agent_optimal_run_ca as ca
 import sys
 import logging
 
@@ -23,7 +24,8 @@ def main():
     ts_tuple = (r1, r2, r3)
     # deviation values of agents
     rhos = [Rho(lower=0.95, upper=1.05), Rho(lower=0.95, upper=1.05)]
-    prefix_length, prefixes, suffix_cycle_cost, suffix_cycles = lomap.robust_multi_agent_optimal_run(ts_tuple, rhos, formula, opt_prop)
+    #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles = lomap.robust_multi_agent_optimal_run(ts_tuple, rhos, formula, opt_prop)
+    prefix_length, prefixes, suffix_cycle_cost, suffix_cycles = ca.multi_agent_optimal_run(ts_tuple, formula, opt_prop)
     print "Cost: %d" % suffix_cycle_cost
     print "Prefix length: %d" % prefix_length
 
