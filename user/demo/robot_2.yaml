@@ -1,0 +1,70 @@
+!Ts
+name: robot_2
+multi: true
+directed: true
+init: [i11]
+final: []
+graph:
+  nodes:
+    i1: {}
+    i2: {}
+    i3: {}
+    i4: {}
+    i5: {}
+    i6: {}
+    i7: {}
+    i8: {}
+    i9: {}
+    i10: {}
+    i11: {}
+    i12: {}
+    i13: {}
+    i14: {}
+    i15: {}
+    i16: {}
+    i17: {}
+    i18:
+      prop: !!set {gather: null, gather2: null, gather21: null}
+    i19: {}
+    i20:
+      prop: !!set {gather: null, gather2: null, gather22: null}
+    i21: {}
+    i22:
+      prop: !!set {upload1: null}
+
+  edges:
+  - [i1, i2, {'weight':1, 'control':'x'}]
+  - [i2, i3, {'weight':1, 'control':'x'}]
+  - [i2, i5, {'weight':4, 'control':'x'}]
+  - [i3, i4, {'weight':1, 'control':'x'}]
+  - [i3, i14, {'weight':4, 'control':'x'}]
+  - [i4, i1, {'weight':1, 'control':'x'}]
+  - [i5, i6, {'weight':1, 'control':'x'}]
+  - [i6, i7, {'weight':1, 'control':'x'}]
+  - [i7, i8, {'weight':1, 'control':'x'}]
+  - [i7, i21, {'weight':2, 'control':'x'}]
+  - [i8, i5, {'weight':1, 'control':'x'}]
+  - [i8, i17, {'weight':2, 'control':'x'}]
+  - [i9, i8, {'weight':4, 'control':'x'}]
+  - [i9, i10, {'weight':1, 'control':'x'}]
+  - [i10, i11, {'weight':1, 'control':'x'}]
+  - [i11, i12, {'weight':1, 'control':'x'}]
+  - [i12, i9, {'weight':1, 'control':'x'}]
+  - [i12, i15, {'weight':4, 'control':'x'}]
+  - [i13, i14, {'weight':1, 'control':'x'}]
+  - [i13, i4, {'weight':4, 'control':'x'}]
+  - [i14, i15, {'weight':1, 'control':'x'}]
+  - [i14, i19, {'weight':2, 'control':'x'}]
+  - [i15, i16, {'weight':1, 'control':'x'}]
+  - [i16, i13, {'weight':1, 'control':'x'}]
+  - [i17, i3, {'weight':2, 'control':'x'}]
+  - [i17, i18, {'weight':1, 'control':'x'}]
+  - [i18, i17, {'weight':1, 'control':'x'}]
+  - [i19, i9, {'weight':2, 'control':'x'}]
+  - [i19, i20, {'weight':1, 'control':'x'}]
+  - [i20, i19, {'weight':1, 'control':'x'}]
+  - [i21, i10, {'weight':2, 'control':'x'}]
+  - [i21, i22, {'weight':1, 'control':'x'}]
+  - [i22, i21, {'weight':1, 'control':'x'}]
+
+

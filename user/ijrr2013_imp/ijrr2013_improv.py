@@ -66,7 +66,7 @@ def main():
         ts_tuple = (r1, r2, r3)
         formula = '[]<>gather1 && []<>gather2 && []<>gather3 && []<>gather4'
         opt_prop = set(['gather'])
-        
+
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
         prefix_length, prefixes, suffix_cycle_cost, suffix_cycles = \
