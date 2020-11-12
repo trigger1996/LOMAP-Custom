@@ -64,9 +64,10 @@ def main():
         '''
 
         ts_tuple = (r1, r2, r3)
-        formula = '[]<>gather1 && []<>gather2 && []<>gather3 && []<>gather4'
-        opt_prop = set(['gather'])
-
+        formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
+                   '&& [](r1gather -> X(!r1gather U r1upload)) '
+                   '&& [](r2gather -> X(!r2gather U r2upload))')
+        opt_prop = set(['r1gather','r2gather'])
 
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
