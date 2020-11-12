@@ -1,5 +1,5 @@
 !Ts
-name: robot_2
+name: robot_3
 multi: true
 directed: true
 init: [u2]
