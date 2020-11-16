@@ -89,6 +89,8 @@ def main():
                                                     control_suffix_cycles[i])
     # visualize run
     view.visualize_run(r1, suffix_cycles[0])
+    view.visualize_run(r1, suffix_cycles[1])
+    view.visualize_run(r1, suffix_cycles[2])
     #view.visualize_run(r2, suffix_cycles[1])
 
     logger.info('<><><> <><><> <><><>')

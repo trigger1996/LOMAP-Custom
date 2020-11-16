@@ -23,7 +23,8 @@ from __future__ import print_function
 import sys
 import traceback
 import logging
-from lomap.algorithms.product import ts_times_ts
+from lomap.algorithms.product_ca import ts_times_ts
+from lomap.algorithms.product_ca import ts_times_ts_ca
 
 # Logger configuration
 logger = logging.getLogger(__name__)
@@ -435,7 +436,7 @@ def ca_safety_game(ts_tuple, prefixes, suffix_cycles, obs_range = 3):
 
 def multi_agent_optimal_run(ts_tuple, formula, opt_prop):
     # Construct the team_ts
-    team_ts = ts_times_ts(ts_tuple)
+    team_ts = ts_times_ts_ca(ts_tuple)
 
     # Find the optimal run and shortest prefix on team_ts
     prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
