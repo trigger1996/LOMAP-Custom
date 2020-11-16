@@ -77,4 +77,4 @@ def visualize_run(tran_sys, run, edgelabel='control', draw='matplotlib'):
         nx.draw_networkx_edge_labels(tran_sys.g, pos=pos,
                                      edge_labels=edge_labels_to_draw)  # edge_labels
 
-        plt.show()
+        #plt.show()
