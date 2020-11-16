@@ -1,7 +1,9 @@
 
 import networkx as nx
 from lomap.classes import ts
+import numpy as np
 from  matplotlib import pyplot as plt
+from matplotlib import animation
 
 pos_ref = { "1" : [0,   0.1],
             "2" : [0,   0.2],
@@ -29,6 +31,10 @@ pos_ref = { "1" : [0,   0.1],
             "g2" : [0.7, 0.5],
             "g3" : [0.5, 0.7],
             "g4" : [0.3, 0.5] }
+
+# https://blog.csdn.net/sinat_36219858/article/details/79800460
+dot_color_ref = ['ro', 'b*', 'gv']
+
 
 def visualize_run(tran_sys, run, edgelabel='control', draw='matplotlib'):
     """
@@ -77,4 +83,184 @@ def visualize_run(tran_sys, run, edgelabel='control', draw='matplotlib'):
         nx.draw_networkx_edge_labels(tran_sys.g, pos=pos,
                                      edge_labels=edge_labels_to_draw)  # edge_labels
 
-        #plt.show()
+        plt.show()
+
+def visualize_animation(tran_sys, run):
+    fig, ax = plt.subplots()
+    dot, = ax.plot([], [], 'ro')
+
+    robot_example = ts.Ts()
+    ts_run = []
+
+    def gen_dot():
+        for i in range(1, ts_run.__len__()):
+            x_start, y_start = pos_ref[ts_run[i - 1]]
+            x_end, y_end = pos_ref[ts_run[i]]
+            weight = robot_example.g.edge[ts_run[i - 1]][ts_run[i]][0]['weight']
+            kx = (x_end - x_start) / (5 * weight);
+            ky = (y_end - y_start) / (
+                        5 * weight);  # WARNING: weight of edges / vehicles is not taken into considerations
+            for j in range(0, (5 * weight)):
+                x = kx * j + x_start
+                y = ky * j + y_start
+                newdot = [x, y]
+                yield newdot
+
+    def update_dot(newd):
+        dot.set_data(newd[0], newd[1])
+        return dot,
+
+    edgelabel = 'control'
+    pos = nx.get_node_attributes(tran_sys.g, 'location')
+    if len(pos) != tran_sys.g.number_of_nodes():
+        pos = nx.spring_layout(tran_sys.g)
+
+    # because the map is the same
+    # add map (drawn before)
+    pos = pos_ref
+
+    # add color (set before)
+    # https://blog.csdn.net/qq_26376175/article/details/67637151
+    node_colors = dict([(v, 'yellowgreen') for v in tran_sys.g])
+    node_colors['u1'] = node_colors['u2'] = 'tomato'
+    node_colors['g1'] = node_colors['g2'] = node_colors['g3'] = node_colors['g4'] = 'cornflowerblue'
+    node_colors = list(node_colors.values())
+
+    # edge color
+    color_map = 'black'
+
+    nx.draw(tran_sys.g, pos=pos, node_color=node_colors, edge_color=color_map)
+    nx.draw_networkx_labels(tran_sys.g, pos=pos)
+    edge_labels = nx.get_edge_attributes(tran_sys.g, edgelabel)
+
+    #
+    edge_labels_to_draw = []
+    for (n1, n2) in edge_labels.items():
+        edge_labels_to_draw.append(((n1[0], n1[1]), n2))
+    edge_labels_to_draw = dict(edge_labels_to_draw)
+
+    nx.draw_networkx_edge_labels(tran_sys.g, pos=pos,
+                                 edge_labels=edge_labels_to_draw)  # edge_labels
+
+
+    global ts_run, robot_example
+    ts_run = run
+    robot_example = tran_sys
+
+    ani = animation.FuncAnimation(fig, update_dot, frames=gen_dot, interval=100)
+    ani.save('sin_dot.gif', writer='imagemagick', fps=30)
+
+    plt.show()
+
+def visualize_two_animation(ts_tuple, run):
+    global robot_example, ts_run
+    robot_example = ts_tuple[0]
+
+    fig = plt.figure()
+    ax1 = fig.add_subplot(1, 1,  1)
+    ax2 = fig.add_subplot(1, 1,1)
+    dot1, = ax1.plot([], [], 'ro')
+    dot2, = ax2.plot([], [], 'bo')
+
+    def init():
+        dot1.set_data([], [])
+        dot2.set_data([], [])
+        return dot1, dot2
+
+    def generate_ts_run(ts_run):
+        t_max = 40
+        t = 0
+
+        team_pose = []
+        for robot_index in range(0, ts_run.__len__()):
+            run = ts_run[robot_index]
+            team_pose.append([])
+            t = 0
+            for i in range(1, run.__len__()):
+                if t >= t_max:
+                    break
+
+                weight = robot_example.g.edge[run[i - 1]][run[i]][0]['weight']
+                for j in range(0, weight):
+                    # travelling states
+                    # team_pose[robot_index].append([pos_ref[run[i]], j])
+                    # interpotation
+                    x_dist = pos_ref[run[i]][0] - pos_ref[run[i - 1]][0]
+                    y_dist = pos_ref[run[i]][1] - pos_ref[run[i - 1]][1]
+                    pose_x_t = float(j) / float(weight) * x_dist + pos_ref[run[i - 1]][0]
+                    pose_y_t = float(j) / float(weight) * y_dist + pos_ref[run[i - 1]][1]
+                    team_pose[robot_index].append([pose_x_t, pose_y_t])
+
+                    t += 1
+                    if t >= t_max:
+                        break
+
+            if t <= t_max:
+                t_max = t  # choose the minium for sync
+
+        return team_pose
+
+
+    # animation function.  this is called sequentially
+    def animate(i):
+        x1 = ts_run[0][i][0]
+        y1 = ts_run[0][i][1]
+        dot1.set_data(x1, y1)
+
+        x2 = ts_run[1][i][0]
+        y2 = ts_run[1][i][1]
+        dot2.set_data(x2, y2)
+        return dot1, dot2
+
+    tran_sys = robot_example
+
+    edgelabel = 'control'
+    pos = nx.get_node_attributes(tran_sys.g, 'location')
+    if len(pos) != tran_sys.g.number_of_nodes():
+        pos = nx.spring_layout(tran_sys.g)
+
+    # because the map is the same
+    # add map (drawn before)
+    pos = pos_ref
+
+    # add color (set before)
+    # https://blog.csdn.net/qq_26376175/article/details/67637151
+    node_colors = dict([(v, 'yellowgreen') for v in tran_sys.g])
+    node_colors['u1'] = node_colors['u2'] = 'tomato'
+    node_colors['g1'] = node_colors['g2'] = node_colors['g3'] = node_colors['g4'] = 'cornflowerblue'
+    node_colors = list(node_colors.values())
+
+    # edge color
+    color_map = 'black'
+
+    nx.draw(tran_sys.g, pos=pos, node_color=node_colors, edge_color=color_map)
+    nx.draw_networkx_labels(tran_sys.g, pos=pos)
+    edge_labels = nx.get_edge_attributes(tran_sys.g, edgelabel)
+
+    #
+    edge_labels_to_draw = []
+    for (n1, n2) in edge_labels.items():
+        edge_labels_to_draw.append(((n1[0], n1[1]), n2))
+    edge_labels_to_draw = dict(edge_labels_to_draw)
+
+    nx.draw_networkx_edge_labels(tran_sys.g, pos=pos,
+                                 edge_labels=edge_labels_to_draw)  # edge_labels
+
+
+
+    ts_run = generate_ts_run(run)
+    anim1 = animation.FuncAnimation(fig, animate, init_func=init, frames=range(0, ts_run[0].__len__()), interval=500)
+    plt.show()
+
+
+
+
+
+def gen_dot_multi():
+    for i in range(0, ts_run[0].__len__()):
+        newdot = []
+        for robot_index in range(0, ts_run.__len__()):
+            x = ts_run[robot_index][i][0]
+            y = ts_run[robot_index][i][1]
+            newdot.append([x, y])
+        yield newdot
