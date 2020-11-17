@@ -45,11 +45,18 @@ def init():
 
 r1 = Ts.load('./robot_1.yaml')
 r2 = Ts.load('./robot_2.yaml')
+r3 = Ts.load('./robot_3.yaml')
 run_1 = ['u1', '4', '5', '6', '7', '8', '25', '26', 'g3', '26', '27', '3', '4', 'u1']
 run_2 = ['u2', '10', '11', '12', '1', '2', '21', '22', 'g1', '22', '23', '9', '10', 'u2']
+run_3 = ['2', '21', '12', '1', '2', '21', '12', '1', '2', '21', '12', '1', '2', '21', '12', '1', '2', '21', '12', '1', '2']
 
-ts_tuple = tuple([r1, r2])
-run = [run_1, run_2]
 
 #view_animation.visualize_animation(r1, run_1)
-view_animation.visualize_two_animation(ts_tuple, run)
+
+#ts_tuple = tuple([r1, r2])
+#run = [run_1, run_2]
+#view_animation.visualize_two_animation(ts_tuple, run)
+
+ts_tuple = tuple([r1, r2, r3])
+run = [run_1, run_2, run_3]
+view_animation.visualize_three_animation(ts_tuple, run)
