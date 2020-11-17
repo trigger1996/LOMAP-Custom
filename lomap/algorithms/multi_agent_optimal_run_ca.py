@@ -434,6 +434,27 @@ def ca_safety_game(ts_tuple, prefixes, suffix_cycles, obs_range = 3):
 
     print(ts_run)
 
+def multi_agent_optimal_run(ts_tuple, formula, opt_prop):
+    # Construct the team_ts
+    team_ts = ts_times_ts(ts_tuple)
+
+    # Find the optimal run and shortest prefix on team_ts
+    prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
+                                                                                               opt_prop)
+    # Pretty print the run
+    pretty_print(len(ts_tuple), prefix_on_team_ts, suffix_cycle_on_team_ts)
+
+    # Project the run on team_ts down to individual agents
+    prefixes = []
+    suffix_cycles = []
+    for i in range(0, len(ts_tuple)):
+        ts = ts_tuple[i]
+        prefixes.append([x for x in [x[i] if x[i] in ts.g.node else None for x in prefix_on_team_ts] if x != None])
+        suffix_cycles.append(
+            [x for x in [x[i] if x[i] in ts.g.node else None for x in suffix_cycle_on_team_ts] if x != None])
+
+    return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
+
 def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop):
     # Construct the team_ts
     team_ts = ts_times_ts_ca(ts_tuple)

@@ -69,7 +69,13 @@ def main():
                    '&& [](r2gather -> X(!r2gather U r2upload))')
         opt_prop = set(['r1gather','r2gather'])
 
+        # tranditional solutions
+        #logger.info('Formula: %s', formula)
+        #logger.info('opt_prop: %s', opt_prop)
+        #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
+        #    ca.multi_agent_optimal_run(ts_tuple, formula, opt_prop)
 
+        # collision avoidance
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
         prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
