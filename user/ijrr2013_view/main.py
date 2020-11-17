@@ -53,10 +53,11 @@ run_3 = ['2', '21', '12', '1', '2', '21', '12', '1', '2', '21', '12', '1', '2', 
 
 #view_animation.visualize_animation(r1, run_1)
 
-#ts_tuple = tuple([r1, r2])
+ts_tuple = tuple([r1, r2])
 #run = [run_1, run_2]
 #view_animation.visualize_two_animation(ts_tuple, run)
 
-ts_tuple = tuple([r1, r2, r3])
-run = [run_1, run_2, run_3]
-view_animation.visualize_three_animation(ts_tuple, run)
+ts_tuple = tuple([r1, r2])
+run = [run_1, run_2]
+#view_animation.visualize_three_animation(ts_tuple, run)
+view_animation.visualize_multi_animation(ts_tuple, run)

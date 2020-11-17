@@ -69,6 +69,7 @@ def main():
                    '&& [](r2gather -> X(!r2gather U r2upload))')
         opt_prop = set(['r1gather','r2gather'])
 
+
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
         prefix_length, prefixes, suffix_cycle_cost, suffix_cycles = \
@@ -88,10 +89,13 @@ def main():
             logger.info('%s control suffix cycle: %s', ts.name,
                                                     control_suffix_cycles[i])
     # visualize run
-    view.visualize_run(r1, suffix_cycles[0])
-    view.visualize_run(r1, suffix_cycles[1])
-    view.visualize_run(r1, suffix_cycles[2])
+    #view.visualize_run(r1, suffix_cycles[0])
+    #view.visualize_run(r1, suffix_cycles[1])
+    #view.visualize_run(r1, suffix_cycles[2])
     #view.visualize_run(r2, suffix_cycles[1])
+
+    # animations
+    view.visualize_multi_animation(ts_tuple, suffix_cycles)
 
     logger.info('<><><> <><><> <><><>')
 
