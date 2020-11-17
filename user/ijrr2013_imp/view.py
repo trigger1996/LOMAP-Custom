@@ -184,7 +184,7 @@ def visualize_multi_animation(ts_tuple, run):
                 if t >= t_max:
                     break
 
-                weight = robot_example.g.edge[run[i - 1]][run[i]][0]['weight']
+                weight = ts_tuple[robot_index].g.edge[run[i - 1]][run[i]][0]['weight']
                 for j in range(0, weight):
                     # travelling states
                     # team_pose[robot_index].append([pos_ref[run[i]], j])
@@ -250,6 +250,6 @@ def visualize_multi_animation(ts_tuple, run):
 
 
     ts_run = generate_ts_run(run)
-    anim1 = animation.FuncAnimation(fig, animate, init_func=init, frames=range(0, ts_run[0].__len__()), interval=500)
+    anim1 = animation.FuncAnimation(fig, animate, init_func=init, frames=range(0, ts_run[0].__len__()), interval=2500)
     plt.show()
 

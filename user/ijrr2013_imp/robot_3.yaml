@@ -40,14 +40,13 @@ graph:
       prop: !!set {r3upload: null, r3upload2: null, upload: null, upload2: null}
 
   edges:
-  - ['27', '28', {control: lf, weight: 3}]
-  - ['28', '21', {control: f, weight: 3}]
-  - ['21', '12', {control: fr, weight: 1}]
-  - ['12', '1', {control: f, weight: 1}]
-  - ['1', '2', {control: rf, weight: 1}]
-  - ['2', '3', {control: f, weight: 6}]
-  - ['3', '4', {control: f, weight: 1}]
-  - ['4', '5', {control: rf, weight: 1}]
-  - ['2', '21', {control: rfr, weight: 1}]
-
+  - ['28', '27', {control: lf, weight: 3}]
+  - ['21', '28', {control: f, weight: 3}]
+  - ['12', '21', {control: fr, weight: 1}]
+  - ['1', '12', {control: f, weight: 1}]
+  - ['2', '1', {control: rf, weight: 1}]
+  - ['3', '2', {control: f, weight: 6}]
+  - ['4', '3', {control: f, weight: 1}]
+  - ['5', '4', {control: rf, weight: 1}]
+  - ['21', '2', {control: rfr, weight: 1}]
 
