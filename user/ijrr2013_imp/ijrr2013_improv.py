@@ -72,8 +72,9 @@ def main():
 
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
-        prefix_length, prefixes, suffix_cycle_cost, suffix_cycles = \
-            ca.multi_agent_optimal_run(ts_tuple, formula, opt_prop)
+        prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
+            ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop)
+
         logger.info('Cost: %d', suffix_cycle_cost)
         logger.info('Prefix length: %d', prefix_length)
         # Find the controls that will produce this run
@@ -95,10 +96,7 @@ def main():
     #view.visualize_run(r2, suffix_cycles[1])
 
     # animations
-    ts_run = []
-    for i in range(0, prefixes.__len__()):
-        ts_run.append(prefixes[i] + suffix_cycles[i])
-    view.visualize_multi_animation(ts_tuple, ts_run)
+    view.visualize_animation_w_team_run(ts_tuple, team_suffix_cycle)
 
     logger.info('<><><> <><><> <><><>')
 

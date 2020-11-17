@@ -461,3 +461,101 @@ def visualize_multi_animation(ts_tuple, run):
     anim1 = animation.FuncAnimation(fig, animate, init_func=init, frames=range(0, ts_run[0].__len__()), interval=500)
     plt.show()
 
+
+def visualize_animation_w_team_run(ts_tuple, team_run):
+    global robot_example, ts_run
+    robot_example = ts_tuple[0]
+
+    robot_num = ts_tuple.__len__()
+
+    fig = plt.figure()
+    ax = []
+    dot = []
+    for i in range(0, robot_num):
+        ax_t = fig.add_subplot(1, 1, 1)
+        dot_t = ax_t.plot([], [], dot_color_ref[i])[0]
+        ax.append(ax_t)
+        dot.append(dot_t)
+
+    def init():
+        for i in range(0, robot_num):
+            dot[i].set_data([], [])
+        return dot
+
+    def generate_ts_run(ts_run):
+        team_pose = []
+        for robot_index in range(0, ts_tuple.__len__()):
+            team_pose.append([])
+            for i in range(0, ts_run.__len__()):
+                # travelling state
+                if type(ts_run[i][robot_index]) == tuple:
+                    # get how many travelling state in this range
+                    for k in range(i + 1, ts_run.__len__()):
+                        if type(ts_run[k][robot_index]) != tuple:
+                            state_len = list(ts_run[k - 1][robot_index])[2] + 1
+                            break
+                    state_start = list(ts_run[i][robot_index])[0]
+                    state_end   = list(ts_run[i][robot_index])[1]
+                    x_start = pos_ref[state_start][0]
+                    y_start = pos_ref[state_start][1]
+                    x_end   = pos_ref[state_end][0]
+                    y_end   = pos_ref[state_end][1]
+
+                    x = x_start + (x_end - x_start) * float(list(ts_run[i][robot_index])[2]) / float(state_len)
+                    y = y_start + (y_end - y_start) * float(list(ts_run[i][robot_index])[2]) / float(state_len)
+                    team_pose[robot_index].append([x, y])
+                # normal state
+                else:
+                    x = pos_ref[ts_run[i][robot_index]][0]
+                    y = pos_ref[ts_run[i][robot_index]][1]
+                    team_pose[robot_index].append([x, y])
+
+        return team_pose
+
+    # animation function.  this is called sequentially
+    def animate(i):
+        for j in range(0, robot_num):
+            x = ts_run[j][i][0]
+            y = ts_run[j][i][1]
+            dot[j].set_data(x, y)
+        return dot
+
+    tran_sys = robot_example
+
+    edgelabel = 'control'
+    pos = nx.get_node_attributes(tran_sys.g, 'location')
+    if len(pos) != tran_sys.g.number_of_nodes():
+        pos = nx.spring_layout(tran_sys.g)
+
+    # because the map is the same
+    # add map (drawn before)
+    pos = pos_ref
+
+    # add color (set before)
+    # https://blog.csdn.net/qq_26376175/article/details/67637151
+    node_colors = dict([(v, 'yellowgreen') for v in tran_sys.g])
+    node_colors['u1'] = node_colors['u2'] = 'tomato'
+    node_colors['g1'] = node_colors['g2'] = node_colors['g3'] = node_colors['g4'] = 'cornflowerblue'
+    node_colors = list(node_colors.values())
+
+    # edge color
+    color_map = 'black'
+
+    nx.draw(tran_sys.g, pos=pos, node_color=node_colors, edge_color=color_map)
+    nx.draw_networkx_labels(tran_sys.g, pos=pos)
+    edge_labels = nx.get_edge_attributes(tran_sys.g, edgelabel)
+
+    #
+    edge_labels_to_draw = []
+    for (n1, n2) in edge_labels.items():
+        edge_labels_to_draw.append(((n1[0], n1[1]), n2))
+    edge_labels_to_draw = dict(edge_labels_to_draw)
+
+    nx.draw_networkx_edge_labels(tran_sys.g, pos=pos,
+                                 edge_labels=edge_labels_to_draw)  # edge_labels
+
+
+
+    ts_run = generate_ts_run(team_run)
+    anim1 = animation.FuncAnimation(fig, animate, init_func=init, frames=range(0, ts_run[0].__len__()), interval=500)
+    plt.show()

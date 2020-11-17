@@ -434,7 +434,7 @@ def ca_safety_game(ts_tuple, prefixes, suffix_cycles, obs_range = 3):
 
     print(ts_run)
 
-def multi_agent_optimal_run(ts_tuple, formula, opt_prop):
+def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop):
     # Construct the team_ts
     team_ts = ts_times_ts_ca(ts_tuple)
 
@@ -455,6 +455,6 @@ def multi_agent_optimal_run(ts_tuple, formula, opt_prop):
 
 
     # verify
-    ca_safety_game(ts_tuple, prefixes, suffix_cycles)
+    #ca_safety_game(ts_tuple, prefixes, suffix_cycles)
 
-    return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles)
+    return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
