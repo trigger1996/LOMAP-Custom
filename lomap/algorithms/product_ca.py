@@ -940,12 +940,26 @@ def ts_times_ts_ca(ts_tuple):
                         for ss, ns, tl, ts in zip(
                             source_state, next_state, time_left, time_spent)))
 
-            # remove states with the same position for collision avoidance
             is_collision = False
+            cur_state_list  = list(cur_state)
             next_state_list = list(next_state)
+            # remove states with the same position for collision avoidance
             for i in range(1, next_state_list.__len__()):
-                if next_state_list[i - 1] == next_state_list[i]:
-                    is_collision = True
+                for j in range(0, next_state_list.__len__()):
+                    if j != i:
+                        if next_state_list[i] == next_state_list[j]:
+                            is_collision = True
+                            break
+                if is_collision:
+                    break
+            # remove states in the same edge
+            for i in range(0, cur_state.__len__()):
+                for j in range(0, next_state_list.__len__()):
+                    if j != i:
+                        if cur_state_list[i] == next_state_list[j]:
+                            is_collision = True
+                            break
+                if is_collision:
                     break
 
             if is_collision:

@@ -95,7 +95,10 @@ def main():
     #view.visualize_run(r2, suffix_cycles[1])
 
     # animations
-    view.visualize_multi_animation(ts_tuple, suffix_cycles)
+    ts_run = []
+    for i in range(0, prefixes.__len__()):
+        ts_run.append(prefixes[i] + suffix_cycles[i])
+    view.visualize_multi_animation(ts_tuple, ts_run)
 
     logger.info('<><><> <><><> <><><>')
 
