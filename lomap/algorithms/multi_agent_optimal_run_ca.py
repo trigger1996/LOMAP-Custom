@@ -553,7 +553,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
                     if type(prefix[j]) != tuple and is_modifible[j]:
                         ts_tuple[j].g.add_edge(prefix[j], prefix[j],
                                                attr_dict={'weight': 1, 'control': 's'})
-
+    ''' BUGS here '''
     if is_pairwise_collision:
         # add turn-back points
         for i in range(0, pairwise_collision_list.__len__()):
@@ -564,6 +564,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
                     else:
                         prefix = list(suffix_cycle_on_team_ts[i - prefix_length])
                     if type(prefix[j]) != tuple and is_modifible[j]:
+                        ''''''
                         ts_tuple[j].g.add_edge(prefix[j], prefix[j],                        # add the min-cost point
                                                attr_dict={'weight': 1, 'control': 's'})
 
@@ -578,6 +579,165 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
                                                                                                    opt_prop)
         # Pretty print the run
         pretty_print(len(ts_tuple), prefix_on_team_ts, suffix_cycle_on_team_ts)
+
+    # Project the run on team_ts down to individual agents
+    prefixes = []
+    suffix_cycles = []
+    for i in range(0, len(ts_tuple)):
+        ts = ts_tuple[i]
+        prefixes.append([x for x in [x[i] if x[i] in ts.g.node else None for x in prefix_on_team_ts] if x != None])
+        suffix_cycles.append(
+            [x for x in [x[i] if x[i] in ts.g.node else None for x in suffix_cycle_on_team_ts] if x != None])
+
+
+    # verify
+    #ca_safety_game(ts_tuple, prefixes, suffix_cycles)
+
+    return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
+
+
+def is_collision_within_team(prefix_on_team_ts, suffix_cycle_on_team_ts, is_modifible):
+    ###
+    ''' Check if collision '''
+    prefix_length = prefix_on_team_ts.__len__()
+    team_size = 0
+    for i in range(0, len(is_modifible)):
+        if is_modifible[i]:
+            team_size += 1
+
+    #
+    is_singleton_collision = False
+    is_pairwise_collision = False
+    singleton_collision_list = [ [False] * team_size ] * (prefix_length + suffix_cycle_on_team_ts.__len__())
+    pairwise_collision_list  = [ [False] * team_size ] * (prefix_length + suffix_cycle_on_team_ts.__len__())
+
+    # singleton_collision
+    for i in range(0, prefix_length):
+        prefix = list(prefix_on_team_ts[i])
+        for j in range(1, prefix.__len__()):
+            if prefix[j - 1] == prefix[j] and is_modifible[j]:
+                is_singleton_collision = True
+                singleton_collision_list[i][j] = True
+    for i in range(0, suffix_cycle_on_team_ts.__len__()):
+        suffix = list(suffix_cycle_on_team_ts[i])
+        for j in range(1, suffix.__len__()):
+            if suffix[j - 1] == suffix[j] and is_modifible[j]:
+                is_singleton_collision = True
+                singleton_collision_list[prefix_length + i][j] = True
+
+    # pairwise_collision
+    for i in range(0, prefix_length - 1):
+        curr_run = list(prefix_on_team_ts[i])
+        next_run = list(prefix_on_team_ts[i + 1])
+        for j in range(0, curr_run.__len__()):
+            for k in range(0, next_run.__len__()):
+                if j != k and curr_run[j] == next_run[k] and is_modifible[j] and is_modifible[k]:
+                    is_pairwise_collision = True
+                    pairwise_collision_list[i][j] = True
+                    pairwise_collision_list[i + 1][k] = True
+    for i in range(0, suffix_cycle_on_team_ts.__len__() - 1):
+        curr_run = list(suffix_cycle_on_team_ts[i])
+        next_run = list(suffix_cycle_on_team_ts[i + 1])
+        for j in range(0, curr_run.__len__()):
+            for k in range(0, next_run.__len__()):
+                if j != k and curr_run[j] == next_run[k] and is_modifible[j] and is_modifible[k]:
+                    is_pairwise_collision = True
+                    pairwise_collision_list[prefix_length + i][j] = True
+                    pairwise_collision_list[prefix_length + i + 1][k] = True
+
+    return is_singleton_collision, is_pairwise_collision, singleton_collision_list, pairwise_collision_list
+
+
+import graph_search
+
+
+def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible, view_range = 2):
+    '''
+    foe vehicle with a certain NON-stop route but vehicle only observable within a certain range
+
+    :param ts_tuple:
+    :param formula:
+    :param opt_prop:
+    :param is_modifible:
+    :param view_range:
+    :return:
+    '''
+
+    # Construct the team_ts
+    team_ts = ts_times_ts(ts_tuple)
+
+    # Find the optimal run and shortest prefix on team_ts
+    prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
+                                                                                               opt_prop)
+    ''' 1. Remove Collision within team of robots '''
+    is_singleton_collision, is_pairwise_collision, singleton_collision_list, pairwise_collision_list = \
+        is_collision_within_team(prefix_on_team_ts, suffix_cycle_on_team_ts, is_modifible)
+
+    if is_singleton_collision:
+        # add stay motion for collision points
+        for i in range(0, singleton_collision_list.__len__()):
+            for j in range(0, ts_tuple.__len__()):
+                if singleton_collision_list[i][j] == True:
+                    if i < prefix_length:
+                        prefix = list(prefix_on_team_ts[i])
+                    else:
+                        prefix = list(suffix_cycle_on_team_ts[i - prefix_length])
+                    if type(prefix[j]) != tuple and is_modifible[j]:
+                        ts_tuple[j].g.add_edge(prefix[j], prefix[j],
+                                               attr_dict={'weight': 1, 'control': 's'})
+    ''' BUGS here '''
+    if is_pairwise_collision:
+        # add turn-back points
+        for i in range(0, pairwise_collision_list.__len__()):
+            for j in range(0, ts_tuple.__len__()):
+                if pairwise_collision_list[i][j] == True:
+                    if i < prefix_length:
+                        prefix = list(prefix_on_team_ts[i])
+                    else:
+                        prefix = list(suffix_cycle_on_team_ts[i - prefix_length])
+                    if type(prefix[j]) != tuple and is_modifible[j]:
+                        ''''''
+                        ts_tuple[j].g.add_edge(prefix[j], prefix[j],                        # add the min-cost point
+                                               attr_dict={'weight': 1, 'control': 's'})
+
+    if is_singleton_collision or is_pairwise_collision:
+    #if 0:
+        # Construct the team_ts while removing collision points and re-try
+        team_ts = ts_times_ts_ca(ts_tuple)
+
+        # Find the optimal run and shortest prefix on team_ts
+        prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
+                                                                                                   opt_prop)
+        # Pretty print the run
+        pretty_print(len(ts_tuple), prefix_on_team_ts, suffix_cycle_on_team_ts)
+
+    ''' 2. Represent runs with ALL robots '''
+    # prefix
+    if prefix_length != prefix_on_team_ts.__len__():
+        prefix_length = prefix_on_team_ts.__len__()
+    suffix_length = suffix_cycle_on_team_ts.__len__()
+    for timestamp in range(0, prefix_length):
+        for i in range(0, ts_tuple.__len__()):
+            ''' 3. If an agent spots foe robot within range '''
+            if is_modifible[i]:
+                curr_states = prefix_on_team_ts[timestamp][i]
+                ts = ts_tuple[i]
+                ''' FIND FATHER AND SUCCESSOR '''
+                g
+
+    for timestamp in range(0, suffix_length):
+        for i in range(0, ts_tuple.__len__()):
+            ''' 3. If an agent spots foe robot within range '''
+            if is_modifible[i]:
+                curr_states = suffix_cycle_on_team_ts[timestamp][i]
+
+
+
+    ''' 3. If an agent spots foe robot within range, prepare to maneuver with safety game '''
+
+
+    # Pretty print the run
+    pretty_print(len(ts_tuple), prefix_on_team_ts, suffix_cycle_on_team_ts)
 
     # Project the run on team_ts down to individual agents
     prefixes = []
