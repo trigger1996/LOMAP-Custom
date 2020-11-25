@@ -481,11 +481,8 @@ def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop):
     return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
 
 
-def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop):
+def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
     ''''''
-    ###
-    ''' Whether the agent is able to control '''
-    is_modifible = [True, True, False]
 
     ###
     '''  First construct standard route with old algorithm '''
@@ -501,6 +498,9 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop):
 
     ###
     ''' Check if collision '''
+    if prefix_length != prefix_on_team_ts.__len__():
+        prefix_length = prefix_on_team_ts.__len__()
+
     #
     is_singleton_collision = False
     is_pairwise_collision = False
@@ -550,14 +550,22 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop):
                         prefix = list(prefix_on_team_ts[i])
                     else:
                         prefix = list(suffix_cycle_on_team_ts[i - prefix_length])
-                    print(prefix[j])
                     if type(prefix[j]) != tuple and is_modifible[j]:
                         ts_tuple[j].g.add_edge(prefix[j], prefix[j],
                                                attr_dict={'weight': 1, 'control': 's'})
 
     if is_pairwise_collision:
-        b = 000
-        print(466666666666666666666)
+        # add turn-back points
+        for i in range(0, pairwise_collision_list.__len__()):
+            for j in range(0, ts_tuple.__len__()):
+                if pairwise_collision_list[i][j] == True:
+                    if i < prefix_length:
+                        prefix = list(prefix_on_team_ts[i])
+                    else:
+                        prefix = list(suffix_cycle_on_team_ts[i - prefix_length])
+                    if type(prefix[j]) != tuple and is_modifible[j]:
+                        ts_tuple[j].g.add_edge(prefix[j], prefix[j],                        # add the min-cost point
+                                               attr_dict={'weight': 1, 'control': 's'})
 
     ''' Re-try '''
     if is_singleton_collision or is_pairwise_collision:

@@ -59,13 +59,16 @@ def main():
         ts_tuple = (r1, r2, r3)
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
-                   '&& [](r2gather -> X(!r2gather U r2upload))')
+                   '&& [](r2gather -> X(!r2gather U r2upload)) '
+                   '&& [](!(r1gather1 && r2gather1) && !(r1gather2 && r2gather2)'
+                   '&& !(r1gather3 && r2gather3) && !(r1gather4 && r2gather4))')
         opt_prop = set(['r1gather','r2gather'])
         # collision avoidance
+        is_modifible = [True, True, False]
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
         prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
-            ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop)
+            ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible)
 
         logger.info('Cost: %d', suffix_cycle_cost)
         logger.info('Prefix length: %d', prefix_length)
