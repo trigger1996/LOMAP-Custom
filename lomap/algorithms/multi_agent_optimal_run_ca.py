@@ -663,6 +663,43 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
     :return:
     '''
 
+    # find mothers
+    #for i in range
+
+    # find successors
+    is_weight_based = False
+    weight_limit =  3
+    node_limit = 2
+
+
+    cur_ts = ts_tuple[0]
+    cur_state = '4'
+    if not is_weight_based:
+
+        current_level_tgt = [cur_state]
+        next_level_tgt = []
+        target_node = []
+
+        for i in range(0, node_limit):
+            for state in current_level_tgt:
+                next_state_arr = cur_ts.next_states_of_wts(state, traveling_states=False)
+                list_t = []
+                for j in range(0, next_state_arr.__len__()):
+                    list_t.append(next_state_arr[j][0])
+                next_level_tgt = next_level_tgt + list_t
+                target_node = target_node + next_level_tgt
+            current_level_tgt = next_level_tgt
+            next_level_tgt = []
+        # move identical elements
+        for s in target_node:
+            if target_node.count(s) > 1:
+                target_node.remove(s)
+
+        print(target_node)
+
+    #g_successors = graph_search.dfs_successors(ts_tuple[0].g, '28')
+    #print(g_successors)
+
     # Construct the team_ts
     team_ts = ts_times_ts(ts_tuple)
 
@@ -723,7 +760,7 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
                 curr_states = prefix_on_team_ts[timestamp][i]
                 ts = ts_tuple[i]
                 ''' FIND FATHER AND SUCCESSOR '''
-                g
+                #g
 
     for timestamp in range(0, suffix_length):
         for i in range(0, ts_tuple.__len__()):
