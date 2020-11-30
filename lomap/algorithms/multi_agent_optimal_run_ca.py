@@ -678,6 +678,8 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
         current_level_tgt = [cur_state]
         next_level_tgt = []
         target_node = []
+        route = []
+        last_route = []
 
         while True:
             for state in current_level_tgt:
@@ -689,30 +691,48 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
                 next_level_tgt = next_level_tgt + list_t
                 target_node = target_node + next_level_tgt
 
-            # check whether all the route is larger than weight limit
+            # generate route
+            last_route = route
             route = []
-            for state_to_check in next_level_tgt:   # [node_label, edge_weight, father_node]
-                route_t = [ ]
-                weight_t = 0
-                state_t = state_to_check
-                # trace back
-                while True:
-                    father = state_t[2]
-                    weight_t = weight_t + state_to_check[1]
-                    route_t.append(state_t[0])
-                    if father == cur_state:
-                        route_t.append(father)
+            for state_to_add in next_level_tgt:
+                father = state_to_add[2]
+                father_path = None
+                for temp in last_route:
+                    if father == temp[0][0]:
+                        father_path = temp
                         break
-                    for temp in target_node:
-                        if temp[0] == father:
-                            state_t = temp
+                # trace back and add a new route
+                if not isinstance(father_path, list):
+                    route_t = []
+                    weight  = 0
+                    state_t = state_to_add
+                    while True:
+                        father = state_t[2]
+                        route_t.append(state_t[0])
+                        weight = weight + state_t[1]
+                        if father == cur_state:  # initial state to search
+                            route_t.append(father)
                             break
-                route.append([route_t, weight_t])
+                        for temp in target_node:
+                            if father == temp[0]:
+                                state_t = temp
+                                break
+                    route.append([route_t, weight])
+                else:
+                    father_path[0].insert(0, state_to_add[0])
+                    father_path[1] = father_path[1] + state_to_add[1]
+                    route_t = father_path
+                    route.append(route_t)
+
+
+            # check if all route weight is larger than weight limit
             is_continue = False
             for route_t in route:
                 if route_t[1] < weight_limit:
                     is_continue = True
             if not is_continue:
+                ''' remove point with EXCEEDED POINTS '''
+
                 break
 
             # extract next level target
