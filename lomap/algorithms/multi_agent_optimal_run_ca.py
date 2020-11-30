@@ -667,14 +667,62 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
     #for i in range
 
     # find successors
-    is_weight_based = False
+    is_weight_based = True  # False
     weight_limit =  3
     node_limit = 2
 
 
     cur_ts = ts_tuple[0]
     cur_state = '4'
-    if not is_weight_based:
+    if is_weight_based:
+        current_level_tgt = [cur_state]
+        next_level_tgt = []
+        target_node = []
+
+        while True:
+            for state in current_level_tgt:
+                next_state_arr = cur_ts.next_states_of_wts(state, traveling_states=False)
+                list_t = []
+                for j in range(0, next_state_arr.__len__()):
+                    node_t = [next_state_arr[j][0], cur_ts.g.edge[state][next_state_arr[j][0]][0]['weight'], state] # [node_label, edge_weight, father_node]
+                    list_t.append(node_t)
+                next_level_tgt = next_level_tgt + list_t
+                target_node = target_node + next_level_tgt
+
+            # check whether all the route is larger than weight limit
+            route = []
+            for state_to_check in next_level_tgt:   # [node_label, edge_weight, father_node]
+                route_t = [ ]
+                weight_t = 0
+                state_t = state_to_check
+                # trace back
+                while True:
+                    father = state_t[2]
+                    weight_t = weight_t + state_to_check[1]
+                    route_t.append(state_t[0])
+                    if father == cur_state:
+                        route_t.append(father)
+                        break
+                    for temp in target_node:
+                        if temp[0] == father:
+                            state_t = temp
+                            break
+                route.append([route_t, weight_t])
+            is_continue = False
+            for route_t in route:
+                if route_t[1] < weight_limit:
+                    is_continue = True
+            if not is_continue:
+                break
+
+            # extract next level target
+            current_level_tgt = []
+            for tgt in next_level_tgt:
+                current_level_tgt.append(tgt[0])
+            next_level_tgt = []
+
+
+    elif not is_weight_based:
 
         current_level_tgt = [cur_state]
         next_level_tgt = []
