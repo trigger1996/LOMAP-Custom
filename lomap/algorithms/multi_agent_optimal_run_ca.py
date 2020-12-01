@@ -26,6 +26,8 @@ import logging
 from lomap.algorithms.product_ca import ts_times_ts
 from lomap.algorithms.product_ca import ts_times_ts_ca
 
+import copy
+
 # Logger configuration
 logger = logging.getLogger(__name__)
 
@@ -49,7 +51,7 @@ logger = logging.getLogger(__name__)
 # Cluster configuration
 # SERVER_ADDR is the ip address of the computer running lomap
 # pp_servers is a tuple of server ips that are running ppserver.py
-# SERVER_ADDR = '107.20.62.59'
+# SERVER_ADDR = '107.20.62.59'father_path
 # pp_servers = ('23.22.80.26', '50.17.177.92', '50.16.82.182', '50.16.116.126')
 SERVER_ADDR = 'localhost'
 pp_servers = ()
@@ -649,7 +651,7 @@ def is_collision_within_team(prefix_on_team_ts, suffix_cycle_on_team_ts, is_modi
 
 
 
-def serach_agent_route(cur_ts, cur_state, weight_limit = 3, node_limit = 2, is_weight_based =  True):
+def search_agent_route(cur_ts, cur_state, weight_limit = 3, node_limit = 2, is_weight_based =  True):
     if is_weight_based:
         current_level_tgt = [cur_state]
         next_level_tgt = []
@@ -675,7 +677,8 @@ def serach_agent_route(cur_ts, cur_state, weight_limit = 3, node_limit = 2, is_w
                 father_path = None
                 for temp in last_route:
                     if father == temp[0][0]:
-                        father_path = temp
+                        father_path = []
+                        father_path = copy.deepcopy(temp)
                         break
                 # trace back and add a new route
                 if not isinstance(father_path, list):
@@ -781,22 +784,12 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
     :return:
     '''
 
-    # find mothers
-    #for i in range
-
-    # find successors
-    is_weight_based = True  # False
-
-
 
     cur_ts = ts_tuple[0]
     cur_state = '4'
-    target_node = serach_agent_route(cur_ts, cur_state)
+    target_node = search_agent_route(cur_ts, cur_state)
 
     print(target_node)
-
-    #g_successors = graph_search.dfs_successors(ts_tuple[0].g, '28')
-    #print(g_successors)
 
     # Construct the team_ts
     team_ts = ts_times_ts(ts_tuple)
@@ -809,7 +802,7 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
         is_collision_within_team(prefix_on_team_ts, suffix_cycle_on_team_ts, is_modifible)
 
     if is_singleton_collision:
-        # add stay motion for collision points
+        # add stay motion for collision pointsFATHER AND
         for i in range(0, singleton_collision_list.__len__()):
             for j in range(0, ts_tuple.__len__()):
                 if singleton_collision_list[i][j] == True:
@@ -822,7 +815,7 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
                                                attr_dict={'weight': 1, 'control': 's'})
     ''' BUGS here '''
     if is_pairwise_collision:
-        # add turn-back points
+        # add turn-back pointssuffix_cycle_on_team_ts
         for i in range(0, pairwise_collision_list.__len__()):
             for j in range(0, ts_tuple.__len__()):
                 if pairwise_collision_list[i][j] == True:
@@ -857,8 +850,17 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
             if is_modifible[i]:
                 curr_states = prefix_on_team_ts[timestamp][i]
                 ts = ts_tuple[i]
-                ''' FIND FATHER AND SUCCESSOR '''
-                #g
+                ''' FIND SUCCESSOR '''
+                target_node = search_agent_route(ts, curr_states, is_weight_based=False)        # is_weight_based = True
+                print(target_node)
+                ''' Check whether the other agents are in these nodes '''
+                for j in range(0, ts_tuple.__len__()):
+                    if not is_modifible[j]:
+                        foe_states = prefix_on_team_ts[timestamp][j]
+                        ts = ts_tuple[j]
+                        if foe_states in set(target_node):
+                            ''' SPOT A FOE VEHICLE '''
+                            a = 0
 
     for timestamp in range(0, suffix_length):
         for i in range(0, ts_tuple.__len__()):
@@ -886,5 +888,8 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
 
     # verify
     #ca_safety_game(ts_tuple, prefixes, suffix_cycles)
+
+    print(prefix_on_team_ts)
+    print(suffix_cycle_on_team_ts)
 
     return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
