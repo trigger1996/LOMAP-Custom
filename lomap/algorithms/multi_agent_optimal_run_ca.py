@@ -648,32 +648,8 @@ def is_collision_within_team(prefix_on_team_ts, suffix_cycle_on_team_ts, is_modi
     return is_singleton_collision, is_pairwise_collision, singleton_collision_list, pairwise_collision_list
 
 
-import graph_search
 
-
-def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible, view_range = 2):
-    '''
-    foe vehicle with a certain NON-stop route but vehicle only observable within a certain range
-
-    :param ts_tuple:
-    :param formula:
-    :param opt_prop:
-    :param is_modifible:
-    :param view_range:
-    :return:
-    '''
-
-    # find mothers
-    #for i in range
-
-    # find successors
-    is_weight_based = True  # False
-    weight_limit =  3
-    node_limit = 2
-
-
-    cur_ts = ts_tuple[0]
-    cur_state = '4'
+def serach_agent_route(cur_ts, cur_state, weight_limit = 3, node_limit = 2, is_weight_based =  True):
     if is_weight_based:
         current_level_tgt = [cur_state]
         next_level_tgt = []
@@ -732,7 +708,22 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
                     is_continue = True
             if not is_continue:
                 ''' remove point with EXCEEDED POINTS '''
-
+                route_to_return = []
+                for route_t in route:
+                    exceeded_weight = 0
+                    pop_index = -1
+                    for i in range(1, route_t[0].__len__()):
+                        if route_t[1] - exceeded_weight <= weight_limit:
+                            break
+                        curr_node = route_t[0][i - 1]
+                        last_node = route_t[0][i]
+                        exceeded_weight = exceeded_weight + cur_ts.g.edge[last_node][curr_node][0]['weight']
+                        pop_index = i - 1
+                    if pop_index >= 0:
+                        for j in range(0, pop_index + 1):
+                            route_t[0].pop(0)
+                        route_t[1] = route_t[1] - exceeded_weight
+                    route_to_return.append(route_t)
                 break
 
             # extract next level target
@@ -741,6 +732,19 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
                 current_level_tgt.append(tgt[0])
             next_level_tgt = []
 
+        # return
+        target_node = []
+        for route_t in route_to_return:
+            for i in range(0, route_t[0].__len__()):
+                is_found = False
+                for j in range(0, target_node.__len__()):
+                    if target_node[j] == route_t[0][i]:
+                        is_found = True
+                        break
+                if not is_found:
+                    target_node.append(route_t[0][i])
+
+        return target_node
 
     elif not is_weight_based:
 
@@ -763,7 +767,33 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
             if target_node.count(s) > 1:
                 target_node.remove(s)
 
-        print(target_node)
+    return target_node
+
+def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible, view_range = 2):
+    '''
+    foe vehicle with a certain NON-stop route but vehicle only observable within a certain range
+
+    :param ts_tuple:
+    :param formula:
+    :param opt_prop:
+    :param is_modifible:
+    :param view_range:
+    :return:
+    '''
+
+    # find mothers
+    #for i in range
+
+    # find successors
+    is_weight_based = True  # False
+
+
+
+    cur_ts = ts_tuple[0]
+    cur_state = '4'
+    target_node = serach_agent_route(cur_ts, cur_state)
+
+    print(target_node)
 
     #g_successors = graph_search.dfs_successors(ts_tuple[0].g, '28')
     #print(g_successors)
