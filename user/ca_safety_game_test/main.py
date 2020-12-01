@@ -57,10 +57,13 @@ def main():
             if is_modifible[i]:
                 cur_ts = ts_tuple[i]
                 cur_state = run_t[i]
-                target_node = safety.search_agent_route(cur_ts, cur_state, weight_limit=10, is_weight_based=True)
+                target_node = safety.search_agent_route(cur_ts, cur_state, weight_limit=5, is_weight_based=True)
                 for j in range(0, ts_tuple.__len__()):
                     if not is_modifible[j]:
+                        ''' if the foe agent is spotted by the friendly '''
                         if run_t[j] in set(target_node):
+                            # plan a new route
+                            safety.safety_game(ts_tuple[i], ts_tuple[j], run_t[i], run_t[j], team_prefix)
                             print(run_t)
                             print(run_t[j])
                             print(target_node)

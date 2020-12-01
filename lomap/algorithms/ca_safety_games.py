@@ -179,3 +179,9 @@ def search_agent_route(cur_ts, cur_state, weight_limit = 3, node_limit = 2, is_w
                 target_node.remove(s)
 
     return target_node
+
+def safety_game(friendly_ts, foe_ts, friendly_state, foe_state, cur_team_run):
+    '''
+        Due to the foe ts is known, construct team ts is not realizable
+        Assume it that the velocity is not faster than friendly
+    '''
