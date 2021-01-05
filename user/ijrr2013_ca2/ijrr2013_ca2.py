@@ -48,14 +48,14 @@ def main():
         r2 = Ts.load('./robot_2_real.yaml')
         r3 = Ts.load('./robot_3_real.yaml')
 
-        '''
-        ts_tuple = (r1, r2)
+
+        ts_tuple = (r1, r2, r3)
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
                    '&& [](r2gather -> X(!r2gather U r2upload))')
         opt_prop = set(['r1gather','r2gather'])
-        '''
 
+        '''
         ts_tuple = (r1, r2, r3)
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
@@ -63,6 +63,7 @@ def main():
                    '&& [](!(r1gather1 && r2gather1) && !(r1gather2 && r2gather2)'
                    '&& !(r1gather3 && r2gather3) && !(r1gather4 && r2gather4))')
         opt_prop = set(['r1gather','r2gather'])
+        '''
         # collision avoidance
         is_modifible = [True, True, False]
         logger.info('Formula: %s', formula)
