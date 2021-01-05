@@ -49,7 +49,6 @@ def main():
     
     '''
 
-
     ''' SAFETY GAMES '''
     ts_tuple = tuple([r1, r2, r3])
     for run_t in team_prefix:
@@ -70,6 +69,9 @@ def main():
                             print(cur_ts.name)
                             print(cur_state)
                             print("\n")
+
+    #safety.safety_game(r1, r3, '21', '12',)
+
 
 
 if __name__ == '__main__':
