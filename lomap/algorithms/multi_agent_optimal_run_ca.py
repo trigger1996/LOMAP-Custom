@@ -24,7 +24,7 @@ import sys
 import traceback
 import logging
 from lomap.algorithms.product_ca import ts_times_ts
-from lomap.algorithms.product_ca import ts_times_ts_ca
+from lomap.algorithms.product_ca import ts_times_ts_ca, ts_times_ts_ca2
 
 import copy
 
@@ -515,22 +515,24 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
     #
     is_singleton_collision = False
     is_pairwise_collision = False
-    singleton_collision_list =[ [False] * ts_tuple.__len__() ] * (prefix_length + suffix_cycle_on_team_ts.__len__())
-    pairwise_collision_list = [ [False] * ts_tuple.__len__() ] * (prefix_length + suffix_cycle_on_team_ts.__len__())
+    singleton_collision_list = [ [False for i in range(ts_tuple.__len__())] for j in range(prefix_length + suffix_cycle_on_team_ts.__len__()) ]
+    pairwise_collision_list  = [ [False for i in range(ts_tuple.__len__())] for j in range(prefix_length + suffix_cycle_on_team_ts.__len__()) ]
 
     ''' singleton_collision '''
     for i in range(0, prefix_length):
         prefix = list(prefix_on_team_ts[i])
         for j in range(1, prefix.__len__()):
-            if prefix[j - 1] == prefix[j]:
+            if prefix[j - 1] == prefix[j] and type(prefix[j]) == str:
                 is_singleton_collision = True
-                singleton_collision_list[i][j] = True
+                singleton_collision_list[i][j - 1] = True
+                singleton_collision_list[i][j]     = True
     for i in range(0, suffix_cycle_on_team_ts.__len__()):
         suffix = list(suffix_cycle_on_team_ts[i])
         for j in range(1, suffix.__len__()):
-            if suffix[j - 1] == suffix[j]:
+            if suffix[j - 1] == suffix[j] and type(suffix[j]) == str:
                 is_singleton_collision = True
-                singleton_collision_list[prefix_length + i][j] = True
+                singleton_collision_list[prefix_length + i][j - 1] = True
+                singleton_collision_list[prefix_length + i][j]     = True
 
     ''' pairwise_collision '''
     for i in range(0, prefix_length - 1):
@@ -557,16 +559,43 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
         for i in range(0, singleton_collision_list.__len__()):
             for j in range(0, ts_tuple.__len__()):
                 if singleton_collision_list[i][j] == True:
+                    team_state_curr = None
+                    team_state_last = None
+                    team_state_next = None
                     if i < prefix_length:
-                        run_indiv = list(prefix_on_team_ts[i])
+                        team_state_curr = list(prefix_on_team_ts[i])
+                        # find last indivdual state expect for travelling
+                        for k in range(1, i):
+                            team_state_last = list(prefix_on_team_ts[i - k])
+                            if type(team_state_last[j]) == str:
+                                break
+                        # find next indivdual state expect for travelling
+                        for k in range(1, prefix_length - i):
+                            team_state_next = list(prefix_on_team_ts[i + k])
+                            if type(team_state_next[j]) == str:
+                                break
                     else:
-                        run_indiv = list(suffix_cycle_on_team_ts[i - prefix_length])
-                    if type(run_indiv[j]) != tuple and is_modifible[j]:
-                        ts_tuple[j].g.add_edge(run_indiv[j - 1], run_indiv[j - 1],
-                                               attr_dict={'weight': 1, 'control': 's'})
-                        if j < run_indiv.__len__():
-                            ts_tuple[j].g.add_edge(run_indiv[j + 1], run_indiv[j + 1],
-                                                   attr_dict={'weight': 1, 'control': 's'})
+                        team_state_curr = list(suffix_cycle_on_team_ts[i - prefix_length])
+                        # find last indivdual state expect for travelling
+                        for k in range(1, i - prefix_length + 1):
+                            team_state_last = list(suffix_cycle_on_team_ts[i - prefix_length - k])
+                            if type(team_state_last[j]) == str:
+                                break
+                        for k in range(1, singleton_collision_list.__len__() - i):
+                            team_state_next = list(suffix_cycle_on_team_ts[i - prefix_length + k])
+                            if type(team_state_next[j]) == str:
+                                break
+                    if type(team_state_curr[j]) != tuple and is_modifible[j]:
+                        if team_state_last != None:
+                            # avoid adding the same edge to reduce states
+                            if ts_tuple[j].g.edge[team_state_last[j]].get(team_state_last[j]) == None:
+                                ts_tuple[j].g.add_edge(team_state_last[j], team_state_last[j],
+                                                       attr_dict={'weight': 1, 'control': 's'})
+                        if team_state_next != None:
+                            if ts_tuple[j].g.edge[team_state_next[j]].get(team_state_next[j]) == None:
+                                ts_tuple[j].g.add_edge(team_state_next[j], team_state_next[j],
+                                                       attr_dict={'weight': 1, 'control': 's'})
+
     ''' BUGS here '''
     if is_pairwise_collision:
         # add turn-back points
@@ -586,7 +615,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
     if is_singleton_collision or is_pairwise_collision:
     #if 0:
         # Construct the team_ts while removing collision points and re-try
-        team_ts = ts_times_ts_ca(ts_tuple)
+        team_ts = ts_times_ts_ca2(ts_tuple)
 
         # Find the optimal run and shortest prefix on team_ts
         prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,

@@ -69,8 +69,8 @@ def main():
 
     # Case Study 2
     with Timer('IJRR 2013 Case-Study 2'):
-        r1 = Ts.load('./robot_1.yaml')
-        r2 = Ts.load('./robot_2.yaml')
+        r1 = Ts.load('./robot_1_real.yaml')
+        r2 = Ts.load('./robot_2_real.yaml')
 
         ts_tuple = (r1, r2)
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '

@@ -989,3 +989,97 @@ def ts_times_ts_ca(ts_tuple):
 
     # Return ts_1 x ts_2 x ...
     return product_ts
+
+def ts_times_ts_ca2(ts_tuple):
+    '''TODO:
+    add option to choose what to save on the automaton's
+    add description
+    add regression tests
+    add option to create from current state
+    '''
+    # NOTE: We assume deterministic TS
+    assert all((len(ts.init) == 1 for ts in ts_tuple))
+
+    # Initial state label is the tuple of initial states' labels
+    product_ts = Ts()
+
+    init_state = tuple((next(iter(ts.init)) for ts in ts_tuple))
+    product_ts.init[init_state] = 1
+
+    # Props satisfied at init_state is the union of props
+    # For each ts, get the prop of init state or empty set
+    init_prop = set.union(*[ts.g.node[ts_init].get('prop', set())
+                            for ts, ts_init in zip(ts_tuple, init_state)])
+
+    # Finally, add the state
+    product_ts.g.add_node(init_state, {'prop': init_prop,
+                        'label': "{}\\n{}".format(init_state, list(init_prop))})
+
+    # Start depth first search from the initial state
+    stack=[]
+    stack.append(init_state)
+    while stack:
+        cur_state = stack.pop()
+        # Actual source states of traveling states
+        source_state = tuple((q[0] if type(q) == tuple else q
+                              for q in cur_state))
+        # Time spent since actual source states
+        time_spent = tuple((q[2] if type(q) == tuple else 0 for q in cur_state))
+
+        # Iterate over all possible transitions
+        for tran_tuple in it.product(*[t.next_states_of_wts(q)
+                                       for t, q in zip(ts_tuple, cur_state)]):
+            # tran_tuple is a tuple of m-tuples (m: size of ts_tuple)
+
+            # First element of each tuple: next_state
+            # Second element of each tuple: time_left
+            next_state = tuple([t[0] for t in tran_tuple])
+            time_left = tuple([t[1] for t in tran_tuple])
+            control = tuple([t[2] for t in tran_tuple])
+
+            # Min time until next transition
+            w_min = min(time_left)
+
+            # Next state label. Singleton if transition taken, tuple if
+            # traveling state
+            next_state = tuple(((ss, ns, w_min+ts) if w_min < tl else ns
+                        for ss, ns, tl, ts in zip(
+                            source_state, next_state, time_left, time_spent)))
+
+            # Add node if new
+            if next_state not in product_ts.g:
+                # Props satisfied at next_state is the union of props
+                # For each ts, get the prop of next state or empty set
+                # Note: we use .get(ns, {}) as this might be a travelling state
+                next_prop = set.union(*[ts.g.node.get(ns, {}).get('prop', set())
+                                       for ts, ns in zip(ts_tuple, next_state)])
+
+                # Add the new state
+                product_ts.g.add_node(next_state, {'prop': next_prop,
+                        'label': "{}\\n{}".format(next_state, list(next_prop))})
+
+                # Add transition w/ weight
+                product_ts.g.add_edge(cur_state, next_state,
+                                attr_dict={'weight': w_min, 'control': control})
+                # Continue dfs from ns
+                stack.append(next_state)
+
+            # Add tran w/ weight if new
+            elif next_state not in product_ts.g[cur_state]:
+                product_ts.g.add_edge(cur_state, next_state,
+                                attr_dict={'weight': w_min, 'control': control})
+
+    node_to_remove = []
+    for node in product_ts.g.node:
+        state_to_check = list(node)
+        for i in range(1, state_to_check.__len__()):
+            # singleton_collision
+            if state_to_check[i - 1] == state_to_check[i]:
+                node_to_remove.append(node)
+            # pairwise_collision
+
+    for node in node_to_remove:
+        product_ts.g.remove_node(node)
+
+    # Return ts_1 x ts_2 x ...
+    return product_ts
