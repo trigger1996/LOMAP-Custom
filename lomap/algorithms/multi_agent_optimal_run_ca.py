@@ -458,6 +458,11 @@ def multi_agent_optimal_run(ts_tuple, formula, opt_prop):
     return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
 
 def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop):
+    '''
+
+        Directly remove collision points
+
+    '''
     # Construct the team_ts
     team_ts = ts_times_ts_ca(ts_tuple)
 
@@ -484,7 +489,11 @@ def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop):
 
 
 def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
-    ''''''
+    '''
+
+        Check-and-remove collision points
+
+    '''
 
     ###
     '''  First construct standard route with old algorithm '''
@@ -509,7 +518,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
     singleton_collision_list =[ [False] * ts_tuple.__len__() ] * (prefix_length + suffix_cycle_on_team_ts.__len__())
     pairwise_collision_list = [ [False] * ts_tuple.__len__() ] * (prefix_length + suffix_cycle_on_team_ts.__len__())
 
-    # singleton_collision
+    ''' singleton_collision '''
     for i in range(0, prefix_length):
         prefix = list(prefix_on_team_ts[i])
         for j in range(1, prefix.__len__()):
@@ -523,7 +532,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
                 is_singleton_collision = True
                 singleton_collision_list[prefix_length + i][j] = True
 
-    # pairwise_collision
+    ''' pairwise_collision '''
     for i in range(0, prefix_length - 1):
         curr_run = list(prefix_on_team_ts[i])
         next_run = list(prefix_on_team_ts[i + 1])
@@ -549,12 +558,15 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible):
             for j in range(0, ts_tuple.__len__()):
                 if singleton_collision_list[i][j] == True:
                     if i < prefix_length:
-                        prefix = list(prefix_on_team_ts[i])
+                        run_indiv = list(prefix_on_team_ts[i])
                     else:
-                        prefix = list(suffix_cycle_on_team_ts[i - prefix_length])
-                    if type(prefix[j]) != tuple and is_modifible[j]:
-                        ts_tuple[j].g.add_edge(prefix[j], prefix[j],
+                        run_indiv = list(suffix_cycle_on_team_ts[i - prefix_length])
+                    if type(run_indiv[j]) != tuple and is_modifible[j]:
+                        ts_tuple[j].g.add_edge(run_indiv[j - 1], run_indiv[j - 1],
                                                attr_dict={'weight': 1, 'control': 's'})
+                        if j < run_indiv.__len__():
+                            ts_tuple[j].g.add_edge(run_indiv[j + 1], run_indiv[j + 1],
+                                                   attr_dict={'weight': 1, 'control': 's'})
     ''' BUGS here '''
     if is_pairwise_collision:
         # add turn-back points
