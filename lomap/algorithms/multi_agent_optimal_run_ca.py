@@ -520,11 +520,14 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
 
     # according to definitions, collision should always be identified in those non-travelling points
     to_pop = []
-    # calculate those travelling state
+    # calculate those all-travelling-state points
     for i in range(0, team_run.__len__()):
+        travelling_state_num = 0
         for j in range(0, ts_tuple.__len__()):
             if not type(team_run[i][j]) == str:
-                to_pop.append(team_run[i])
+                travelling_state_num += 1
+        if travelling_state_num == ts_tuple.__len__():
+            to_pop.append(team_run[i])
     # remove from team run
     for i in range(0, to_pop.__len__()):
         team_run.remove(to_pop[i])
@@ -539,37 +542,54 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
     for i in range(0, team_run.__len__()):
         curr_run = list(team_run[i])
         for j in range(1, curr_run.__len__()):
-            if curr_run[j - 1] == curr_run[j]:
+            if curr_run[j - 1] == curr_run[j] and type(curr_run[j]) == str:
                 is_singleton_collision = True
                 singleton_collision_list[i][j - 1] = True
                 singleton_collision_list[i][j]     = True
 
     ''' pairwise_collision '''
-    for i in range(0, team_run.__len__() - 1):
-        curr_run = list(team_run[i])
-        next_run = list(team_run[i + 1])
-        for j in range(0, curr_run.__len__()):
-            for k in range(0, next_run.__len__()):
-                if j != k and curr_run[j] == next_run[k]:
+    for i in range(0, team_run.__len__()):
+        for j in range(0, ts_tuple.__len__()):              # agent j
+            # find current non-travelling state for agent j
+            curr_run = list(team_run[i])
+            if not type(curr_run[j]) == str:
+                continue
+
+            for k in range(0, ts_tuple.__len__()):          # agent k
+                if k == j:
+                    continue
+                for l in range(i + 1, team_run.__len__()):
+                    next_run = list(team_run[l])
+                    # find the next, non-travelling state for agent k
+                    if type(next_run[k]) == str:
+                        break
+                if next_run[k] == curr_run[j]:    # for curr_run[j] is not travelling state, next_run[k] is not
                     is_pairwise_collision = True
                     pairwise_collision_list[i][j] = True
-                    pairwise_collision_list[i][k] = True
+                    pairwise_collision_list[l][k] = True
 
-
+    ''' singleton_collision '''
     if is_singleton_collision:
         # add stay motion for collision points
         for i in range(0, singleton_collision_list.__len__()):
             for j in range(0, ts_tuple.__len__()):
                 if singleton_collision_list[i][j] == True:
-                    #team_state_curr = None
+                    team_state_curr = list(team_run[i])
                     team_state_last = None
                     team_state_next = None
-                    if i > 0:
-                        team_state_last = list(team_run[i - 1])
-                    if i < team_run.__len__() - 1:
-                        team_state_next = list(team_run[i + 1])
 
-                    if is_modifible[j]:
+                    # find last indivdual state expect for travelling
+                    for k in range(1, i):
+                        team_state_last = list(team_run[i - k])
+                        if type(team_state_last[j]) == str:
+                            break
+                    # find next indivdual state expect for travelling
+                    for k in range(1, team_run.__len__() - i):
+                        team_state_next = list(team_run[i + k])
+                        if type(team_state_next[j]) == str:
+                            break
+
+                    if type(team_state_curr[j]) == str and is_modifible[j]:
                         if team_state_last != None:
                             # avoid adding the same edge to reduce states
                             if ts_tuple[j].g.edge[team_state_last[j]].get(team_state_last[j]) == None:
@@ -580,19 +600,28 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                                 ts_tuple[j].g.add_edge(team_state_next[j], team_state_next[j],
                                                        attr_dict={'weight': min_cost, 'control': 's'})
 
-
+    ''' pairwise_collision '''
     if is_pairwise_collision:
         # add turn-back points
         for i in range(0, pairwise_collision_list.__len__()):
             for j in range(0, ts_tuple.__len__()):
                 if pairwise_collision_list[i][j] == True:
-                    #team_state_curr = None
+
+                    team_state_curr = list(team_run[i])
                     team_state_last = None
                     team_state_next = None
-                    if i > 0:
-                        team_state_last = list(team_run[i - 1])
-                    if i < team_run.__len__() - 1:
-                        team_state_next = list(team_run[i + 1])
+
+                    # find last indivdual state expect for travelling
+                    for k in range(1, i):
+                        team_state_last = list(team_run[i - k])
+                        if type(team_state_last[j]) == str:
+                            break
+                    # find next indivdual state expect for travelling
+                    for k in range(1, team_run.__len__() - i):
+                        team_state_next = list(team_run[i + k])
+                        if type(team_state_next[j]) == str:
+                            break
+
                     if is_modifible[j]:
                         ''' FIRST, add go-back points '''
                         # find ALL edges to target state
@@ -605,7 +634,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                         for k in range(0, go_back_list.__len__()):
                             if go_back_list[k][1] <= go_back_list[min_cost_index][1]:
                                 min_cost_index = k
-                        ts_tuple[j].g.add_edge(curr_run[j], go_back_list[min_cost_index][0],
+                        ts_tuple[j].g.add_edge(team_state_last[j], go_back_list[min_cost_index][0],
                                                attr_dict={'weight': go_back_list[min_cost_index][1], 'control': 'go_back'})
 
                         ''' SECOND, add wait points '''
@@ -620,12 +649,12 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
         team_ts = ts_times_ts_ca(ts_tuple)
 
         # Find the optimal run and shortest prefix on team_ts
-        if not is_pp:
-            prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
-                                                                                                       opt_prop)
-        else:
-            prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run_pp(team_ts, formula,
-                                                                                                          opt_prop)
+    if not is_pp:
+        prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
+                                                                                                   opt_prop)
+    else:
+        prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run_pp(team_ts, formula,
+                                                                                                      opt_prop)
         # Pretty print the run
         pretty_print(len(ts_tuple), prefix_on_team_ts, suffix_cycle_on_team_ts)
 
