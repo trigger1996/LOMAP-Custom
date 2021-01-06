@@ -891,6 +891,10 @@ def ts_times_ts_ca(ts_tuple):
     add regression tests
     add option to create from current state
     '''
+
+    ''' Added '''
+    state_to_remove = []
+
     # NOTE: We assume deterministic TS
     assert all((len(ts.init) == 1 for ts in ts_tuple))
 
@@ -944,11 +948,23 @@ def ts_times_ts_ca(ts_tuple):
             cur_state_list  = list(cur_state)
             next_state_list = list(next_state)
             ''' singleton collision '''
-            for i in range(1, next_state_list.__len__()):
+            ''' SITUATION 1: Current '''
+            for i in range(0, cur_state_list.__len__()):
+                for j in range(0, cur_state_list.__len__()):
+                    if j != i:
+                        if cur_state_list[i] == cur_state_list[j] and not type(cur_state_list[i]) == str:
+                            is_collision = True
+                            state_to_remove.append(cur_state)
+                            break
+                if is_collision:
+                    break
+            ''' SITUATION 2: Next '''
+            for i in range(0, next_state_list.__len__()):
                 for j in range(0, next_state_list.__len__()):
                     if j != i:
-                        if next_state_list[i] == next_state_list[j] and not type(cur_state_list[i]) == str:
+                        if next_state_list[i] == next_state_list[j] and not type(next_state_list[i]) == str:
                             is_collision = True
+                            state_to_remove.append(next_state)
                             break
                 if is_collision:
                     break
@@ -960,6 +976,8 @@ def ts_times_ts_ca(ts_tuple):
                     if j != i:
                         if cur_state_list[i] == next_state_list[j] and type(cur_state_list[i]) == str:
                             is_collision = True
+                            state_to_remove.append(cur_state)
+                            state_to_remove.append(next_state)
                             break
                 if is_collision:
                     break
@@ -972,6 +990,7 @@ def ts_times_ts_ca(ts_tuple):
                             state_j = list(cur_state_list[j])
                             if state_i[0] == state_j[1] and state_i[1] == state_j[0]:
                                 is_collision = True
+                                state_to_remove.append(cur_state)
                                 break
                     if is_collision:
                         break
@@ -1008,6 +1027,20 @@ def ts_times_ts_ca(ts_tuple):
             elif next_state not in product_ts.g[cur_state]:
                 product_ts.g.add_edge(cur_state, next_state,
                                 attr_dict={'weight': w_min, 'control': control})
+
+    # those points created by original Cartesian product is not removed
+    for state in product_ts.g.node:
+        state_list = list(state)
+        for i in range(0, state_list.__len__()):
+            for j in range(0, state_list.__len__()):
+                if i != j and state_list[i] == state_list[j]:
+                    state_to_remove.append(state)
+    for state in state_to_remove:
+        try:
+            product_ts.g.remove_node(state)
+        except:
+            print("[expection] node", state, "is previously removed")
+    #print(state_to_remove)
 
     # Return ts_1 x ts_2 x ...
     return product_ts

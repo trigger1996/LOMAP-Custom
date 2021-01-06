@@ -360,4 +360,7 @@ def min_bottleneck_cycle(g, s, f):
             # last ff is kept to make it clear that this is a suffix-cycle
             path_star = path_ff_to_s1[0:-1] + path_s1_to_s2[0:-1] + path_s2_to_ff
 
+        job_server.destroy()
+        del job_server
+
         return (cost_star, path_star)

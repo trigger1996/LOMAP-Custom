@@ -541,11 +541,12 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
     ''' singleton_collision '''
     for i in range(0, team_run.__len__()):
         curr_run = list(team_run[i])
-        for j in range(1, curr_run.__len__()):
-            if curr_run[j - 1] == curr_run[j] and type(curr_run[j]) == str:
-                is_singleton_collision = True
-                singleton_collision_list[i][j - 1] = True
-                singleton_collision_list[i][j]     = True
+        for j in range(0, curr_run.__len__()):
+            for k in range(0, curr_run.__len__()):
+                if j != k and curr_run[j] == curr_run[k] and type(curr_run[j]) == str:
+                    is_singleton_collision = True
+                    singleton_collision_list[i][j] = True
+                    singleton_collision_list[i][k] = True
 
     ''' pairwise_collision '''
     for i in range(0, team_run.__len__()):
@@ -649,14 +650,13 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
         team_ts = ts_times_ts_ca(ts_tuple)
 
         # Find the optimal run and shortest prefix on team_ts
-        #if not is_pp:
-        #    prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
-        #                                                                                               opt_prop)
-        #else:
-        #    prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run_pp(team_ts, formula,
-        #                                                                                               opt_prop)
-        prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
+        if not is_pp:
+            prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
                                                                                                        opt_prop)
+        else:
+            prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run_pp(team_ts, formula,
+                                                                                                       opt_prop)
+
 
         # Pretty print the run
         pretty_print(len(ts_tuple), prefix_on_team_ts, suffix_cycle_on_team_ts)

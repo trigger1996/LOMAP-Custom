@@ -62,8 +62,8 @@ def main():
         #opt_prop = set(['r1gather','r2gather'])
 
         # CASE 3
-        ts_tuple = (r1, r2)
-        #ts_tuple = (r1, r2, r3)
+        #ts_tuple = (r1, r2)
+        ts_tuple = (r1, r2, r3)
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
                    '&& [](r2gather -> X(!r2gather U r2upload)) '
