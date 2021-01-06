@@ -54,12 +54,12 @@ def main():
         #opt_prop = set(['gather'])
 
         # CASE 2
-        ts_tuple = (r1, r2)
-        ts_tuple = (r1, r2, r3)
-        formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
-                   '&& [](r1gather -> X(!r1gather U r1upload)) '
-                   '&& [](r2gather -> X(!r2gather U r2upload))')
-        opt_prop = set(['r1gather','r2gather'])
+        #ts_tuple = (r1, r2)
+        #ts_tuple = (r1, r2, r3)
+        #formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
+        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
+        #           '&& [](r2gather -> X(!r2gather U r2upload))')
+        #opt_prop = set(['r1gather','r2gather'])
 
         # CASE 3
         #ts_tuple = (r1, r2)
@@ -71,11 +71,11 @@ def main():
         #opt_prop = set(['r1gather','r2gather'])
 
         # CASE 4
-        #ts_tuple = (r1, r2)
-        #formula = ('[]<>gather && [](gather->(r1gather4 && r2gather2)) '
-        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
-        #           '&& [](r2gather -> X(!r2gather U r2upload))')
-        #opt_prop = set(['r1gather4','r2gather2'])
+        ts_tuple = (r1, r2)
+        formula = ('[]<>gather && [](gather->(r1gather4 && r2gather4)) '
+                   '&& [](r1gather -> X(!r1gather U r1upload)) '
+                   '&& [](r2gather -> X(!r2gather U r2upload))')
+        opt_prop = set(['r1gather4','r2gather4'])
 
         # CASE 5
         #ts_tuple = (r1, r2)
