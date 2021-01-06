@@ -649,12 +649,15 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
         team_ts = ts_times_ts_ca(ts_tuple)
 
         # Find the optimal run and shortest prefix on team_ts
-    if not is_pp:
+        #if not is_pp:
+        #    prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
+        #                                                                                               opt_prop)
+        #else:
+        #    prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run_pp(team_ts, formula,
+        #                                                                                               opt_prop)
         prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
-                                                                                                   opt_prop)
-    else:
-        prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run_pp(team_ts, formula,
-                                                                                                      opt_prop)
+                                                                                                       opt_prop)
+
         # Pretty print the run
         pretty_print(len(ts_tuple), prefix_on_team_ts, suffix_cycle_on_team_ts)
 
