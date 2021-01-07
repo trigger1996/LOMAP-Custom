@@ -458,7 +458,7 @@ def multi_agent_optimal_run(ts_tuple, formula, opt_prop):
 
     return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
 
-def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop):
+def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=False):
     '''
 
         Directly remove collision points
@@ -468,8 +468,13 @@ def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop):
     team_ts = ts_times_ts_ca(ts_tuple)
 
     # Find the optimal run and shortest prefix on team_ts
-    prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
-                                                                                               opt_prop)
+    if not is_pp:
+        prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run(team_ts, formula,
+                                                                                                   opt_prop)
+    else:
+        prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run_pp(team_ts, formula,
+                                                                                                   opt_prop)
+
     # Pretty print the run
     pretty_print(len(ts_tuple), prefix_on_team_ts, suffix_cycle_on_team_ts)
 

@@ -1039,7 +1039,8 @@ def ts_times_ts_ca(ts_tuple):
         try:
             product_ts.g.remove_node(state)
         except:
-            print("[expection] node", state, "is previously removed")
+            #print("[expection] node", state, "is previously removed")
+            pass
     #print(state_to_remove)
 
     # Return ts_1 x ts_2 x ...

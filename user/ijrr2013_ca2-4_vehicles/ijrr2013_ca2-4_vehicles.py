@@ -43,44 +43,21 @@ def main():
     rhos = [Rho(lower=0.98, upper=1.04), Rho(lower=0.98, upper=1.04)]
 
     with Timer('IJRR 2013 Case-Study 2'):
-        r1 = Ts.load('./robot_1.yaml')     # robot_1_real.yaml
-        r2 = Ts.load('./robot_2.yaml')     # robot_2_real.yaml
-        r3 = Ts.load('./robot_3.yaml')     # robot_3_real.yaml
+        r1 = Ts.load('./robot_1.yaml')
+        r2 = Ts.load('./robot_2.yaml')
+        r3 = Ts.load('./robot_3.yaml')
+        r4 = Ts.load('./robot_4.yaml')
 
         # CASE 2
         #ts_tuple = (r1, r2)
-        #ts_tuple = (r1, r2, r3)
-        #formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
-        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
-        #           '&& [](r2gather -> X(!r2gather U r2upload))')
-        #opt_prop = set(['r1gather','r2gather'])
-
-        # CASE 3
-        #ts_tuple = (r1, r2)
-        ts_tuple = (r1, r2, r3)
+        ts_tuple = (r1, r2, r3, r4)
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
-                   '&& [](r2gather -> X(!r2gather U r2upload)) '
-                   '&& [](!(r1gather1 && r2gather1) && !(r1gather2 && r2gather2)'
-                   '&& !(r1gather3 && r2gather3) && !(r1gather4 && r2gather4))')
+                   '&& [](r2gather -> X(!r2gather U r2upload))')
         opt_prop = set(['r1gather','r2gather'])
 
-        # CASE 4
-        #ts_tuple = (r1, r2)
-        #ts_tuple = (r1, r2, r3)
-        #formula = ('[]<>gather && [](gather->(r1gather4 && r2gather2)) '
-        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
-        #           '&& [](r2gather -> X(!r2gather U r2upload))')
-        #opt_prop = set(['r1gather4','r2gather2'])
-
-        # CASE 5
-        #ts_tuple = (r1, r2)
-        #ts_tuple = (r1, r2, r3)
-        #formula = '[]<>gather1 && []<>gather2 && []<>gather3 && []<>gather4'
-        #opt_prop = set(['gather'])
-
         # collision avoidance
-        is_modifible = [True, True, False]
+        is_modifible = [True, True, False, False]
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
         prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
