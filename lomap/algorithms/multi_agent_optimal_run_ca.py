@@ -494,7 +494,7 @@ def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=False):
     return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
 
 
-def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_cost = 1, is_pp = False):
+def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_cost = 1, additional_goback_cost = 1, is_pp = False):
     '''
 
         Check-and-remove collision points
@@ -634,14 +634,17 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                         go_back_list = []       # for go_back_list[i], [0] for node and [1] for cost
                         for u in ts_tuple[j].g.edge:
                             if ts_tuple[j].g.edge[u].get(team_state_last[j]) != None:
-                                go_back_list.append([u, ts_tuple[j].g.edge[u].get(team_state_last[j])[0]['weight']])   # record point and corresponding weight
+                                go_back_list.append([u, ts_tuple[j].g.edge[u].get(team_state_last[j])[0]['weight'] + additional_goback_cost])   # record point and corresponding weight
 
                         min_cost_index = 0
                         for k in range(0, go_back_list.__len__()):
                             if go_back_list[k][1] <= go_back_list[min_cost_index][1]:
                                 min_cost_index = k
-                        ts_tuple[j].g.add_edge(team_state_last[j], go_back_list[min_cost_index][0],
-                                               attr_dict={'weight': go_back_list[min_cost_index][1], 'control': 'go_back'})
+
+                        # if the go back edge does not exist, add it
+                        if ts_tuple[j].g.edge[team_state_last[j]].get(go_back_list[min_cost_index][0]) == None:
+                            ts_tuple[j].g.add_edge(team_state_last[j], go_back_list[min_cost_index][0],
+                                                   attr_dict={'weight': go_back_list[min_cost_index][1], 'control': 'go_back'})
 
                         ''' SECOND, add wait points '''
                         if team_state_next != None:
