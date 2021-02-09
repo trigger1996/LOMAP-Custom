@@ -33,7 +33,7 @@ pos_ref = { "1" : [0,   0.1],
             "g4" : [0.3, 0.5] }
 
 # https://blog.csdn.net/sinat_36219858/article/details/79800460
-dot_color_ref = ['ro', 'b*', 'gv']
+dot_color_ref = ['ro', 'b*', 'gv', 'gv']
 
 def visualize_run(tran_sys, run, edgelabel='control', draw='matplotlib'):
     """
