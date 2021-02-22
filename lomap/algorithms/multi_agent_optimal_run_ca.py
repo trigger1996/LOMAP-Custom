@@ -544,6 +544,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
     pairwise_collision_list  = [ [False for i in range(ts_tuple.__len__())] for j in range(team_run.__len__()) ]
 
     ''' singleton_collision '''
+    num_singleton_collision = 0
     for i in range(0, team_run.__len__()):
         curr_run = list(team_run[i])
         for j in range(0, curr_run.__len__()):
@@ -552,8 +553,10 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                     is_singleton_collision = True
                     singleton_collision_list[i][j] = True
                     singleton_collision_list[i][k] = True
+                    num_singleton_collision += 1
 
     ''' pairwise_collision '''
+    num_pairwise_collision = 0
     for i in range(0, team_run.__len__()):
         for j in range(0, ts_tuple.__len__()):              # agent j
             # find current non-travelling state for agent j
@@ -573,6 +576,10 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                     is_pairwise_collision = True
                     pairwise_collision_list[i][j] = True
                     pairwise_collision_list[l][k] = True
+                    num_pairwise_collision += 1
+
+    logger.info('[collision] Number singleton collision: %d', num_singleton_collision)
+    logger.info('[collision] Number pairwise collision:  %d', num_pairwise_collision)
 
     ''' singleton_collision '''
     if is_singleton_collision:
