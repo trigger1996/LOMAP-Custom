@@ -43,10 +43,10 @@ def main():
     rhos = [Rho(lower=0.98, upper=1.04), Rho(lower=0.98, upper=1.04)]
 
     with Timer('IJRR 2013 Case-Study 2'):
-        r1 = Ts.load('./robot_1.yaml')
-        r2 = Ts.load('./robot_2.yaml')
-        r3 = Ts.load('./robot_3.yaml')
-        r4 = Ts.load('./robot_4.yaml')
+        r1 = Ts.load('./robot_1_real.yaml')
+        r2 = Ts.load('./robot_2_real.yaml')
+        r3 = Ts.load('./robot_3_real.yaml')
+        r4 = Ts.load('./robot_4_real.yaml')
 
         # CASE 2
         #ts_tuple = (r1, r2)
@@ -60,12 +60,12 @@ def main():
         is_modifible = [True, True, False, False]
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
-        prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
-            ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, additional_goback_cost=1, is_pp=False)
+        #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
+        #    ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, additional_goback_cost=1, is_pp=True)
         #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
         #    ca.multi_agent_optimal_run(ts_tuple, formula, opt_prop)
-        #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
-        #    ca.multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=False)
+        prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
+            ca.multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=True)
 
         logger.info('Cost: %d', suffix_cycle_cost)
         logger.info('Prefix length: %d', prefix_length)

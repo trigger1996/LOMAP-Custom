@@ -1,8 +1,8 @@
 !Ts
-name: amigobot_3
+name: amigobot_4
 multi: true
 directed: true
-init: ['11']
+init: ['6']
 final: []
 graph:
   nodes:
@@ -40,12 +40,7 @@ graph:
       prop: !!set {r3upload: null, r3upload2: null, upload: null, upload2: null}
 
   edges:
-  - ['2',  '21', {control: rfr, weight: 2}]
-  - ['21', '22', {control: lf,  weight: 3}]
-  - ['22', '23', {control: f,   weight: 3}]
-  - ['23', '9',  {control: f,   weight: 2}]
-  - ['9',  '10', {control: f,   weight: 2}]
-  - ['10', '11', {control: rf,  weight: 2}]
-  - ['11', '12', {control: f,   weight: 4}]
-  - ['12', '1',  {control: f,   weight: 2}]
-  - ['1',  '2',  {control: rf,  weight: 2}]
+  - ['6',  '7',  {control: f,   weight: 2}]
+  - ['7',  '8',  {control: rf,  weight: 2}]
+  - ['8',  '25', {control: rfr, weight: 2}]
+  - ['25', '6',  {control: f,   weight: 2}]
