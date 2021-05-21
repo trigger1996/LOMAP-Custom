@@ -60,10 +60,10 @@ def main():
         is_modifible = [True, True, False, False]
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
-        #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
-        #    ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, additional_goback_cost=1, is_pp=True)
         prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
-            ca.multi_agent_optimal_run(ts_tuple, formula, opt_prop)
+            ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, additional_goback_cost=1, is_pp=False)
+        #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
+        #    ca.multi_agent_optimal_run(ts_tuple, formula, opt_prop)
         #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
         #    ca.multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=True)
 

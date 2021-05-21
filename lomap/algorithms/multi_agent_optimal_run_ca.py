@@ -493,6 +493,11 @@ def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=False):
 
     return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
 
+def is_traveling_state(curr_run):
+    if type(curr_run) == str:
+        return False        # str
+    else:
+        return True         # traveling state: tuple
 
 def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_cost = 1, additional_goback_cost = 1, is_pp = False):
     '''
@@ -529,7 +534,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
     for i in range(0, team_run.__len__()):
         travelling_state_num = 0
         for j in range(0, ts_tuple.__len__()):
-            if not type(team_run[i][j]) == str:
+            if is_traveling_state(team_run[i][j]):
                 travelling_state_num += 1
         if travelling_state_num == ts_tuple.__len__():
             to_pop.append(team_run[i])
@@ -549,7 +554,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
         curr_run = list(team_run[i])
         for j in range(0, curr_run.__len__()):
             for k in range(0, curr_run.__len__()):
-                if j != k and curr_run[j] == curr_run[k] and type(curr_run[j]) == str:
+                if j != k and curr_run[j] == curr_run[k] and not is_traveling_state(curr_run[j]):
                     is_singleton_collision = True
                     singleton_collision_list[i][j] = True
                     singleton_collision_list[i][k] = True
@@ -561,7 +566,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
         for j in range(0, ts_tuple.__len__()):              # agent j
             # find current non-travelling state for agent j
             curr_run = list(team_run[i])
-            if not type(curr_run[j]) == str:
+            if is_traveling_state(curr_run[j]):
                 continue
 
             for k in range(0, ts_tuple.__len__()):          # agent k
@@ -570,7 +575,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                 for l in range(i + 1, team_run.__len__()):
                     next_run = list(team_run[l])
                     # find the next, non-travelling state for agent k
-                    if type(next_run[k]) == str:
+                    if not is_traveling_state(next_run[k]):
                         break
                 if next_run[k] == curr_run[j]:    # for curr_run[j] is not travelling state, next_run[k] is not
                     is_pairwise_collision = True
@@ -594,15 +599,15 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                     # find last indivdual state expect for travelling
                     for k in range(1, i):
                         team_state_last = list(team_run[i - k])
-                        if type(team_state_last[j]) == str:
+                        if not is_traveling_state(team_state_last[j]):
                             break
                     # find next indivdual state expect for travelling
                     for k in range(1, team_run.__len__() - i):
                         team_state_next = list(team_run[i + k])
-                        if type(team_state_next[j]) == str:
+                        if not is_traveling_state(team_state_next[j]):
                             break
 
-                    if type(team_state_curr[j]) == str and is_modifible[j]:
+                    if not is_traveling_state(team_state_curr[j]) and is_modifible[j]:
                         if team_state_last != None:
                             # avoid adding the same edge to reduce states
                             if ts_tuple[j].g.edge[team_state_last[j]].get(team_state_last[j]) == None:
@@ -627,12 +632,12 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                     # find last indivdual state expect for travelling
                     for k in range(1, i):
                         team_state_last = list(team_run[i - k])
-                        if type(team_state_last[j]) == str:
+                        if not is_traveling_state(team_state_last[j]):
                             break
                     # find next indivdual state expect for travelling
                     for k in range(1, team_run.__len__() - i):
                         team_state_next = list(team_run[i + k])
-                        if type(team_state_next[j]) == str:
+                        if not is_traveling_state(team_state_next[j]):
                             break
 
                     if is_modifible[j]:
@@ -904,7 +909,7 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
                         prefix = list(prefix_on_team_ts[i])
                     else:
                         prefix = list(suffix_cycle_on_team_ts[i - prefix_length])
-                    if type(prefix[j]) != tuple and is_modifible[j]:
+                    if not is_traveling_state(prefix[j]) and is_modifible[j]:
                         ts_tuple[j].g.add_edge(prefix[j], prefix[j],
                                                attr_dict={'weight': 1, 'control': 's'})
     ''' BUGS here '''
@@ -917,7 +922,7 @@ def multi_agent_optrun_unknown_w_route(ts_tuple, formula, opt_prop, is_modifible
                         prefix = list(prefix_on_team_ts[i])
                     else:
                         prefix = list(suffix_cycle_on_team_ts[i - prefix_length])
-                    if type(prefix[j]) != tuple and is_modifible[j]:
+                    if not is_traveling_state(prefix[j]) and is_modifible[j]:
                         ''''''
                         ts_tuple[j].g.add_edge(prefix[j], prefix[j],                        # add the min-cost point
                                                attr_dict={'weight': 1, 'control': 's'})
