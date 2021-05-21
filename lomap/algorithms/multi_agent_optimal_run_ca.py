@@ -437,6 +437,7 @@ def ca_safety_game(ts_tuple, prefixes, suffix_cycles, obs_range = 3):
 
     print(ts_run)
 
+
 def multi_agent_optimal_run(ts_tuple, formula, opt_prop):
     # Construct the team_ts
     team_ts = ts_times_ts(ts_tuple)
@@ -457,6 +458,7 @@ def multi_agent_optimal_run(ts_tuple, formula, opt_prop):
             [x for x in [x[i] if x[i] in ts.g.node else None for x in suffix_cycle_on_team_ts] if x != None])
 
     return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
+
 
 def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=False):
     '''
@@ -493,11 +495,27 @@ def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=False):
 
     return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
 
+
 def is_traveling_state(curr_run):
     if type(curr_run) == str:
         return False        # str
     else:
         return True         # traveling state: tuple
+
+
+def is_traveling_states_intersect(state_1, state_2):
+    if is_traveling_state(state_1) and is_traveling_state(state_2):
+        state_1_src = list(state_1)[0]
+        state_1_dst = list(state_1)[1]
+
+        state_2_src = list(state_2)[0]
+        state_2_dst = list(state_2)[1]
+        if (state_1_src == state_2_src and state_1_dst == state_2_dst) or \
+           (state_1_dst == state_2_src and state_1_src == state_2_dst):
+           return True
+    else:
+        return False
+
 
 def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_cost = 1, additional_goback_cost = 1, is_pp = False):
     '''
@@ -554,7 +572,8 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
         curr_run = list(team_run[i])
         for j in range(0, curr_run.__len__()):
             for k in range(0, curr_run.__len__()):
-                if j != k and curr_run[j] == curr_run[k] and not is_traveling_state(curr_run[j]):
+                # remove is_traveling_states for REAR_END collisions checking:
+                if j != k and curr_run[j] == curr_run[k]: # and not is_traveling_state(curr_run[j]):
                     is_singleton_collision = True
                     singleton_collision_list[i][j] = True
                     singleton_collision_list[i][k] = True
@@ -567,21 +586,31 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
             # find current non-travelling state for agent j
             curr_run = list(team_run[i])
             if is_traveling_state(curr_run[j]):
-                continue
+                # if current run is traveling state
 
-            for k in range(0, ts_tuple.__len__()):          # agent k
-                if k == j:
-                    continue
-                for l in range(i + 1, team_run.__len__()):
-                    next_run = list(team_run[l])
-                    # find the next, non-travelling state for agent k
-                    if not is_traveling_state(next_run[k]):
-                        break
-                if next_run[k] == curr_run[j]:    # for curr_run[j] is not travelling state, next_run[k] is not
-                    is_pairwise_collision = True
-                    pairwise_collision_list[i][j] = True
-                    pairwise_collision_list[l][k] = True
-                    num_pairwise_collision += 1
+                for k in range(0, ts_tuple.__len__()):
+                    if k == j:
+                        continue
+                    if is_traveling_states_intersect(curr_run[j], curr_run[k]):
+                        pairwise_collision_list[i][j] = True
+                        pairwise_collision_list[l][k] = True
+                        num_pairwise_collision += 1
+            else:
+                # if current run is normal state:
+
+                for k in range(0, ts_tuple.__len__()):          # agent k
+                    if k == j:
+                        continue
+                    for l in range(i + 1, team_run.__len__()):
+                        next_run = list(team_run[l])
+                        # find the next, non-travelling state for agent k
+                        if not is_traveling_state(next_run[k]):
+                            break
+                    if next_run[k] == curr_run[j]:    # for curr_run[j] is not travelling state, next_run[k] is not
+                        is_pairwise_collision = True
+                        pairwise_collision_list[i][j] = True
+                        pairwise_collision_list[l][k] = True
+                        num_pairwise_collision += 1
 
     logger.info('[collision] Number singleton collision: %d', num_singleton_collision)
     logger.info('[collision] Number pairwise collision:  %d', num_pairwise_collision)
@@ -607,7 +636,8 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                         if not is_traveling_state(team_state_next[j]):
                             break
 
-                    if not is_traveling_state(team_state_curr[j]) and is_modifible[j]:
+                    #if not is_traveling_state(team_state_curr[j]) and is_modifible[j]:     # remove is_traveling_states for REAR_END collisions checking:
+                    if is_modifible[j]:
                         if team_state_last != None:
                             # avoid adding the same edge to reduce states
                             if ts_tuple[j].g.edge[team_state_last[j]].get(team_state_last[j]) == None:
