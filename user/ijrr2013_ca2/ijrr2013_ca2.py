@@ -49,11 +49,11 @@ def main():
 
         # CASE 2
         #ts_tuple = (r1, r2)
-        #ts_tuple = (r1, r2, r3)
-        #formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
-        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
-        #           '&& [](r2gather -> X(!r2gather U r2upload))')
-        #opt_prop = set(['r1gather','r2gather'])
+        ts_tuple = (r1, r2, r3)
+        formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
+                   '&& [](r1gather -> X(!r1gather U r1upload)) '
+                   '&& [](r2gather -> X(!r2gather U r2upload))')
+        opt_prop = set(['r1gather','r2gather'])
 
         # CASE 3
         #ts_tuple = (r1, r2)
@@ -67,11 +67,11 @@ def main():
 
         # CASE 4
         #ts_tuple = (r1, r2)
-        ts_tuple = (r1, r2, r3)
-        formula = ('[]<>gather && [](gather->(r1gather4 && r2gather2)) '
-                   '&& [](r1gather -> X(!r1gather U r1upload)) '
-                   '&& [](r2gather -> X(!r2gather U r2upload))')
-        opt_prop = set(['r1gather4','r2gather2'])
+        #ts_tuple = (r1, r2, r3)
+        #formula = ('[]<>gather && [](gather->(r1gather4 && r2gather2)) '
+        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
+        #           '&& [](r2gather -> X(!r2gather U r2upload))')
+        #opt_prop = set(['r1gather4','r2gather2'])
 
         # CASE 5
         #ts_tuple = (r1, r2)
@@ -83,12 +83,12 @@ def main():
         is_modifible = [True, True, False]
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
-        #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
-        #    ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, is_pp=True)
+        prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
+            ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, is_pp=False)
         #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
         #    ca.multi_agent_optimal_run(ts_tuple, formula, opt_prop)
-        prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
-            ca.multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=True)
+        #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
+        #    ca.multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=True)
 
         logger.info('Cost: %d', suffix_cycle_cost)
         logger.info('Prefix length: %d', prefix_length)
