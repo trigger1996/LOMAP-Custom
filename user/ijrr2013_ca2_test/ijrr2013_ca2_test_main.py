@@ -32,7 +32,7 @@ run_4_vehicles_case_2 = [('u1', 'u2', '2', '6'), ('4', '10', '21', '7'), ('5', '
 logger = logging.getLogger(__name__)
 
 min_cost = 1
-go_back_additional_cost = 1
+additional_goback_cost = 1
 
 def is_traveling_state(curr_run):
     if type(curr_run) == str:
@@ -188,7 +188,7 @@ def check_remove_collisions(ts_tuple, is_modifible, team_run):
                             if curr_run_k == next_run_j[j] and next_run_k[k] == curr_run_j:   # next_seq_k == next_seq_j
                                 is_pairwise_collision = True
                                 pairwise_collision_list[i][j] = [next_run_k[k], next_seq_k, k]
-                                pairwise_collision_list[i][k] = [next_run_j[j], next_run_j, j]
+                                pairwise_collision_list[i][k] = [next_run_j[j], next_seq_j, j]
                                 pairwise_collision_list[next_seq_j][j] = [curr_run_k, i, k]
                                 pairwise_collision_list[next_seq_k][k] = [curr_run_j, i, j]
                                 num_pairwise_collision += 1

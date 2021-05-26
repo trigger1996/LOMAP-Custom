@@ -649,7 +649,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                             if curr_run_k == next_run_j[j] and next_run_k[k] == curr_run_j:   # next_seq_k == next_seq_j
                                 is_pairwise_collision = True
                                 pairwise_collision_list[i][j] = [next_run_k[k], next_seq_k, k]
-                                pairwise_collision_list[i][k] = [next_run_j[j], next_run_j, j]
+                                pairwise_collision_list[i][k] = [next_run_j[j], next_seq_j, j]
                                 pairwise_collision_list[next_seq_j][j] = [curr_run_k, i, k]
                                 pairwise_collision_list[next_seq_k][k] = [curr_run_j, i, j]
                                 num_pairwise_collision += 1
