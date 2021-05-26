@@ -575,6 +575,9 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
     for i in range(0, to_pop.__len__()):
         team_run.remove(to_pop[i])
 
+    logger.info('original team run: %s', team_run)
+    logger.info('original suffix cycle len on team TS: %d', suffix_cycle_on_team_ts.__len__())
+
     #
     is_singleton_collision = False
     is_pairwise_collision  = False
@@ -624,13 +627,14 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                                 [next_run_j_nt, next_seq_j] = find_next_non_traveling_state(team_run, j, i)
                                 [next_run_k_nt, next_seq_k] = find_next_non_traveling_state(team_run, k, i)
 
-                                is_pairwise_collision = True
-                                if last_run_j_nt != None and last_run_k_nt != None and next_run_j_nt != None and next_run_k_nt != None:
-                                    pairwise_collision_list[last_seq_j][j] = [next_run_k_nt[k], next_seq_k, k]
-                                    pairwise_collision_list[last_seq_k][k] = [next_run_j_nt[j], next_seq_j, j]
-                                    pairwise_collision_list[next_seq_j][j] = [last_run_k_nt[k], last_seq_k, k]
-                                    pairwise_collision_list[next_seq_k][k] = [last_run_j_nt[j], last_seq_j, j]
-                                    num_pairwise_collision += 1
+                                if next_run_k_nt[k] == last_run_j_nt[j] and next_run_j_nt[j] == last_run_k_nt[k]:
+                                    if last_run_j_nt != None and last_run_k_nt != None and next_run_j_nt != None and next_run_k_nt != None:
+                                        is_pairwise_collision = True
+                                        pairwise_collision_list[last_seq_j][j] = [next_run_k_nt[k], next_seq_k, k]
+                                        pairwise_collision_list[last_seq_k][k] = [next_run_j_nt[j], next_seq_j, j]
+                                        pairwise_collision_list[next_seq_j][j] = [last_run_k_nt[k], last_seq_k, k]
+                                        pairwise_collision_list[next_seq_k][k] = [last_run_j_nt[j], last_seq_j, j]
+                                        num_pairwise_collision += 1
             else:
                 # if current run of both agent is actual state:
 
@@ -663,7 +667,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                         continue
                     if not is_traveling_state(curr_run[k]) and list(curr_run[j])[0] == curr_run[k]:
                         # if the origin of traveling state is equal to the other non-traveling state
-                        [last_run_j_nt, last_seq_j] = find_last_non_traveling_state(curr_run[k], j, i)
+                        [last_run_j_nt, last_seq_j] = find_last_non_traveling_state(team_run, j, i)
                         [run_j, seq_j] = find_next_non_traveling_state(team_run, j, i)      # the end of the traveling state
                         [run_k, seq_k] = find_next_non_traveling_state(team_run, k, i)      # next non-traveling state of agent k from i
 
