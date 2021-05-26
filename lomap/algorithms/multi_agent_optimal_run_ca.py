@@ -617,19 +617,19 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                         # find the next, non-travelling state for agent k
                         if is_traveling_state(next_run_j) and is_traveling_state(next_run_k):     # find next traveling state
                             if is_traveling_states_intersect(curr_run_j, next_run_k) and \
-                               is_traveling_states_intersect(curr_run_k, next_run_k):
+                               is_traveling_states_intersect(curr_run_k, next_run_j):
                                 # now can confirm pairwise collision
-                                [last_run_j, last_seq_j] = find_last_non_traveling_state(team_run, j, i)
-                                [last_run_k, last_seq_k] = find_last_non_traveling_state(team_run, k, i)
-                                [next_run_j, next_seq_j] = find_next_non_traveling_state(team_run, j, i)
-                                [next_run_k, next_seq_k] = find_next_non_traveling_state(team_run, k, i)
+                                [last_run_j_nt, last_seq_j] = find_last_non_traveling_state(team_run, j, i)
+                                [last_run_k_nt, last_seq_k] = find_last_non_traveling_state(team_run, k, i)
+                                [next_run_j_nt, next_seq_j] = find_next_non_traveling_state(team_run, j, i)
+                                [next_run_k_nt, next_seq_k] = find_next_non_traveling_state(team_run, k, i)
 
                                 is_pairwise_collision = True
-                                if last_run_j != None and last_run_k != None and next_run_j != None and next_run_k != None:
-                                    pairwise_collision_list[last_seq_j][j] = [next_run_k[k], next_seq_k, k]
-                                    pairwise_collision_list[last_seq_k][k] = [next_run_j[j], next_run_j, j]
-                                    pairwise_collision_list[next_seq_j][j] = [last_run_k[k], last_seq_k, k]
-                                    pairwise_collision_list[next_seq_k][k] = [last_run_j[j], last_seq_j, j]
+                                if last_run_j_nt != None and last_run_k_nt != None and next_run_j_nt != None and next_run_k_nt != None:
+                                    pairwise_collision_list[last_seq_j][j] = [next_run_k_nt[k], next_seq_k, k]
+                                    pairwise_collision_list[last_seq_k][k] = [next_run_j_nt[j], next_seq_j, j]
+                                    pairwise_collision_list[next_seq_j][j] = [last_run_k_nt[k], last_seq_k, k]
+                                    pairwise_collision_list[next_seq_k][k] = [last_run_j_nt[j], last_seq_j, j]
                                     num_pairwise_collision += 1
             else:
                 # if current run of both agent is actual state:
@@ -650,43 +650,6 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                                 pairwise_collision_list[next_seq_k][k] = [curr_run_j, i, j]
                                 num_pairwise_collision += 1
 
-            '''
-            curr_run = list(team_run[i])
-            if is_traveling_state(curr_run[j]):
-                # if current run is traveling state
-
-                for k in range(0, ts_tuple.__len__()):
-                    if k == j:
-                        continue
-                    l = i + 1
-                    next_run = list(team_run[l])
-                    # find the next, non-travelling state for agent k
-                    if is_traveling_state(next_run[k]):     # find next traveling state
-                        if is_traveling_states_intersect(curr_run[j], next_run[k]):
-                            [run_j, seq_j] = find_last_non_traveling_state(team_run, j, i)
-                            [run_k, seq_k] = find_last_non_traveling_state(team_run, k, l)
-                            if run_j[j] != run_k[k] and run_j != None:
-                                is_pairwise_collision = True
-                                pairwise_collision_list[seq_j][j] = [run_k, seq_k, k]
-                                pairwise_collision_list[seq_k][k] = [run_j, seq_j, j]
-                                num_pairwise_collision += 1
-            else:
-                # if current run is actual state:
-
-                for k in range(0, ts_tuple.__len__()):          # agent k
-                    if k == j:
-                        continue
-                    for l in range(i + 1, team_run.__len__()):
-                        next_run = list(team_run[l])
-                        # find the next, non-travelling state for agent k
-                        if not is_traveling_state(next_run[k]):     # find next non-traveling state
-                            break
-                    if next_run[k] == curr_run[j]:    # for curr_run[j] is not travelling state, next_run[k] is not
-                        is_pairwise_collision = True
-                        pairwise_collision_list[i][j] = [next_run, l, k]
-                        pairwise_collision_list[l][k] = [curr_run, i, j]
-                        num_pairwise_collision += 1   # only a half need to be done, because the other half will be completed in the whole process, just Fix this below
-           '''
     ''' rear-end collisions '''
     num_rear_end_collision = 0
     for i in range(0, team_run.__len__()):
@@ -700,16 +663,18 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                         continue
                     if not is_traveling_state(curr_run[k]) and list(curr_run[j])[0] == curr_run[k]:
                         # if the origin of traveling state is equal to the other non-traveling state
+                        [last_run_j_nt, last_seq_j] = find_last_non_traveling_state(curr_run[k], j, i)
                         [run_j, seq_j] = find_next_non_traveling_state(team_run, j, i)      # the end of the traveling state
                         [run_k, seq_k] = find_next_non_traveling_state(team_run, k, i)      # next non-traveling state of agent k from i
-                        if run_k == None:
-                            print(seq_k)
-                        if run_k != None and \
+
+                        if run_j != None and run_k != None and last_run_j_nt != None and \
                            list(curr_run[j])[1] == run_k[k] and seq_j > seq_k:
                             # check wether agent k arrives the end earlier than agnent j
                             is_rear_end_collision = True
-                            rear_end_collision_list[seq_j][j] = True
-                            rear_end_collision_list[seq_k][k] = True
+                            rear_end_collision_list[i][j] = [curr_run[k],      i,          k, 'lo']   # [the_state_of_the_agents_collited, state_seq_of_the_other_agents, the_other_agent_id, speed_of_the_current_agent]
+                            pairwise_collision_list[i][k] = [last_run_j_nt[j], last_seq_j, j, 'hi']
+                            rear_end_collision_list[seq_j][j] = [run_k, seq_k, k, 'lo']
+                            rear_end_collision_list[seq_k][k] = [run_j, seq_j, j, 'hi']
                             num_rear_end_collision += 1  # only a half need to be done, because the other half will be completed in the whole process, just Fix this below
 
     logger.info('[collision] Number singleton collision: %d', num_singleton_collision)
@@ -794,8 +759,13 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                             if ts_tuple[j].g.edge[team_state_next[j]].get(team_state_next[j]) == None:
                                 ts_tuple[j].g.add_edge(team_state_next[j], team_state_next[j],
                                                        attr_dict={'weight': min_cost, 'control': 's'})
+
+    ''' rear_end_collision '''
+    if is_rear_end_collision:
+        233
+
     ''' Re-try '''
-    if is_singleton_collision or is_pairwise_collision:
+    if is_singleton_collision or is_pairwise_collision or is_rear_end_collision:
     #if 0:
         # Construct the team_ts while removing collision points and re-try
         team_ts = ts_times_ts_ca(ts_tuple)
