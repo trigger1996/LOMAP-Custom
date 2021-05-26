@@ -264,7 +264,7 @@ def visualize_animation_w_team_run(ts_tuple, team_run):
     dot = []
     for i in range(0, robot_num):
         ax_t = fig.add_subplot(1, 1, 1)
-        dot_t = ax_t.plot([], [], dot_color_ref[i])[0]
+        dot_t = ax_t.plot([], [], dot_color_ref[i], markersize=22)[0]
         ax.append(ax_t)
         dot.append(dot_t)
 
