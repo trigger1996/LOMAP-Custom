@@ -402,6 +402,45 @@ def find_next_non_traveling_state_in_product_ts(product_ts, curr_state, agent_id
     # REMEMBER TO CLEAR route_to_nt after use, e.g.: del route_to_nt[:]
     return state_to_return
 
+route_nt_to_nt = []
+next_nt_list = []
+def find_next_non_traveling_state_in_product_ts_nt(product_ts, curr_state, agent_i_id, agent_j_id):
+    # can find one but cannot find all
+    '''
+    curr_state_i = list(curr_state)[agent_i_id]
+    #curr_state_j = list(curr_state)[agent_j_id]
+    route_nt_to_nt.append(curr_state)
+
+    if not is_traveling_state(curr_state_i) and is_traveling_state(j):
+        for next_state in product_ts.g.edge[curr_state]:
+            next_state_i = next_state[agent_i_id]
+            next_state_j = next_state[agent_j_id]
+            if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
+                return next_state
+            else:
+                state_to_return = find_next_non_traveling_state_in_product_ts_nt(product_ts, next_state, agent_i_id, agent_j_id)
+
+        # REMEMBER TO CLEAR route_to_nt after use, e.g.: del route_to_nt[:]
+        return state_to_return
+    '''
+
+    curr_state_i = list(curr_state)[agent_i_id]
+    curr_state_j = list(curr_state)[agent_j_id]
+
+    if not is_traveling_state(curr_state_i) and not is_traveling_state(curr_state_j):
+        next_state_list = product_ts.g.out_edges(curr_state)
+        for next_state_index in next_state_list:
+            next_state = next_state_index[0]
+            next_state_i = next_state[agent_i_id]
+            next_state_j = next_state[agent_i_id]
+            if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
+                next_nt_list.append(next_state)
+                return
+            else:
+                route_nt_to_nt.append(next_state)
+                find_next_non_traveling_state_in_product_ts_nt(product_ts, next_state, agent_i_id, agent_j_id)
+
+
 def ts_times_ts_ca(ts_tuple):
     '''TODO:
     add option to choose what to save on the automaton's
@@ -492,6 +531,7 @@ def ts_times_ts_ca(ts_tuple):
             for j in range(0, state_list.__len__()):
                 if i != j and state_list[i] == state_list[j] and not is_traveling_state(state_list[i]):
                     state_to_remove.append(state)
+
     # pairwise collisions
     for state in product_ts.g.node:
         for i in range(0, ts_tuple.__len__()):
@@ -530,29 +570,27 @@ def ts_times_ts_ca(ts_tuple):
                                         route_to_remove = route_to_i_nt + route_to_j_nt + route_from_i_nt + route_from_j_nt
                                         for state_temp in route_to_remove:
                                             state_to_remove.append(state_temp)
-            '''
-            for j in range(0, ts_tuple.__len__()):
-                if j == i:
-                    continue
-                state_i = state[i]
-                state_j = state[j]
-                if is_traveling_state(state_i) and is_traveling_state(state_j):
+            else:
+                for j in range(0, state_list.__len__()):
+                    if i == j:
+                        continue
+                    state_j = state[j]
+                    if not is_traveling_state(state_j):
+                        find_next_non_traveling_state_in_product_ts_nt(product_ts, state, i, j)
+                        next_nt_list_curr = copy.deepcopy(next_nt_list)
+                        del next_nt_list[:]
 
-                    
-                    next_state_i = find_next_non_traveling_state_in_product_ts(product_ts, state, i)
-                    rout_to_nt_i = copy.deepcopy(route_to_nt)
-                    del route_to_nt[:]
+                        for next_state in next_nt_list_curr:
+                            next_state_i = next_state[i]
+                            next_state_j = next_state[j]
+                            if state_i == next_state_j and state_j == next_state_i:
+                                state_to_remove.append(state_i)
+                                state_to_remove.append(state_j)
+                                state_to_remove.append(next_state_i)
+                                state_to_remove.append(next_state_j)
 
-                    next_state_j = find_next_non_traveling_state_in_product_ts(product_ts, state, j)
-                    rout_to_nt_j = copy.deepcopy(route_to_nt)
-                    del route_to_nt[:]
+                                # route_nt_to_nt
 
-                    if state_i[0] == state_j[1]
-                    233
-                    
-                elif not is_traveling_state(state_i) and not is_traveling_state(state_j):
-                    233
-            '''
     for state in state_to_remove:
         try:
             product_ts.g.remove_node(state)
