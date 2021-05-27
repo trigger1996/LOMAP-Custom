@@ -944,69 +944,9 @@ def ts_times_ts_ca(ts_tuple):
                         for ss, ns, tl, ts in zip(
                             source_state, next_state, time_left, time_spent)))
 
-            is_collision = False
-            cur_state_list  = list(cur_state)
-            next_state_list = list(next_state)
-            ''' singleton collision '''
-            ''' SITUATION 1: Current '''
-            for i in range(0, cur_state_list.__len__()):
-                for j in range(0, cur_state_list.__len__()):
-                    if j != i:
-                        if cur_state_list[i] == cur_state_list[j] and not type(cur_state_list[i]) == str:
-                            is_collision = True
-                            state_to_remove.append(cur_state)
-                            break
-                if is_collision:
-                    break
-            ''' SITUATION 2: Next '''
-            for i in range(0, next_state_list.__len__()):
-                for j in range(0, next_state_list.__len__()):
-                    if j != i:
-                        if next_state_list[i] == next_state_list[j] and not type(next_state_list[i]) == str:
-                            is_collision = True
-                            state_to_remove.append(next_state)
-                            break
-                if is_collision:
-                    break
 
-            ''' pairwise collision '''
-            ''' CASE 1: no travelling states '''
-            for i in range(0, cur_state.__len__()):
-                for j in range(0, next_state_list.__len__()):
-                    if j != i:
-                        if cur_state_list[i] == next_state_list[j] and type(cur_state_list[i]) == str:
-                            is_collision = True
-                            state_to_remove.append(cur_state)
-                            state_to_remove.append(next_state)
-                            break
-                if is_collision:
-                    break
-            ''' SITUATION 2: two agents are in travelling states '''
-            for i in range(0, cur_state_list.__len__()):
-                if not type(cur_state_list[i]) == str:
-                    for j in range(0, cur_state_list.__len__()):
-                        if i != j and not type(cur_state_list[j]) == str:
-                            state_i = list(cur_state_list[i])
-                            state_j = list(cur_state_list[j])
-                            if state_i[0] == state_j[1] and state_i[1] == state_j[0]:
-                                is_collision = True
-                                state_to_remove.append(cur_state)
-                                break
-                    if is_collision:
-                        break
-            ''' SITUATION 3: one is not travelling while the other is  '''
-            ''' Cannot be happened '''
-            # e.g.:
-            # CASE 1  |   CASE 2                  |    CASE 3
-            # 4,  u1  |  4,          (u1, 4, 2)   |    4,              (u1, 4, 3)
-            # u1, 4   |  (4, u1, 1), 4            |    (4, u1, 1)      (u1, 4, 2)
-            #         |                           |    (4, u1, 2)      (u1, 4, 1)
-            # CASE 1 and 2 can be spotted in SITUATION 1, CASE 3 can be spotted in SITUATION 2
-
-            if is_collision:
-                continue
             # Add node if new
-            elif next_state not in product_ts.g:
+            if next_state not in product_ts.g:
                 # Props satisfied at next_state is the union of props
                 # For each ts, get the prop of next state or empty set
                 # Note: we use .get(ns, {}) as this might be a travelling state

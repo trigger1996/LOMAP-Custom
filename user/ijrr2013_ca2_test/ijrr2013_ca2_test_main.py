@@ -1,6 +1,7 @@
 import networkx
 import logging
 
+import copy
 import itertools as it
 from lomap import Ts
 
@@ -364,6 +365,43 @@ def check_remove_collisions(ts_tuple, is_modifible, team_run):
     if is_rear_end_collision:
         233
 
+route_from_nt = []
+def find_last_non_traveling_state_in_product_ts(product_ts, curr_state, agent_id):
+    curr_state_i = list(curr_state)[agent_id]
+    route_from_nt.append(curr_state)
+
+    if is_traveling_state(curr_state_i):
+        last_state_list = product_ts.g.in_edges(curr_state)
+        for last_state_index in last_state_list:
+            last_state = last_state_index[0]
+            last_state_i = last_state[agent_id]
+
+            if last_state_i == list(curr_state_i)[0]:
+                return last_state
+            else:
+                state_to_return = find_last_non_traveling_state_in_product_ts(product_ts, last_state, agent_id)
+
+        return state_to_return
+
+
+route_to_nt = []            # remember to use copy to get value from route_to_nt, e.g. rout_to_nt_i = copy.deepcopy(route_to_nt)
+def find_next_non_traveling_state_in_product_ts(product_ts, curr_state, agent_id):
+    curr_state_i = list(curr_state)[agent_id]
+    route_to_nt.append(curr_state)
+
+    if not is_traveling_state(curr_state_i):
+        return None
+
+    for next_state in product_ts.g.edge[curr_state]:
+        next_state_i = next_state[agent_id]
+        if next_state_i == list(curr_state_i)[1]:
+            return next_state
+        else:
+            state_to_return = find_next_non_traveling_state_in_product_ts(product_ts, next_state, agent_id)
+
+    # REMEMBER TO CLEAR route_to_nt after use, e.g.: del route_to_nt[:]
+    return state_to_return
+
 def ts_times_ts_ca(ts_tuple):
     '''TODO:
     add option to choose what to save on the automaton's
@@ -425,7 +463,7 @@ def ts_times_ts_ca(ts_tuple):
                             source_state, next_state, time_left, time_spent)))
 
             # Add node if new
-            elif next_state not in product_ts.g:
+            if next_state not in product_ts.g:
                 # Props satisfied at next_state is the union of props
                 # For each ts, get the prop of next state or empty set
                 # Note: we use .get(ns, {}) as this might be a travelling state
@@ -447,13 +485,74 @@ def ts_times_ts_ca(ts_tuple):
                 product_ts.g.add_edge(cur_state, next_state,
                                 attr_dict={'weight': w_min, 'control': control})
 
-    # those points created by original Cartesian product is not removed
+    # singleton collisions
     for state in product_ts.g.node:
         state_list = list(state)
         for i in range(0, state_list.__len__()):
             for j in range(0, state_list.__len__()):
-                if i != j and state_list[i] == state_list[j]:
+                if i != j and state_list[i] == state_list[j] and not is_traveling_state(state_list[i]):
                     state_to_remove.append(state)
+    # pairwise collisions
+    for state in product_ts.g.node:
+        for i in range(0, ts_tuple.__len__()):
+            state_i = state[i]
+            if is_traveling_state(state_i):
+                for next_state in product_ts.g.edge[state]:
+                    for j in range(0, state_list.__len__()):
+                        if i == j:
+                            continue
+                        next_state_j = next_state[j]
+                        if is_traveling_state(next_state_j) and \
+                           is_traveling_states_intersect(state_i, next_state_j):
+                                next_state_i_nt = find_next_non_traveling_state_in_product_ts(product_ts, state, i)
+                                route_to_i_nt = copy.deepcopy(route_to_nt)
+                                del route_to_nt[:]
+
+                                next_state_j_nt = find_next_non_traveling_state_in_product_ts(product_ts, next_state, j)
+                                route_to_j_nt = copy.deepcopy(route_to_nt)
+                                del route_to_nt[:]
+
+                                last_state_i_nt = find_last_non_traveling_state_in_product_ts(product_ts, state, i)
+                                route_from_i_nt = copy.deepcopy(route_from_nt)
+                                del route_from_nt[:]
+
+                                last_state_j_nt = find_last_non_traveling_state_in_product_ts(product_ts, next_state, j)
+                                route_from_j_nt = copy.deepcopy(route_from_nt)
+                                del route_from_nt[:]
+
+                                if last_state_i_nt != None and next_state_j_nt != None and next_state_i_nt != None and last_state_j_nt != None:
+                                    if last_state_i_nt[i] == next_state_j_nt[j] and last_state_j_nt[j] == next_state_i_nt[i]:
+                                        state_to_remove.append(last_state_i_nt)
+                                        state_to_remove.append(last_state_j_nt)
+                                        state_to_remove.append(next_state_i_nt)
+                                        state_to_remove.append(next_state_j_nt)
+
+                                        route_to_remove = route_to_i_nt + route_to_j_nt + route_from_i_nt + route_from_j_nt
+                                        for state_temp in route_to_remove:
+                                            state_to_remove.append(state_temp)
+            '''
+            for j in range(0, ts_tuple.__len__()):
+                if j == i:
+                    continue
+                state_i = state[i]
+                state_j = state[j]
+                if is_traveling_state(state_i) and is_traveling_state(state_j):
+
+                    
+                    next_state_i = find_next_non_traveling_state_in_product_ts(product_ts, state, i)
+                    rout_to_nt_i = copy.deepcopy(route_to_nt)
+                    del route_to_nt[:]
+
+                    next_state_j = find_next_non_traveling_state_in_product_ts(product_ts, state, j)
+                    rout_to_nt_j = copy.deepcopy(route_to_nt)
+                    del route_to_nt[:]
+
+                    if state_i[0] == state_j[1]
+                    233
+                    
+                elif not is_traveling_state(state_i) and not is_traveling_state(state_j):
+                    233
+            '''
     for state in state_to_remove:
         try:
             product_ts.g.remove_node(state)
@@ -469,7 +568,7 @@ def ts_times_ts_ca(ts_tuple):
 def main():
     r1 = Ts.load('./robot_1.yaml')  # robot_1_real.yaml
     r2 = Ts.load('./robot_2.yaml')  # robot_2_real.yaml
-    r3 = Ts.load('./robot_3.yaml')  # robot_3_real.yaml
+    r3 = Ts.load('./robot_3_inv.yaml')  # robot_3_real.yaml     robot_3_inv.yaml
 
     # Adding test
     ts_tuple = (r1, r2, r3)
