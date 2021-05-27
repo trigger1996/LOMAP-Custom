@@ -725,44 +725,100 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
             for j in range(0, ts_tuple.__len__()):
                 if pairwise_collision_list[i][j] != False:
 
-                    team_state_curr = list(team_run[i])
-                    team_state_last = None
-                    team_state_next = None
-
-                    # find last indivdual state expect for travelling
-                    for k in range(1, i):
-                        team_state_last = list(team_run[i - k])
-                        if not is_traveling_state(team_state_last[j]):
-                            break
-                    # find next indivdual state expect for travelling
-                    for k in range(1, team_run.__len__() - i):
-                        team_state_next = list(team_run[i + k])
-                        if not is_traveling_state(team_state_next[j]):
-                            break
+                    curr_state_j = list(team_run[i])[j]
+                    next_state_k = pairwise_collision_list[i][j][0]
+                    next_seq_k   = pairwise_collision_list[i][j][1]
+                    agent_k_id   = pairwise_collision_list[i][j][2]
 
                     if is_modifible[j]:
-                        ''' FIRST, add go-back points '''
-                        # find ALL edges to target state
-                        go_back_list = []       # for go_back_list[i], [0] for node and [1] for cost
-                        for u in ts_tuple[j].g.edge:
-                            if ts_tuple[j].g.edge[u].get(team_state_last[j]) != None:
-                                go_back_list.append([u, ts_tuple[j].g.edge[u].get(team_state_last[j])[0]['weight'] + additional_goback_cost])   # record point and corresponding weight
+                        if next_seq_k >= i:
+                            # if next sequence of the run larger than current, it is the start of collision
 
-                        min_cost_index = 0
-                        for k in range(0, go_back_list.__len__()):
-                            if go_back_list[k][1] <= go_back_list[min_cost_index][1]:
-                                min_cost_index = k
+                            # FIRST, add go-back points
+                            # find ALL edges to target state
+                            go_back_list = []  # for go_back_list[i], [0] for node, [1] for cost, [2] for whether exist return transition, exist [3] for two-way cost
+                            go_from_list = []
 
-                        # if the go back edge does not exist, add it
-                        if ts_tuple[j].g.edge[team_state_last[j]].get(go_back_list[min_cost_index][0]) == None:
-                            ts_tuple[j].g.add_edge(team_state_last[j], go_back_list[min_cost_index][0],
-                                                   attr_dict={'weight': go_back_list[min_cost_index][1], 'control': 'go_back'})
+                            for u in ts_tuple[j].g.edge[curr_state_j]:
+                                if u != curr_state_j:
+                                    go_from_list.append([u, ts_tuple[j].g.edge[curr_state_j][u][0]['weight']])
+                            for u in ts_tuple[j].g.edge:
+                                if ts_tuple[j].g.edge[u].get(curr_state_j) != None and \
+                                    u != curr_state_j:
+                                        go_back_list.append([u, ts_tuple[j].g.edge[u].get(curr_state_j)[0][
+                                            'weight']])  # record point and corresponding weight
 
-                        ''' SECOND, add wait points '''
-                        if team_state_next != None:
-                            if ts_tuple[j].g.edge[team_state_next[j]].get(team_state_next[j]) == None:
-                                ts_tuple[j].g.add_edge(team_state_next[j], team_state_next[j],
-                                                       attr_dict={'weight': min_cost, 'control': 's'})
+                            min_cost_index_goback = 0
+                            for k in range(0, go_back_list.__len__()):
+                                # calculate two-way cost for nodes in go-back list
+                                if ts_tuple[j].g.edge[curr_state_j].get(go_back_list[k][0]) == None:
+                                    go_back_list[k].append(False)
+                                    go_back_list[k].append(go_back_list[k][1] * 2 + additional_goback_cost)
+                                else:
+                                    go_back_list[k].append(True)
+                                    go_back_list[k].append(go_back_list[k][1] + ts_tuple[j].g.edge[curr_state_j].get(go_back_list[k][0])[0]['weight'])
+                                # find the minimum
+                                if go_back_list[k][3] <= go_back_list[min_cost_index_goback][3]:
+                                    min_cost_index_goback = k
+
+                            min_cost_index_goform = 0
+                            for k in range(0, go_from_list.__len__()):
+                                # calculate two-way cost for nodes in go-from list
+                                if ts_tuple[j].g.edge[go_from_list[k][0]].get(curr_state_j) == None:
+                                    go_from_list[k].append(False)
+                                    go_from_list[k].append(go_from_list[k][1] * 2 + additional_goback_cost)
+                                else:
+                                    go_from_list[k].append(True)
+                                    go_from_list[k].append(go_from_list[k][1] + ts_tuple[j].g.edge[go_from_list[k][0]].get(curr_state_j)[0]['weight'])
+                                # find the minimum
+                                if go_from_list[k][3] <= go_from_list[min_cost_index_goform][3]:
+                                    min_cost_index_goform = k
+
+                            # pick the best for go-back
+                            # 1 cost
+                            # 2 is go-back edge need to append, no need is better
+                            # 3 go-back first
+                            min_cost_node = None
+                            is_min_cost_goback = True
+                            if go_back_list[min_cost_index_goback][3] < go_from_list[min_cost_index_goform][3]:
+                                min_cost_node = go_back_list[min_cost_index_goback]
+                                is_min_cost_goback = True
+                            elif go_back_list[min_cost_index_goback][3] > go_from_list[min_cost_index_goform][3]:
+                                min_cost_node = go_from_list[min_cost_index_goback]
+                                is_min_cost_goback = False
+                            else:
+                                if go_from_list[min_cost_index_goform][2]:
+                                    min_cost_node = go_from_list[min_cost_index_goform]
+                                    is_min_cost_goback = False
+                                else:
+                                    min_cost_node = go_back_list[min_cost_index_goback]
+                                    is_min_cost_goback = True
+
+                                # for debugging
+                                '''
+                                if go_back_list[min_cost_index_goback][2]:
+                                    min_cost_node = go_back_list[min_cost_index_goback]
+                                    is_min_cost_goback = True
+                                else:
+                                    min_cost_node = go_from_list[min_cost_index_goform]
+                                    is_min_cost_goback = False
+                                '''
+
+                            # if the go back edge does not exist, add it
+                            if not min_cost_node[2]:
+                                if is_min_cost_goback:
+                                    ts_tuple[j].g.add_edge(curr_state_j, min_cost_node[0],
+                                                           attr_dict={'weight': min_cost_node[1] + additional_goback_cost,
+                                                                      'control': 'go_back'})
+                                else:
+                                    ts_tuple[j].g.add_edge(min_cost_node[0], curr_state_j,
+                                                           attr_dict={'weight': min_cost_node[1] + additional_goback_cost,
+                                                                      'control': 'go_back'})
+                    else:
+                        # SECOND, add wait points
+                        if ts_tuple[agent_k_id].g.edge[next_state_k].get(next_state_k) == None:
+                            ts_tuple[agent_k_id].g.add_edge(next_state_k, next_state_k,
+                                                   attr_dict={'weight': min_cost, 'control': 's'})
 
     ''' rear_end_collision '''
     if is_rear_end_collision:

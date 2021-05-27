@@ -1,6 +1,7 @@
 import networkx
 import logging
 
+import itertools as it
 from lomap import Ts
 
 
@@ -264,55 +265,222 @@ def check_remove_collisions(ts_tuple, is_modifible, team_run):
             for j in range(0, ts_tuple.__len__()):
                 if pairwise_collision_list[i][j] != False:
 
-                    team_state_curr = list(team_run[i])
-                    team_state_last = None
-                    team_state_next = None
-
-                    # find last indivdual state expect for travelling
-                    for k in range(1, i):
-                        team_state_last = list(team_run[i - k])
-                        if not is_traveling_state(team_state_last[j]):
-                            break
-                    # find next indivdual state expect for travelling
-                    for k in range(1, team_run.__len__() - i):
-                        team_state_next = list(team_run[i + k])
-                        if not is_traveling_state(team_state_next[j]):
-                            break
+                    curr_state_j = list(team_run[i])[j]
+                    next_state_k = pairwise_collision_list[i][j][0]
+                    next_seq_k   = pairwise_collision_list[i][j][1]
+                    agent_k_id   = pairwise_collision_list[i][j][2]
 
                     if is_modifible[j]:
-                        ''' FIRST, add go-back points '''
-                        # find ALL edges to target state
-                        go_back_list = []       # for go_back_list[i], [0] for node and [1] for cost
-                        for u in ts_tuple[j].g.edge:
-                            if ts_tuple[j].g.edge[u].get(team_state_last[j]) != None:
-                                go_back_list.append([u, ts_tuple[j].g.edge[u].get(team_state_last[j])[0]['weight'] + additional_goback_cost])   # record point and corresponding weight
+                        if next_seq_k >= i:
+                            # if next sequence of the run larger than current, it is the start of collision
 
-                        min_cost_index = 0
-                        for k in range(0, go_back_list.__len__()):
-                            if go_back_list[k][1] <= go_back_list[min_cost_index][1]:
-                                min_cost_index = k
+                            # FIRST, add go-back points
+                            # find ALL edges to target state
+                            go_back_list = []  # for go_back_list[i], [0] for node, [1] for cost, [2] for whether exist return transition, exist [3] for two-way cost
+                            go_from_list = []
 
-                        # if the go back edge does not exist, add it
-                        if ts_tuple[j].g.edge[team_state_last[j]].get(go_back_list[min_cost_index][0]) == None:
-                            ts_tuple[j].g.add_edge(team_state_last[j], go_back_list[min_cost_index][0],
-                                                   attr_dict={'weight': go_back_list[min_cost_index][1], 'control': 'go_back'})
+                            for u in ts_tuple[j].g.edge[curr_state_j]:
+                                if u != curr_state_j:
+                                    go_from_list.append([u, ts_tuple[j].g.edge[curr_state_j][u][0]['weight']])
+                            for u in ts_tuple[j].g.edge:
+                                if ts_tuple[j].g.edge[u].get(curr_state_j) != None and \
+                                    u != curr_state_j:
+                                        go_back_list.append([u, ts_tuple[j].g.edge[u].get(curr_state_j)[0][
+                                            'weight']])  # record point and corresponding weight
 
-                        ''' SECOND, add wait points '''
-                        if team_state_next != None:
-                            if ts_tuple[j].g.edge[team_state_next[j]].get(team_state_next[j]) == None:
-                                ts_tuple[j].g.add_edge(team_state_next[j], team_state_next[j],
-                                                       attr_dict={'weight': min_cost, 'control': 's'})
+                            min_cost_index_goback = 0
+                            for k in range(0, go_back_list.__len__()):
+                                # calculate two-way cost for nodes in go-back list
+                                if ts_tuple[j].g.edge[curr_state_j].get(go_back_list[k][0]) == None:
+                                    go_back_list[k].append(False)
+                                    go_back_list[k].append(go_back_list[k][1] * 2 + additional_goback_cost)
+                                else:
+                                    go_back_list[k].append(True)
+                                    go_back_list[k].append(go_back_list[k][1] + ts_tuple[j].g.edge[curr_state_j].get(go_back_list[k][0])[0]['weight'])
+                                # find the minimum
+                                if go_back_list[k][3] <= go_back_list[min_cost_index_goback][3]:
+                                    min_cost_index_goback = k
+
+                            min_cost_index_goform = 0
+                            for k in range(0, go_from_list.__len__()):
+                                # calculate two-way cost for nodes in go-from list
+                                if ts_tuple[j].g.edge[go_from_list[k][0]].get(curr_state_j) == None:
+                                    go_from_list[k].append(False)
+                                    go_from_list[k].append(go_from_list[k][1] * 2 + additional_goback_cost)
+                                else:
+                                    go_from_list[k].append(True)
+                                    go_from_list[k].append(go_from_list[k][1] + ts_tuple[j].g.edge[go_from_list[k][0]].get(curr_state_j)[0]['weight'])
+                                # find the minimum
+                                if go_from_list[k][3] <= go_from_list[min_cost_index_goform][3]:
+                                    min_cost_index_goform = k
+
+                            # pick the best for go-back
+                            # 1 cost
+                            # 2 is go-back edge need to append, no need is better
+                            # 3 go-back first
+                            min_cost_node = None
+                            is_min_cost_goback = True
+                            if go_back_list[min_cost_index_goback][3] < go_from_list[min_cost_index_goform][3]:
+                                min_cost_node = go_back_list[min_cost_index_goback]
+                                is_min_cost_goback = True
+                            elif go_back_list[min_cost_index_goback][3] > go_from_list[min_cost_index_goform][3]:
+                                min_cost_node = go_from_list[min_cost_index_goform]
+                                is_min_cost_goback = False
+                            else:
+                                if go_from_list[min_cost_index_goform][2]:
+                                    min_cost_node = go_from_list[min_cost_index_goform]
+                                    is_min_cost_goback = False
+                                else:
+                                    min_cost_node = go_back_list[min_cost_index_goback]
+                                    is_min_cost_goback = True
+
+                                # for debugging
+                                '''
+                                if go_back_list[min_cost_index_goback][2]:
+                                    min_cost_node = go_back_list[min_cost_index_goback]
+                                    is_min_cost_goback = True
+                                else:
+                                    min_cost_node = go_from_list[min_cost_index_goform]
+                                    is_min_cost_goback = False
+                                '''
+
+                            # if the go back edge does not exist, add it
+                            if not min_cost_node[2]:
+                                if is_min_cost_goback:
+                                    ts_tuple[j].g.add_edge(curr_state_j, min_cost_node[0],
+                                                           attr_dict={'weight': min_cost_node[1] + additional_goback_cost,
+                                                                      'control': 'go_back'})
+                                else:
+                                    ts_tuple[j].g.add_edge(min_cost_node[0], curr_state_j,
+                                                           attr_dict={'weight': min_cost_node[1] + additional_goback_cost,
+                                                                      'control': 'go_back'})
+                    else:
+                        # SECOND, add wait points
+                        if ts_tuple[agent_k_id].g.edge[next_state_k].get(next_state_k) == None:
+                            ts_tuple[agent_k_id].g.add_edge(next_state_k, next_state_k,
+                                                   attr_dict={'weight': min_cost, 'control': 's'})
+
+    ''' rear_end_collision '''
+    if is_rear_end_collision:
+        233
+
+def ts_times_ts_ca(ts_tuple):
+    '''TODO:
+    add option to choose what to save on the automaton's
+    add description
+    add regression tests
+    add option to create from current state
+    '''
+
+    ''' Added '''
+    state_to_remove = []
+
+    # NOTE: We assume deterministic TS
+    assert all((len(ts.init) == 1 for ts in ts_tuple))
+
+    # Initial state label is the tuple of initial states' labels
+    product_ts = Ts()
+
+    init_state = tuple((next(iter(ts.init)) for ts in ts_tuple))
+    product_ts.init[init_state] = 1
+
+    # Props satisfied at init_state is the union of props
+    # For each ts, get the prop of init state or empty set
+    init_prop = set.union(*[ts.g.node[ts_init].get('prop', set())
+                            for ts, ts_init in zip(ts_tuple, init_state)])
+
+    # Finally, add the state
+    product_ts.g.add_node(init_state, {'prop': init_prop,
+                        'label': "{}\\n{}".format(init_state, list(init_prop))})
+
+    # Start depth first search from the initial state
+    stack=[]
+    stack.append(init_state)
+    while stack:
+        cur_state = stack.pop()
+        # Actual source states of traveling states
+        source_state = tuple((q[0] if type(q) == tuple else q
+                              for q in cur_state))
+        # Time spent since actual source states
+        time_spent = tuple((q[2] if type(q) == tuple else 0 for q in cur_state))
+
+        # Iterate over all possible transitions
+        for tran_tuple in it.product(*[t.next_states_of_wts(q)
+                                       for t, q in zip(ts_tuple, cur_state)]):
+            # tran_tuple is a tuple of m-tuples (m: size of ts_tuple)
+
+            # First element of each tuple: next_state
+            # Second element of each tuple: time_left
+            next_state = tuple([t[0] for t in tran_tuple])
+            time_left = tuple([t[1] for t in tran_tuple])
+            control = tuple([t[2] for t in tran_tuple])
+
+            # Min time until next transition
+            w_min = min(time_left)
+
+            # Next state label. Singleton if transition taken, tuple if
+            # traveling state
+            next_state = tuple(((ss, ns, w_min+ts) if w_min < tl else ns
+                        for ss, ns, tl, ts in zip(
+                            source_state, next_state, time_left, time_spent)))
+
+            # Add node if new
+            elif next_state not in product_ts.g:
+                # Props satisfied at next_state is the union of props
+                # For each ts, get the prop of next state or empty set
+                # Note: we use .get(ns, {}) as this might be a travelling state
+                next_prop = set.union(*[ts.g.node.get(ns, {}).get('prop', set())
+                                       for ts, ns in zip(ts_tuple, next_state)])
+
+                # Add the new state
+                product_ts.g.add_node(next_state, {'prop': next_prop,
+                        'label': "{}\\n{}".format(next_state, list(next_prop))})
+
+                # Add transition w/ weight
+                product_ts.g.add_edge(cur_state, next_state,
+                                attr_dict={'weight': w_min, 'control': control})
+                # Continue dfs from ns
+                stack.append(next_state)
+
+            # Add tran w/ weight if new
+            elif next_state not in product_ts.g[cur_state]:
+                product_ts.g.add_edge(cur_state, next_state,
+                                attr_dict={'weight': w_min, 'control': control})
+
+    # those points created by original Cartesian product is not removed
+    for state in product_ts.g.node:
+        state_list = list(state)
+        for i in range(0, state_list.__len__()):
+            for j in range(0, state_list.__len__()):
+                if i != j and state_list[i] == state_list[j]:
+                    state_to_remove.append(state)
+    for state in state_to_remove:
+        try:
+            product_ts.g.remove_node(state)
+        except:
+            #print("[expection] node", state, "is previously removed")
+            pass
+    #print(state_to_remove)
+    print(state_to_remove.__len__())
+
+    # Return ts_1 x ts_2 x ...
+    return product_ts
 
 def main():
     r1 = Ts.load('./robot_1.yaml')  # robot_1_real.yaml
     r2 = Ts.load('./robot_2.yaml')  # robot_2_real.yaml
     r3 = Ts.load('./robot_3.yaml')  # robot_3_real.yaml
 
-    # CASE 2
+    # Adding test
     ts_tuple = (r1, r2, r3)
     is_modifible = [True, True, False]
 
     check_remove_collisions(ts_tuple, is_modifible, run_case_3_inv)
+
+    # Removal Test
+    team_ts = ts_times_ts_ca(ts_tuple)
+
+    print(team_ts)
 
 if __name__ == '__main__':
     main()
