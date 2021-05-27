@@ -574,6 +574,10 @@ def ts_times_ts_ca(ts_tuple):
                 for j in range(0, state_list.__len__()):
                     if i == j:
                         continue
+
+                    if i == 9 and j == 10:
+                        print(233)
+
                     state_j = state[j]
                     if not is_traveling_state(state_j):
                         find_next_non_traveling_state_in_product_ts_nt(product_ts, state, i, j)
