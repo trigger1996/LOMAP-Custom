@@ -968,18 +968,18 @@ def find_next_non_traveling_state_in_product_ts_nt(product_ts, curr_state, agent
     curr_state_i = list(curr_state)[agent_i_id]
     curr_state_j = list(curr_state)[agent_j_id]
 
-    if not is_traveling_state(curr_state_i) and not is_traveling_state(curr_state_j):
-        next_state_list = product_ts.g.out_edges(curr_state)
-        for next_state_index in next_state_list:
-            next_state = next_state_index[0]
-            next_state_i = next_state[agent_i_id]
-            next_state_j = next_state[agent_i_id]
-            if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
-                next_nt_list.append(next_state)
-                return
-            else:
-                route_nt_to_nt.append(next_state)
-                find_next_non_traveling_state_in_product_ts_nt(product_ts, next_state, agent_i_id, agent_j_id)
+    #if not is_traveling_state(curr_state_i) and not is_traveling_state(curr_state_j):
+    next_state_list = product_ts.g.out_edges(curr_state)
+    for next_state_index in next_state_list:
+        next_state = next_state_index[1]
+        next_state_i = next_state[agent_i_id]
+        next_state_j = next_state[agent_i_id]
+        if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
+            next_nt_list.append(next_state)
+            #return
+        else:
+            route_nt_to_nt.append(next_state)       # BUGS
+            find_next_non_traveling_state_in_product_ts_nt(product_ts, next_state, agent_i_id, agent_j_id)
 
 
 def ts_times_ts_ca(ts_tuple):
@@ -1079,7 +1079,7 @@ def ts_times_ts_ca(ts_tuple):
             state_i = state[i]
             if is_traveling_state(state_i):
                 for next_state in product_ts.g.edge[state]:
-                    for j in range(0, state_list.__len__()):
+                    for j in range(0, ts_tuple.__len__()):
                         if i == j:
                             continue
                         next_state_j = next_state[j]
@@ -1104,6 +1104,11 @@ def ts_times_ts_ca(ts_tuple):
                             if last_state_i_nt != None and next_state_j_nt != None and next_state_i_nt != None and last_state_j_nt != None:
                                 if last_state_i_nt[i] == next_state_j_nt[j] and last_state_j_nt[j] == next_state_i_nt[
                                     i]:
+                                    state_to_remove.append(state)
+                                    state_to_remove.append(next_state)
+
+                                    print(str(state), "   ", str(next_state), "   ", 233)
+                                    '''
                                     state_to_remove.append(last_state_i_nt)
                                     state_to_remove.append(last_state_j_nt)
                                     state_to_remove.append(next_state_i_nt)
@@ -1112,6 +1117,7 @@ def ts_times_ts_ca(ts_tuple):
                                     route_to_remove = route_to_i_nt + route_to_j_nt + route_from_i_nt + route_from_j_nt
                                     for state_temp in route_to_remove:
                                         state_to_remove.append(state_temp)
+                                    '''
             else:
                 for j in range(0, state_list.__len__()):
                     if i == j:
@@ -1126,10 +1132,8 @@ def ts_times_ts_ca(ts_tuple):
                             next_state_i = next_state[i]
                             next_state_j = next_state[j]
                             if state_i == next_state_j and state_j == next_state_i:
-                                state_to_remove.append(state_i)
-                                state_to_remove.append(state_j)
-                                state_to_remove.append(next_state_i)
-                                state_to_remove.append(next_state_j)
+                                state_to_remove.append(next_state)
+                                state_to_remove.append(state)
 
                                 # route_nt_to_nt
 
