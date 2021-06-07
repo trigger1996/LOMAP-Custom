@@ -1071,7 +1071,8 @@ def ts_times_ts_ca(ts_tuple):
         for i in range(0, state_list.__len__()):
             for j in range(0, state_list.__len__()):
                 if i != j and state_list[i] == state_list[j] and not is_traveling_state(state_list[i]):
-                    state_to_remove.append(state)
+                    if state not in state_to_remove:
+                        state_to_remove.append(state)
 
     # pairwise collisions
     for state in product_ts.g.node:
@@ -1102,12 +1103,12 @@ def ts_times_ts_ca(ts_tuple):
                             del route_from_nt[:]
 
                             if last_state_i_nt != None and next_state_j_nt != None and next_state_i_nt != None and last_state_j_nt != None:
-                                if last_state_i_nt[i] == next_state_j_nt[j] and last_state_j_nt[j] == next_state_i_nt[
-                                    i]:
-                                    state_to_remove.append(state)
-                                    state_to_remove.append(next_state)
+                                if last_state_i_nt[i] == next_state_j_nt[j] and last_state_j_nt[j] == next_state_i_nt[i]:
+                                    if state not in state_to_remove:
+                                        state_to_remove.append(state)
+                                    if next_state not in state_to_remove:
+                                        state_to_remove.append(next_state)
 
-                                    print(str(state), "   ", str(next_state), "   ", 233)
                                     '''
                                     state_to_remove.append(last_state_i_nt)
                                     state_to_remove.append(last_state_j_nt)
@@ -1132,8 +1133,10 @@ def ts_times_ts_ca(ts_tuple):
                             next_state_i = next_state[i]
                             next_state_j = next_state[j]
                             if state_i == next_state_j and state_j == next_state_i:
-                                state_to_remove.append(next_state)
-                                state_to_remove.append(state)
+                                if state not in state_to_remove:
+                                    state_to_remove.append(state)
+                                if next_state not in state_to_remove:
+                                    state_to_remove.append(next_state)
 
                                 # route_nt_to_nt
 
@@ -1143,7 +1146,9 @@ def ts_times_ts_ca(ts_tuple):
         except:
             # print("[expection] node", state, "is previously removed")
             pass
-    # print(state_to_remove)
+    for state in state_to_remove:
+        if 'g1' in list(state):
+            print(state)
     print(state_to_remove.__len__())
 
     # Return ts_1 x ts_2 x ...

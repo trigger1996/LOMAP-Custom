@@ -45,7 +45,7 @@ def main():
     with Timer('IJRR 2013 Case-Study 2'):
         r1 = Ts.load('./robot_1.yaml')         # robot_1_real.yaml
         r2 = Ts.load('./robot_2.yaml')         # robot_2_real.yaml
-        r3 = Ts.load('./robot_3_inv.yaml')     # robot_3_real.yaml  robot_3_inv.yaml
+        r3 = Ts.load('./robot_3_inv_smaller.yaml')     # robot_3_real.yaml  robot_3_inv.yaml robot_3_inv_smaller.yaml
 
         # CASE 2
         #ts_tuple = (r1, r2)
