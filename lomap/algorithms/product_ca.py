@@ -1127,10 +1127,11 @@ def ts_times_ts_ca(ts_tuple):
                             next_state_i = next_state[i]
                             next_state_j = next_state[j]
                             if state_i == next_state_j and state_j == next_state_i:
-                                if state not in state_to_remove:
+                                if state not in state_to_remove and next_state not in state_to_remove:
+                                    # only half of the nodes is added here
                                     state_to_remove.append(state)
-                                if next_state not in state_to_remove:
-                                    state_to_remove.append(next_state)
+                                #if next_state not in state_to_remove:
+                                #    state_to_remove.append(next_state)
 
                                 # route_nt_to_nt
 
@@ -1140,8 +1141,8 @@ def ts_times_ts_ca(ts_tuple):
         except:
             # print("[expection] node", state, "is previously removed")
             pass
-    #for state in state_to_remove:
-    #        print(state)
+    for state in state_to_remove:
+        print(state)
     print(state_to_remove.__len__())
 
     # Return ts_1 x ts_2 x ...

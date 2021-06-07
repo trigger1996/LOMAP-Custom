@@ -45,7 +45,8 @@ graph:
   #- ['1',  '12', {control: f, weight: 1}]
   #- ['2',  '1', {control: rf, weight: 1}]
 
-  - ['9', '10', {control: f, weight: 1}]
+  - ['9', '23', {control: f, weight: 1}]
   - ['10', '9', {control: f, weight: 1}]
-
+  - ['23', '11', {control: rfr, weight: 1}]
+  - ['11', '10', {control: rf, weight: 1}]
 
