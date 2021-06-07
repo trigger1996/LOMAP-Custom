@@ -973,10 +973,10 @@ def find_next_non_traveling_state_in_product_ts_nt(product_ts, curr_state, agent
     for next_state_index in next_state_list:
         next_state = next_state_index[1]
         next_state_i = next_state[agent_i_id]
-        next_state_j = next_state[agent_i_id]
+        next_state_j = next_state[agent_j_id]
         if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
             next_nt_list.append(next_state)
-            #return
+            return
         else:
             route_nt_to_nt.append(next_state)       # BUGS
             find_next_non_traveling_state_in_product_ts_nt(product_ts, next_state, agent_i_id, agent_j_id)
