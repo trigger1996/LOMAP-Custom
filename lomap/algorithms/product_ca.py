@@ -943,43 +943,39 @@ def find_next_non_traveling_state_in_product_ts(product_ts, curr_state, agent_id
     # REMEMBER TO CLEAR route_to_nt after use, e.g.: del route_to_nt[:]
     return state_to_return
 
-route_nt_to_nt = []
-next_nt_list = []
-def find_next_non_traveling_state_in_product_ts_nt(product_ts, curr_state, agent_i_id, agent_j_id):
-    # can find one but cannot find all
-    '''
-    curr_state_i = list(curr_state)[agent_i_id]
-    #curr_state_j = list(curr_state)[agent_j_id]
-    route_nt_to_nt.append(curr_state)
-
-    if not is_traveling_state(curr_state_i) and is_traveling_state(j):
-        for next_state in product_ts.g.edge[curr_state]:
-            next_state_i = next_state[agent_i_id]
-            next_state_j = next_state[agent_j_id]
-            if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
-                return next_state
-            else:
-                state_to_return = find_next_non_traveling_state_in_product_ts_nt(product_ts, next_state, agent_i_id, agent_j_id)
-
-        # REMEMBER TO CLEAR route_to_nt after use, e.g.: del route_to_nt[:]
-        return state_to_return
-    '''
-
+def find_next_non_traveling_state_in_product_ts_nt(product_ts, ts_tuple, curr_state, agent_i_id, agent_j_id):
+    next_nt_list = []
     curr_state_i = list(curr_state)[agent_i_id]
     curr_state_j = list(curr_state)[agent_j_id]
 
-    #if not is_traveling_state(curr_state_i) and not is_traveling_state(curr_state_j):
+    expected_next_state_list_i = []
+    expected_next_state_list_j = []
+    for edge in list(ts_tuple)[agent_i_id].g.out_edges(curr_state_i):
+        expected_next_state_list_i.append(edge[1])
+    for edge in list(ts_tuple)[agent_j_id].g.out_edges(curr_state_j):
+        expected_next_state_list_j.append(edge[1])
+
     next_state_list = product_ts.g.out_edges(curr_state)
-    for next_state_index in next_state_list:
-        next_state = next_state_index[1]
+    while next_state_list.__len__() != 0:
+        next_state = next_state_list.pop(0)[1]
         next_state_i = next_state[agent_i_id]
         next_state_j = next_state[agent_j_id]
+
         if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
             next_nt_list.append(next_state)
-            return
         else:
-            route_nt_to_nt.append(next_state)       # BUGS
-            find_next_non_traveling_state_in_product_ts_nt(product_ts, next_state, agent_i_id, agent_j_id)
+            next_state_list_t = product_ts.g.out_edges(next_state)
+            for next_state_index_t in next_state_list_t:
+                next_state_i = next_state_index_t[1][agent_i_id]
+                next_state_j = next_state_index_t[1][agent_j_id]
+                if is_traveling_state(next_state_i) and list(next_state_i)[1] in expected_next_state_list_i and \
+                   is_traveling_state(next_state_j) and list(next_state_j)[1] in expected_next_state_list_j:
+                    next_state_list.append(next_state_index_t)
+                #if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
+                #    next_state_list.append(next_state_index_t)
+            del next_state_list_t
+
+    return next_nt_list
 
 
 def ts_times_ts_ca(ts_tuple):
@@ -1125,9 +1121,7 @@ def ts_times_ts_ca(ts_tuple):
                         continue
                     state_j = state[j]
                     if not is_traveling_state(state_j):
-                        find_next_non_traveling_state_in_product_ts_nt(product_ts, state, i, j)
-                        next_nt_list_curr = copy.deepcopy(next_nt_list)
-                        del next_nt_list[:]
+                        next_nt_list_curr = find_next_non_traveling_state_in_product_ts_nt(product_ts, ts_tuple, state, i, j)
 
                         for next_state in next_nt_list_curr:
                             next_state_i = next_state[i]
@@ -1146,9 +1140,8 @@ def ts_times_ts_ca(ts_tuple):
         except:
             # print("[expection] node", state, "is previously removed")
             pass
-    for state in state_to_remove:
-        if 'g1' in list(state):
-            print(state)
+    #for state in state_to_remove:
+    #        print(state)
     print(state_to_remove.__len__())
 
     # Return ts_1 x ts_2 x ...

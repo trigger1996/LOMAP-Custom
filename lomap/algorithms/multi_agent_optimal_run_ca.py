@@ -696,12 +696,12 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                     team_state_next = None
 
                     # find last indivdual state expect for travelling
-                    for k in range(1, i):
+                    for k in range(1, i + 1):
                         team_state_last = list(team_run[i - k])
                         if not is_traveling_state(team_state_last[j]):
                             break
                     # find next indivdual state expect for travelling
-                    for k in range(1, team_run.__len__() - i):
+                    for k in range(1, team_run.__len__()):
                         team_state_next = list(team_run[i + k])
                         if not is_traveling_state(team_state_next[j]):
                             break
