@@ -600,11 +600,12 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
 
     ''' pairwise_collision '''
     num_pairwise_collision = 0
-    for i in range(0, team_run.__len__()):
-        for j in range(0, ts_tuple.__len__()):              # agent j
+    for i in range(0, team_run.__len__() - 1):
+        for j in range(0, ts_tuple.__len__()):  # agent j
             # find current non-travelling state for agent j
             curr_run = list(team_run[i])
             curr_run_j = curr_run[j]
+
             if is_traveling_state(curr_run_j):
                 # if current run is traveling state
 
@@ -612,20 +613,26 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                     if k == j:
                         continue
                     curr_run_k = curr_run[k]
-                    if is_traveling_state(curr_run_k):
+                    if not is_traveling_state(curr_run_k):  # is_traveling_state(curr_run_k):
                         l = i + 1
                         next_run = list(team_run[l])
                         next_run_j = next_run[j]
                         next_run_k = next_run[k]
+
                         # find the next, non-travelling state for agent k
-                        if is_traveling_state(next_run_j) and is_traveling_state(next_run_k):     # find next traveling state
-                            if is_traveling_states_intersect(curr_run_j, next_run_k) and \
-                               is_traveling_states_intersect(curr_run_k, next_run_j):
+                        # if is_traveling_state(next_run_j) and is_traveling_state(next_run_k):     # find next traveling state
+                        #    if is_traveling_states_intersect(curr_run_j, next_run_k) and \
+                        #       is_traveling_states_intersect(curr_run_k, next_run_j):
+                        if is_traveling_state(next_run_k):
+                            if is_traveling_states_intersect(curr_run_j, next_run_k):
                                 # now can confirm pairwise collision
                                 [last_run_j_nt, last_seq_j] = find_last_non_traveling_state(team_run, j, i)
-                                [last_run_k_nt, last_seq_k] = find_last_non_traveling_state(team_run, k, i)
+                                # [last_run_k_nt, last_seq_k] = find_last_non_traveling_state(team_run, k, i)
                                 [next_run_j_nt, next_seq_j] = find_next_non_traveling_state(team_run, j, i)
                                 [next_run_k_nt, next_seq_k] = find_next_non_traveling_state(team_run, k, i)
+                                # fixed bugs
+                                last_run_k_nt = curr_run
+                                last_seq_k = i
 
                                 if next_run_k_nt[k] == last_run_j_nt[j] and next_run_j_nt[j] == last_run_k_nt[k]:
                                     if last_run_j_nt != None and last_run_k_nt != None and next_run_j_nt != None and next_run_k_nt != None:

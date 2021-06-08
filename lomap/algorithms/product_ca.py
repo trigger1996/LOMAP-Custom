@@ -988,6 +988,7 @@ def ts_times_ts_ca(ts_tuple):
 
     ''' Added '''
     state_to_remove = []
+    edge_to_remove  = []
 
     # NOTE: We assume deterministic TS
     assert all((len(ts.init) == 1 for ts in ts_tuple))
@@ -1100,10 +1101,11 @@ def ts_times_ts_ca(ts_tuple):
 
                             if last_state_i_nt != None and next_state_j_nt != None and next_state_i_nt != None and last_state_j_nt != None:
                                 if last_state_i_nt[i] == next_state_j_nt[j] and last_state_j_nt[j] == next_state_i_nt[i]:
-                                    if state not in state_to_remove:
-                                        state_to_remove.append(state)
-                                    if next_state not in state_to_remove:
-                                        state_to_remove.append(next_state)
+                                    #if state not in state_to_remove and next_state not in state_to_remove:
+                                    #    # only half of the nodes is added here
+                                    #    state_to_remove.append(state)
+                                    if [state, next_state] not in edge_to_remove:
+                                        edge_to_remove.append([state, next_state])
 
                                     '''
                                     state_to_remove.append(last_state_i_nt)
@@ -1127,11 +1129,9 @@ def ts_times_ts_ca(ts_tuple):
                             next_state_i = next_state[i]
                             next_state_j = next_state[j]
                             if state_i == next_state_j and state_j == next_state_i:
-                                if state not in state_to_remove and next_state not in state_to_remove:
-                                    # only half of the nodes is added here
-                                    state_to_remove.append(state)
-                                #if next_state not in state_to_remove:
-                                #    state_to_remove.append(next_state)
+
+                                if [state, next_state] not in edge_to_remove:
+                                    edge_to_remove.append([state, next_state])
 
                                 # route_nt_to_nt
 
@@ -1141,9 +1141,18 @@ def ts_times_ts_ca(ts_tuple):
         except:
             # print("[expection] node", state, "is previously removed")
             pass
-    for state in state_to_remove:
-        print(state)
-    print(state_to_remove.__len__())
+
+    for edge in edge_to_remove:
+        try:
+            product_ts.g.remove_edge(edge[0], edge[1])
+        except:
+            # print("[expection] edge", edge, "is previously removed")
+            pass
+
+    #for state in state_to_remove:
+    #    print(state)
+    print("[Product CA] removed state:", state_to_remove.__len__())
+    print("[Product CA] removed edge: ", edge_to_remove.__len__())
 
     # Return ts_1 x ts_2 x ...
     return product_ts

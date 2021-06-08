@@ -16,6 +16,8 @@ run_case_3_inv = [('u1', 'u2', '11'), (('u1', '4', 1), ('u2', '10', 1), '10'), (
 
 
 run_case_3_inv_smaller = [('u1', 'u2', '10'), (('u1', '4', 1), ('u2', '10', 1), '9'), ('4', '10', '23'), ('5', '11', '11'), ('27', '23', '10'), (('27', '28', 1), ('23', '24', 1), '9'), (('27', '28', 2), ('23', '24', 2), '23'), ('28', '24', '11'), (('28', '21', 1), ('24', '25', 1), '10'), (('28', '21', 2), ('24', '25', 2), '9'), ('21', '25', '23'), (('21', '22', 1), ('25', '26', 1), '11'), ('22', '26', '10'), ('g1', 'g3', '9'), (('g1', '22', 1), ('g3', '26', 1), '23'), ('22', '26', '11'), (('22', '23', 1), ('26', '27', 1), '10'), ('23', '27', '9'), ('9', '3', '23'), ('10', '4', '11'), ('u2', 'u1', '10'), (('u2', '10', 1), ('u1', '4', 1), '9'), ('10', '4', '23'), ('11', '5', '11'), (('11', '12', 1), ('5', '6', 1), '10'), (('11', '12', 2), ('5', '6', 2), '9'), (('11', '12', 3), ('5', '6', 3), '23'), ('12', '6', '11'), ('1', '7', '10'), ('2', '8', '9'), ('21', '25', '23')]
+run_case_3_inv_larger  = [('u1', 'u2', '23'), ('4', '10', '22'), ('u1', 'u2', ('22', '21', 1)), (('u1', '4', 1), ('u2', '10', 1), '21'), ('4', '10', ('21', '28', 1)), ('u1', 'u2', ('21', '28', 2)), (('u1', '4', 1), ('u2', '10', 1), '28'), ('4', '10', ('28', '27', 1)), ('u1', 'u2', ('28', '27', 2)), (('u1', '4', 1), ('u2', '10', 1), '27'), ('4', '10', ('27', '26', 1)), ('5', '11', '26'), ('27', '23', ('26', '25', 1)), ('3', '9', '25'), ('4', '10', ('25', '24', 1)), ('u1', 'u2', ('25', '24', 2)), (('u1', '4', 1), ('u2', '10', 1), '24'), ('4', '10', ('24', '23', 1)), ('5', '11', ('24', '23', 2)), (('5', '6', 1), ('11', '12', 1), '23'), (('5', '6', 3), ('11', '12', 3), '22'), ('6', '12', ('22', '21', 1)), ('7', '1', '21'), ('8', '2', ('21', '28', 1)), ('25', '21', ('21', '28', 2)), (('25', '26', 1), ('21', '22', 1), '28'), ('26', '22', ('28', '27', 1)), ('g3', 'g1', ('28', '27', 2)), (('g3', '26', 1), ('g1', '22', 1), '27'), ('26', '22', ('27', '26', 1)), (('26', '27', 1), ('22', '23', 1), '26'), ('27', '23', ('26', '25', 1)), ('3', '9', '25'), ('4', '10', ('25', '24', 1)), ('u1', 'u2', ('25', '24', 2))]
+
 
 # real
 run_case_4_real = [('u1', 'u2', '11'), ('4', '10', ('11', '12', 2)), ('5', '11', '12'), ('27', '23', '1'), (('27', '28', 2), ('23', '24', 2), '2'), ('28', '24', ('2', '21', 1)), ('g4', 'g2', '21'), ('28', '24', ('21', '22', 1)), (('28', '21', 2), ('24', '25', 2), '22'), ('21', '25', ('22', '23', 1)), ('12', '6', '23'), ('1', '7', '9'), ('2', '8', '10'), (('2', '3', 2), ('8', '9', 2), '11'), ('3', '9', ('11', '12', 2)), ('4', '10', '12'), ('u1', 'u2', '1'), ('4', '10', '2'), ('5', '11', '21'), ('27', '23', ('21', '22', 2)), (('27', '28', 1), ('23', '24', 1), '22'), ('28', '24', ('22', '23', 2)), ('g4', 'g2', '23'), ('28', '24', ('23', '9', 1)), (('28', '21', 1), ('24', '25', 1), '9'), ('21', '25', '10'), ('12', '6', '11'), ('1', '7', ('11', '12', 2)), ('2', '8', '12'), (('2', '3', 2), ('8', '9', 2), '1'), ('3', '9', '2'), ('4', '10', '21'), ('u1', 'u2', ('21', '22', 2)), (('u1', '4', 1), ('u2', '10', 1), '22'), ('4', '10', ('22', '23', 1)), ('5', '11', '23'), ('27', '23', '9'), (('27', '28', 2), ('23', '24', 2), '10'), ('28', '24', ('10', '11', 1)), ('g4', 'g2', '11'), ('28', '24', ('11', '12', 1)), ('21', '25', '12'), ('12', '6', '1'), ('1', '7', '2'), ('2', '8', '21'), (('2', '3', 3), ('8', '9', 3), '22'), ('3', '9', ('22', '23', 1)), ('4', '10', '23'), ('u1', 'u2', '9'), ('4', '10', '10'), ('5', '11', '11'), ('27', '23', ('11', '12', 2)), (('27', '28', 2), ('23', '24', 2), '12'), ('28', '24', ('12', '1', 1)), ('g4', 'g2', '1'), ('28', '24', ('1', '2', 1)), (('28', '21', 1), ('24', '25', 1), '2'), ('21', '25', '21'), ('12', '6', ('21', '22', 2)), (('12', '1', 1), ('6', '7', 1), '22'), ('1', '7', ('22', '23', 1)), ('2', '8', '23'), (('2', '3', 2), ('8', '9', 2), '9'), ('3', '9', '10'), ('4', '10', '11'), ('u1', 'u2', ('11', '12', 2)), ('4', '10', '12'), ('5', '11', '1'), ('27', '23', '2'), (('27', '28', 2), ('23', '24', 2), '21'), ('28', '24', ('21', '22', 1)), ('g4', 'g2', ('21', '22', 2)), ('28', '24', '22'), ('21', '25', '23'), ('12', '6', '9'), ('1', '7', '10'), ('2', '8', '11'), ('3', '9', '12'), ('4', '10', '1'), ('u1', 'u2', '2'), ('4', '10', '21'), ('5', '11', ('21', '22', 2)), (('5', '27', 1), ('11', '23', 1), '22'), ('27', '23', ('22', '23', 1)), (('27', '28', 2), ('23', '24', 2), '23'), ('28', '24', ('23', '9', 1)), ('g4', 'g2', '9'), ('28', '24', ('9', '10', 1)), (('28', '21', 1), ('24', '25', 1), '10'), ('21', '25', '11'), ('12', '6', ('11', '12', 2)), ('1', '7', '12'), ('2', '8', '1'), (('2', '3', 2), ('8', '9', 2), '2'), ('3', '9', '21'), ('4', '10', ('21', '22', 2)), (('4', 'u1', 1), ('10', 'u2', 1), '22'), ('u1', 'u2', ('22', '23', 1)), ('4', '10', '23'), ('5', '11', '9'), ('27', '23', '10'), (('27', '28', 2), ('23', '24', 2), '11'), ('28', '24', ('11', '12', 1)), ('g4', 'g2', ('11', '12', 2)), ('28', '24', ('11', '12', 3)), (('28', '21', 1), ('24', '25', 1), '12'), ('21', '25', '1'), ('12', '6', '2'), ('1', '7', '21'), ('2', '8', ('21', '22', 2)), (('2', '3', 1), ('8', '9', 1), '22'), ('3', '9', '23'), ('4', '10', '9'), ('u1', 'u2', '10'), ('4', '10', '11'), ('5', '11', ('11', '12', 2)), ('27', '23', '12'), (('27', '28', 2), ('23', '24', 2), '1'), ('28', '24', ('1', '2', 1)), ('g4', 'g2', '2'), ('28', '24', ('2', '21', 1)), (('28', '21', 1), ('24', '25', 1), '21'), ('21', '25', ('21', '22', 2)), (('21', '12', 1), ('25', '6', 1), '22'), ('12', '6', ('22', '23', 1)), ('1', '7', '23'), ('2', '8', '9'), (('2', '3', 2), ('8', '9', 2), '10'), ('3', '9', '11'), ('4', '10', ('11', '12', 2)), ('u1', 'u2', '12'), ('4', '10', '1'), ('5', '11', '2'), ('27', '23', '21'), ('28', '24', '22'), ('g4', 'g2', ('22', '23', 1)), ('28', '24', ('22', '23', 2)), (('28', '21', 1), ('24', '25', 1), '23'), ('21', '25', '9'), ('12', '6', '10'), ('1', '7', '11'), ('2', '8', ('11', '12', 2)), (('2', '3', 2), ('8', '9', 2), '12'), ('3', '9', '1'), ('4', '10', '2'), ('u1', 'u2', '21'), ('4', '10', ('21', '22', 2)), (('4', '5', 1), ('10', '11', 1), '22'), ('5', '11', ('22', '23', 1)), ('27', '23', '23'), (('27', '28', 2), ('23', '24', 2), '9'), ('28', '24', ('9', '10', 1)), ('g4', 'g2', '10'), ('28', '24', ('10', '11', 1)), (('28', '21', 1), ('24', '25', 1), '11'), ('21', '25', ('11', '12', 2)), ('12', '6', '12'), ('1', '7', '1'), ('2', '8', '2'), (('2', '3', 2), ('8', '9', 2), '21'), ('3', '9', ('21', '22', 2)), (('3', '4', 1), ('9', '10', 1), '22'), ('4', '10', ('22', '23', 1)), ('u1', 'u2', '23'), ('4', '10', '9'), ('5', '11', '10'), ('27', '23', '11'), ('28', '24', ('11', '12', 3)), ('g4', 'g2', '12'), ('28', '24', ('12', '1', 1)), (('28', '21', 1), ('24', '25', 1), '1'), ('21', '25', '2'), ('12', '6', '21'), ('1', '7', ('21', '22', 2)), (('1', '2', 1), ('7', '8', 1), '22'), ('2', '8', ('22', '23', 1)), (('2', '3', 2), ('8', '9', 2), '23'), ('3', '9', '9'), ('4', '10', '10'), ('u1', 'u2', '11')]
@@ -137,11 +139,15 @@ def check_remove_collisions(ts_tuple, is_modifible, team_run):
 
     ''' pairwise_collision '''
     num_pairwise_collision = 0
-    for i in range(0, team_run.__len__()):
+    for i in range(0, team_run.__len__() - 1):
         for j in range(0, ts_tuple.__len__()):              # agent j
             # find current non-travelling state for agent j
             curr_run = list(team_run[i])
             curr_run_j = curr_run[j]
+
+            if curr_run_j == ('27', '26', 1):
+                print(2333333)
+
             if is_traveling_state(curr_run_j):
                 # if current run is traveling state
 
@@ -149,7 +155,7 @@ def check_remove_collisions(ts_tuple, is_modifible, team_run):
                     if k == j:
                         continue
                     curr_run_k = curr_run[k]
-                    if is_traveling_state(curr_run_k):
+                    if not is_traveling_state(curr_run_k):      # is_traveling_state(curr_run_k):
                         l = i + 1
                         next_run = list(team_run[l])
                         next_run_j = next_run[j]
@@ -163,9 +169,13 @@ def check_remove_collisions(ts_tuple, is_modifible, team_run):
                            if is_traveling_states_intersect(curr_run_j, next_run_k):
                                 # now can confirm pairwise collision
                                 [last_run_j_nt, last_seq_j] = find_last_non_traveling_state(team_run, j, i)
-                                [last_run_k_nt, last_seq_k] = find_last_non_traveling_state(team_run, k, i)
+                                #[last_run_k_nt, last_seq_k] = find_last_non_traveling_state(team_run, k, i)
                                 [next_run_j_nt, next_seq_j] = find_next_non_traveling_state(team_run, j, i)
                                 [next_run_k_nt, next_seq_k] = find_next_non_traveling_state(team_run, k, i)
+                                # fixed bugs
+                                last_run_k_nt = curr_run
+                                last_seq_k    = i
+
 
                                 if next_run_k_nt[k] == last_run_j_nt[j] and next_run_j_nt[j] == last_run_k_nt[k]:
                                     if last_run_j_nt != None and last_run_k_nt != None and next_run_j_nt != None and next_run_k_nt != None:
@@ -435,7 +445,7 @@ def find_next_non_traveling_state_in_product_ts_nt(product_ts, ts_tuple, curr_st
 
     return next_nt_list
 
-def ts_times_ts_ca(ts_tuple):
+def ts_times_ts_ca(ts_tuple, is_modifible):
     '''TODO:
     add option to choose what to save on the automaton's
     add description
@@ -445,6 +455,7 @@ def ts_times_ts_ca(ts_tuple):
 
     ''' Added '''
     state_to_remove = []
+    edge_to_remove  = []
 
     # NOTE: We assume deterministic TS
     assert all((len(ts.init) == 1 for ts in ts_tuple))
@@ -529,6 +540,7 @@ def ts_times_ts_ca(ts_tuple):
 
     # pairwise collisions
     for state in product_ts.g.node:
+
         for i in range(0, ts_tuple.__len__()):
             state_i = state[i]
             if is_traveling_state(state_i):
@@ -537,6 +549,7 @@ def ts_times_ts_ca(ts_tuple):
                         if i == j:
                             continue
                         next_state_j = next_state[j]
+
                         if is_traveling_state(next_state_j) and \
                            is_traveling_states_intersect(state_i, next_state_j):
                                 next_state_i_nt = find_next_non_traveling_state_in_product_ts(product_ts, state, i)
@@ -557,10 +570,11 @@ def ts_times_ts_ca(ts_tuple):
 
                                 if last_state_i_nt != None and next_state_j_nt != None and next_state_i_nt != None and last_state_j_nt != None:
                                     if last_state_i_nt[i] == next_state_j_nt[j] and last_state_j_nt[j] == next_state_i_nt[i]:
-                                        if state not in state_to_remove:
-                                            state_to_remove.append(state)
-                                        if next_state not in state_to_remove:
-                                            state_to_remove.append(next_state)
+                                        # if state not in state_to_remove and next_state not in state_to_remove:
+                                        #    # only half of the nodes is added here
+                                        #    state_to_remove.append(state)
+                                        if [state, next_state] not in edge_to_remove:
+                                            edge_to_remove.append([state, next_state])
 
                                         '''
                                         state_to_remove.append(last_state_i_nt)
@@ -580,9 +594,6 @@ def ts_times_ts_ca(ts_tuple):
 
                     state_j = state[j]
                     if not is_traveling_state(state_j):
-                        if state == ('23', '21', '23'):
-                            print(233)
-
                         next_nt_list_curr = find_next_non_traveling_state_in_product_ts_nt(product_ts, ts_tuple, state, i, j)
 
                         for next_state in next_nt_list_curr:
@@ -594,10 +605,14 @@ def ts_times_ts_ca(ts_tuple):
                                 #if state not in state_to_remove:
                                 #    print(str(state), "   ", next_state, "   ", 233)
 
-                                if state not in state_to_remove:
-                                    state_to_remove.append(state)
-                                if next_state not in state_to_remove:
-                                    state_to_remove.append(next_state)
+                                #if state not in state_to_remove and next_state not in state_to_remove:
+                                #   only half of the nodes is added here
+                                #   state_to_remove.append(state)
+                                # if next_state not in state_to_remove:
+                                #    state_to_remove.append(next_state)
+
+                                if [state, next_state] not in edge_to_remove:
+                                    edge_to_remove.append([state, next_state])
 
                                 # route_nt_to_nt
 
@@ -609,11 +624,19 @@ def ts_times_ts_ca(ts_tuple):
         try:
             product_ts.g.remove_node(state)
         except:
-            #print("[expection] node", state, "is previously removed")
+            # print("[expection] node", state, "is previously removed")
             pass
-    for state in state_to_remove:
-        print(state)
-    print(state_to_remove.__len__())
+
+    for edge in edge_to_remove:
+        try:
+            product_ts.g.remove_edge(edge[0], edge[1])
+        except:
+            print("[expection] edge", edge, "is previously removed")
+            pass
+    #for state in state_to_remove:
+    #    print(state)
+    print("[Product CA] removed state:", state_to_remove.__len__())
+    print("[Product CA] removed edge: ", edge_to_remove.__len__())
 
     # Return ts_1 x ts_2 x ...
     return product_ts
@@ -621,16 +644,16 @@ def ts_times_ts_ca(ts_tuple):
 def main():
     r1 = Ts.load('./robot_1.yaml')  # robot_1_real.yaml
     r2 = Ts.load('./robot_2.yaml')  # robot_2_real.yaml
-    r3 = Ts.load('./robot_3_inv_smaller.yaml')  # robot_3_real.yaml     robot_3_inv.yaml robot_3_inv_smaller.yaml
+    r3 = Ts.load('./robot_3_inv_larger.yaml')  # robot_3_real.yaml     robot_3_inv.yaml robot_3_inv_smaller.yaml robot_3_inv_larger.yaml
 
     # Adding test
     ts_tuple = (r1, r2, r3)
     is_modifible = [True, True, False]
 
-    check_remove_collisions(ts_tuple, is_modifible, run_case_3_inv_smaller)
+    check_remove_collisions(ts_tuple, is_modifible, run_case_3_inv_larger)
 
     # Removal Test
-    team_ts = ts_times_ts_ca(ts_tuple)
+    team_ts = ts_times_ts_ca(ts_tuple, is_modifible)
 
     print(team_ts)
 
