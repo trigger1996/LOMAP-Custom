@@ -43,9 +43,15 @@ def main():
     rhos = [Rho(lower=0.98, upper=1.04), Rho(lower=0.98, upper=1.04)]
 
     with Timer('IJRR 2013 Case-Study 2'):
-        r1 = Ts.load('./robot_1.yaml')         # robot_1_real.yaml
-        r2 = Ts.load('./robot_2.yaml')         # robot_2_real.yaml
-        r3 = Ts.load('./robot_3_inv_smaller.yaml')     # robot_3_real.yaml  robot_3_inv.yaml robot_3_inv_smaller.yaml
+        # norminal
+        # r1 = Ts.load('./robot_1.yaml')         # robot_1_real.yaml
+        # r2 = Ts.load('./robot_2.yaml')         # robot_2_real.yaml
+        # r3 = Ts.load('./robot_3_inv_smaller.yaml')     # robot_3_real.yaml  robot_3_inv.yaml robot_3_inv_smaller.yaml
+
+        # robustness
+        r1 = Ts.load('./robustness/robot_1_robustness.yaml')
+        r2 = Ts.load('./robustness/robot_2_robustness.yaml')
+        r3 = Ts.load('./robustness/robot_3_inv_larger.yaml')
 
         # CASE 2
         #ts_tuple = (r1, r2)

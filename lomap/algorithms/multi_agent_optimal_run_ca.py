@@ -643,6 +643,27 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                                         pairwise_collision_list[next_seq_j][j] = [last_run_k_nt[k], last_seq_k, k]
                                         pairwise_collision_list[next_seq_k][k] = [last_run_j_nt[j], last_seq_j, j]
                                         num_pairwise_collision += 1
+
+                        # if the other agent is quick enough
+                        #INFO lomap.algorithms.multi_agent_optimal_run_ca - 25    21     26
+                        #INFO lomap.algorithms.multi_agent_optimal_run_ca - 26    22     ('26', '25', 2)
+                        #INFO lomap.algorithms.multi_agent_optimal_run_ca - g3    g1     25
+                        if curr_run_k == list(curr_run_j)[0]:
+                            [last_run_j_nt, last_seq_j] = find_last_non_traveling_state(team_run, j, i)
+                            [next_run_j_nt, next_seq_j] = find_next_non_traveling_state(team_run, j, i)
+                            [last_run_k_nt, last_seq_k] = find_last_non_traveling_state(team_run, k, i)
+                            # fixed bugs
+                            next_run_k_nt = curr_run
+                            next_seq_k = i
+                            if next_run_k_nt[k] == last_run_j_nt[j] and next_run_j_nt[j] == last_run_k_nt[k]:
+                                if last_run_j_nt != None and last_run_k_nt != None and next_run_j_nt != None and next_run_k_nt != None:
+                                    is_pairwise_collision = True
+                                    pairwise_collision_list[last_seq_j][j] = [next_run_k_nt[k], next_seq_k, k]
+                                    pairwise_collision_list[last_seq_k][k] = [next_run_j_nt[j], next_seq_j, j]
+                                    pairwise_collision_list[next_seq_j][j] = [last_run_k_nt[k], last_seq_k, k]
+                                    pairwise_collision_list[next_seq_k][k] = [last_run_j_nt[j], last_seq_j, j]
+                                    num_pairwise_collision += 1
+
             else:
                 # if current run of both agent is actual state:
 

@@ -906,6 +906,44 @@ def is_traveling_states_intersect(state_1, state_2):
     else:
         return False
 
+def find_all_last_non_traveling_state(product_ts, curr_state, agent_id):
+    last_state_list = product_ts.g.in_edges(curr_state)
+    last_nt_list = []
+
+    while last_state_list.__len__() != 0:
+        last_state_index = last_state_list.pop(0)
+        last_state = last_state_index[0]
+        last_state_i = last_state[agent_id]
+
+        if not is_traveling_state(last_state_i):
+            if last_state not in last_nt_list:
+                last_nt_list.append(last_state)
+        else:
+            last_state_list_t = product_ts.g.in_edges(last_state)
+            for last_state_index_t in last_state_list_t:
+                last_state_list.append(last_state_index_t)
+
+    return last_nt_list
+
+def find_all_next_non_traveling_state(product_ts, curr_state, agent_id):
+    next_state_list = product_ts.g.out_edges(curr_state)
+    next_nt_list = []
+
+    while next_state_list.__len__() != 0:
+        next_state_index = next_state_list.pop(0)
+        next_state = next_state_index[1]
+        next_state_i = next_state[agent_id]
+
+        if not is_traveling_state(next_state_i):
+            if next_state not in next_nt_list:
+                next_nt_list.append(next_state)
+        else:
+            next_state_list_t = product_ts.g.out_edges(next_state)
+            for next_state_index_t in next_state_list_t:
+                next_state_list.append(next_state_index_t)
+
+    return next_nt_list
+
 route_from_nt = []
 def find_last_non_traveling_state_in_product_ts(product_ts, curr_state, agent_id):
     curr_state_i = list(curr_state)[agent_id]
@@ -1107,16 +1145,27 @@ def ts_times_ts_ca(ts_tuple):
                                     if [state, next_state] not in edge_to_remove:
                                         edge_to_remove.append([state, next_state])
 
-                                    '''
-                                    state_to_remove.append(last_state_i_nt)
-                                    state_to_remove.append(last_state_j_nt)
-                                    state_to_remove.append(next_state_i_nt)
-                                    state_to_remove.append(next_state_j_nt)
+                        # if the other agent is quick enough
+                        state_j = state[j]
+                        if state_j == list(state_i)[1]:
 
-                                    route_to_remove = route_to_i_nt + route_to_j_nt + route_from_i_nt + route_from_j_nt
-                                    for state_temp in route_to_remove:
-                                        state_to_remove.append(state_temp)
-                                    '''
+                            next_nt_list_j = find_all_next_non_traveling_state(product_ts, state, j)
+
+                            for next_state_t in next_nt_list_j:
+                                if next_state_t[j] == list(state_i)[0]:
+                                    if [state, next_state_t] not in edge_to_remove:
+                                        edge_to_remove.append([state, next_state_t])
+                                        if state[0] == '25' and state[1] == '21' and state[2] == ('26', '25', 1):
+                                            print([state, next_state_t], ' ', 2333)
+
+                        if state_j == list(state_i)[0]:
+                            last_nt_list_j = find_all_last_non_traveling_state(product_ts, state, j)
+
+                            for last_state_t in last_nt_list_j:
+                                if last_state_t[j] == list(state_i)[1]:
+                                    if [last_state_t, state] not in edge_to_remove:
+                                        edge_to_remove.append([last_state_t, state])
+
             else:
                 for j in range(0, state_list.__len__()):
                     if i == j:
