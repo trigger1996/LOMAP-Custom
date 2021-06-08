@@ -577,6 +577,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
 
     logger.info('original team run: %s', team_run)
     logger.info('original suffix cycle len on team TS: %d', suffix_cycle_on_team_ts.__len__())
+    logger.info('original Cost: %d', suffix_cycle_cost)
 
     #
     is_singleton_collision = False
