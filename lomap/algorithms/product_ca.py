@@ -1183,8 +1183,9 @@ def ts_times_ts_ca(ts_tuple):
 
                                 if [state, next_state] not in edge_to_remove:
                                     route_nt_to_nt = networkx.dijkstra_path(product_ts.g, state, next_state)
-                                    for k in range(0, route_nt_to_nt.__len__() - 1):
-                                        edge_to_remove.append([route_nt_to_nt[k], route_nt_to_nt[k + 1]])
+                                    #for k in range(0, route_nt_to_nt.__len__() - 1):
+                                    #    edge_to_remove.append([route_nt_to_nt[k], route_nt_to_nt[k + 1]])
+                                    edge_to_remove.append([route_nt_to_nt[0], route_nt_to_nt[1]])
 
                                 # route_nt_to_nt
 

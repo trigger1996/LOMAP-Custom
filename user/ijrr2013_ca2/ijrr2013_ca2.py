@@ -49,9 +49,9 @@ def main():
         # r3 = Ts.load('./robot_3_inv_smaller.yaml')     # robot_3_real.yaml  robot_3_inv.yaml robot_3_inv_smaller.yaml
 
         # robustness
-        r1 = Ts.load('./robustness/robot_1_robustness.yaml')
-        r2 = Ts.load('./robustness/robot_2_robustness.yaml')
-        r3 = Ts.load('./robustness/robot_3_inv_faster.yaml')    # robot_3_inv_larger.yaml
+        r1 = Ts.load('./robustness_inv/robot_1_robustness.yaml')
+        r2 = Ts.load('./robustness_inv/robot_2_robustness.yaml')
+        r3 = Ts.load('./robustness_inv/robot_3_larger_faster.yaml')    # robot_3_inv_larger.yaml
 
         # CASE 2
         #ts_tuple = (r1, r2)

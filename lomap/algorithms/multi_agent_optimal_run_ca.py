@@ -655,8 +655,8 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                             # fixed bugs
                             next_run_k_nt = curr_run
                             next_seq_k = i
-                            if next_run_k_nt[k] == last_run_j_nt[j] and next_run_j_nt[j] == last_run_k_nt[k]:
-                                if last_run_j_nt != None and last_run_k_nt != None and next_run_j_nt != None and next_run_k_nt != None:
+                            if last_run_j_nt != None and last_run_k_nt != None and next_run_j_nt != None and next_run_k_nt != None:
+                                if next_run_k_nt[k] == last_run_j_nt[j] and next_run_j_nt[j] == last_run_k_nt[k]:
                                     is_pairwise_collision = True
                                     pairwise_collision_list[last_seq_j][j] = [next_run_k_nt[k], next_seq_k, k]
                                     pairwise_collision_list[last_seq_k][k] = [next_run_j_nt[j], next_seq_j, j]
