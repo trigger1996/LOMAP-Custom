@@ -1185,7 +1185,13 @@ def ts_times_ts_ca(ts_tuple):
                                     route_nt_to_nt = networkx.dijkstra_path(product_ts.g, state, next_state)
                                     #for k in range(0, route_nt_to_nt.__len__() - 1):
                                     #    edge_to_remove.append([route_nt_to_nt[k], route_nt_to_nt[k + 1]])
-                                    edge_to_remove.append([route_nt_to_nt[0], route_nt_to_nt[1]])
+                                    if [route_nt_to_nt[0], route_nt_to_nt[1]] not in edge_to_remove:
+                                        edge_to_remove.append([route_nt_to_nt[0], route_nt_to_nt[1]])
+                                    if [route_nt_to_nt[route_nt_to_nt.__len__() - 2],
+                                        route_nt_to_nt[route_nt_to_nt.__len__() - 1]] not in edge_to_remove:
+                                        edge_to_remove.append([route_nt_to_nt[route_nt_to_nt.__len__() - 2],
+                                                               route_nt_to_nt[route_nt_to_nt.__len__() - 1]])
+
 
                                 # route_nt_to_nt
 

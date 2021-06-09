@@ -44,9 +44,9 @@ def main():
 
     with Timer('IJRR 2013 Case-Study 2'):
         # norminal
-        # r1 = Ts.load('./robot_1.yaml')         # robot_1_real.yaml
-        # r2 = Ts.load('./robot_2.yaml')         # robot_2_real.yaml
-        # r3 = Ts.load('./robot_3_inv_smaller.yaml')     # robot_3_real.yaml  robot_3_inv.yaml robot_3_inv_smaller.yaml
+        #r1 = Ts.load('./robot_1.yaml')         # robot_1_real.yaml
+        #r2 = Ts.load('./robot_2.yaml')         # robot_2_real.yaml
+        #r3 = Ts.load('./robot_3_inv_larger.yaml')     # robot_3_real.yaml  robot_3_inv.yaml robot_3_inv_smaller.yaml
 
         # robustness
         r1 = Ts.load('./robustness_inv/robot_1_robustness.yaml')
