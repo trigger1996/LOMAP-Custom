@@ -1009,8 +1009,9 @@ def find_next_non_traveling_state_in_product_ts_nt(product_ts, ts_tuple, curr_st
                 if is_traveling_state(next_state_i) and list(next_state_i)[1] in expected_next_state_list_i and \
                    is_traveling_state(next_state_j) and list(next_state_j)[1] in expected_next_state_list_j:
                     next_state_list.append(next_state_index_t)
-                #if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
-                #    next_state_list.append(next_state_index_t)
+                #
+                if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
+                    next_state_list.append(next_state_index_t)
             del next_state_list_t
 
     return next_nt_list

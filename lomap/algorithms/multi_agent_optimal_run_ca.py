@@ -867,6 +867,25 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
             prefix_length, prefix_on_team_ts, suffix_cycle_cost, suffix_cycle_on_team_ts = optimal_run_pp(team_ts, formula,
                                                                                                        opt_prop)
 
+        ''' print modified team run '''
+        # pop the start of suffix to remove repetance
+        suffix_cycle_on_team_ts.pop(0)
+        team_run = list(prefix_on_team_ts + suffix_cycle_on_team_ts)
+
+        # according to definitions, collision should always be identified in those non-travelling points
+        to_pop = []
+        # calculate those all-travelling-state points
+        for i in range(0, team_run.__len__()):
+            travelling_state_num = 0
+            for j in range(0, ts_tuple.__len__()):
+                if is_traveling_state(team_run[i][j]):
+                    travelling_state_num += 1
+            if travelling_state_num == ts_tuple.__len__():
+                to_pop.append(team_run[i])
+        # remove from team run
+        for i in range(0, to_pop.__len__()):
+            team_run.remove(to_pop[i])
+        logger.info('CA team run: %s', team_run)
 
         # Pretty print the run
         pretty_print(len(ts_tuple), prefix_on_team_ts, suffix_cycle_on_team_ts)

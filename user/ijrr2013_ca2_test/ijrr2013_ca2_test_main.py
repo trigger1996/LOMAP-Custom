@@ -497,8 +497,9 @@ def find_next_non_traveling_state_in_product_ts_nt(product_ts, ts_tuple, curr_st
                 if is_traveling_state(next_state_i) and list(next_state_i)[1] in expected_next_state_list_i and \
                    is_traveling_state(next_state_j) and list(next_state_j)[1] in expected_next_state_list_j:
                     next_state_list.append(next_state_index_t)
-                #if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
-                #    next_state_list.append(next_state_index_t)
+                #
+                if not is_traveling_state(next_state_i) and not is_traveling_state(next_state_j):
+                    next_state_list.append(next_state_index_t)
             del next_state_list_t
 
     return next_nt_list
@@ -599,6 +600,9 @@ def ts_times_ts_ca(ts_tuple, is_modifible):
     # pairwise collisions
     for state in product_ts.g.node:
 
+        if state[0] == '26' and state[1] == ('22', '23', 1) and state[2] == '27':
+            print(233)
+
         for i in range(0, ts_tuple.__len__()):
             state_i = state[i]
             if is_traveling_state(state_i):
@@ -645,9 +649,6 @@ def ts_times_ts_ca(ts_tuple, is_modifible):
                                             state_to_remove.append(state_temp)
                                         '''
 
-                        if state[0] == '25' and state[1] == '21' and state[2] == ('26', '25', 1) and i == 2 and j == 0:
-                            print(233)
-
                         # if the other agent is quick enough
                         #INFO lomap.algorithms.multi_agent_optimal_run_ca - 8                   2                   26
                         #INFO lomap.algorithms.multi_agent_optimal_run_ca - 25                  21                  ('26', '25', 1)
@@ -664,7 +665,6 @@ def ts_times_ts_ca(ts_tuple, is_modifible):
                         # INFO lomap.algorithms.multi_agent_optimal_run_ca - 8                   2                   26
                         # INFO lomap.algorithms.multi_agent_optimal_run_ca - 25                  21                  ('26', '25', 1)
                         # INFO lomap.algorithms.multi_agent_optimal_run_ca - 26                  22                  25
-
                         state_j = state[j]
                         if state_j == list(state_i)[1]:
 
@@ -718,7 +718,9 @@ def ts_times_ts_ca(ts_tuple, is_modifible):
                                 if [state, next_state] not in edge_to_remove:
                                     edge_to_remove.append([state, next_state])
 
-                                # route_nt_to_nt
+                    # INFO lomap.algorithms.multi_agent_optimal_run_ca - 26                  ('22', '23', 1)     27
+                    # INFO lomap.algorithms.multi_agent_optimal_run_ca - ('26', '27', 1)     23                  ('27', '26', 1)
+                    # INFO lomap.algorithms.multi_agent_optimal_run_ca - 27                  9                   26
 
     if state_to_remove.__len__() >= 0:
         print("The number of removal")
@@ -750,9 +752,9 @@ def main():
     #r2 = Ts.load('./robot_2.yaml')  # robot_2_real.yaml
     #r3 = Ts.load('./robot_3_inv_larger.yaml')  # robot_3_real.yaml     robot_3_inv.yaml robot_3_inv_smaller.yaml robot_3_inv_larger.yaml
 
-    r1 = Ts.load('./robustness_1/robot_1_robustness.yaml')
-    r2 = Ts.load('./robustness_1/robot_2_robustness.yaml')
-    r3 = Ts.load('./robustness_1/robot_3_inv_larger.yaml')
+    r1 = Ts.load('./robustness_2/robot_1_robustness.yaml')
+    r2 = Ts.load('./robustness_2/robot_2_robustness.yaml')
+    r3 = Ts.load('./robustness_2/robot_3_inv_larger.yaml')
 
     # Adding test
     ts_tuple = (r1, r2, r3)
