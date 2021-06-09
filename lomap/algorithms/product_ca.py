@@ -23,6 +23,7 @@ import itertools as it
 import operator as op
 import logging
 import copy
+import networkx
 from collections import deque
 
 from six.moves import zip
@@ -1181,7 +1182,9 @@ def ts_times_ts_ca(ts_tuple):
                             if state_i == next_state_j and state_j == next_state_i:
 
                                 if [state, next_state] not in edge_to_remove:
-                                    edge_to_remove.append([state, next_state])
+                                    route_nt_to_nt = networkx.dijkstra_path(product_ts.g, state, next_state)
+                                    for k in range(0, route_nt_to_nt.__len__() - 1):
+                                        edge_to_remove.append([route_nt_to_nt[k], route_nt_to_nt[k + 1]])
 
                                 # route_nt_to_nt
 
