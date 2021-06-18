@@ -1157,8 +1157,6 @@ def ts_times_ts_ca(ts_tuple):
                                 if next_state_t[j] == list(state_i)[0]:
                                     if [state, next_state_t] not in edge_to_remove:
                                         edge_to_remove.append([state, next_state_t])
-                                        if state[0] == '25' and state[1] == '21' and state[2] == ('26', '25', 1):
-                                            print([state, next_state_t], ' ', 2333)
 
                         if state_j == list(state_i)[0]:
                             last_nt_list_j = find_all_last_non_traveling_state(product_ts, state, j)

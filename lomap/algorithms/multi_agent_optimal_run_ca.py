@@ -575,9 +575,9 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
     for i in range(0, to_pop.__len__()):
         team_run.remove(to_pop[i])
 
-    logger.info('original team run: %s', team_run)
-    logger.info('original suffix cycle len on team TS: %d', suffix_cycle_on_team_ts.__len__())
-    logger.info('original Cost: %d', suffix_cycle_cost)
+    logger.info('[original] team run: %s', team_run)
+    logger.info('[original] suffix cycle len on team TS: %d', suffix_cycle_on_team_ts.__len__())
+    logger.info('[original] Cost: %d', suffix_cycle_cost)
 
     #
     is_singleton_collision = False
@@ -585,7 +585,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
     is_rear_end_collision  = False
     singleton_collision_list = [ [False for i in range(ts_tuple.__len__())] for j in range(team_run.__len__()) ]
     pairwise_collision_list  = [ [False for i in range(ts_tuple.__len__())] for j in range(team_run.__len__()) ]
-    rear_end_collision_list  = [[False for i in range(ts_tuple.__len__())] for j in range(team_run.__len__())]
+    rear_end_collision_list  = [ [False for i in range(ts_tuple.__len__())] for j in range(team_run.__len__()) ]
 
     ''' singleton_collision '''
     num_singleton_collision = 0
@@ -730,7 +730,7 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                         if not is_traveling_state(team_state_last[j]):
                             break
                     # find next indivdual state expect for travelling
-                    for k in range(1, team_run.__len__()):
+                    for k in range(1, team_run.__len__() - i):
                         team_state_next = list(team_run[i + k])
                         if not is_traveling_state(team_state_next[j]):
                             break
