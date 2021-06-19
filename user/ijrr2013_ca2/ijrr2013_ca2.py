@@ -44,14 +44,14 @@ def main():
 
     with Timer('IJRR 2013 Case-Study 2'):
         # norminal
-        #r1 = Ts.load('./robot_1.yaml')
-        #r2 = Ts.load('./robot_2.yaml')
-        #r3 = Ts.load('./robot_3_inv_larger.yaml')      # robot_3.yaml robot_3_inv.yaml   robot_3_inv_larger.yaml
+        r1 = Ts.load('./robot_1.yaml')
+        r2 = Ts.load('./robot_2.yaml')
+        r3 = Ts.load('./robot_3_inv_larger.yaml')      # robot_3.yaml robot_3_inv.yaml   robot_3_inv_larger.yaml
 
         # robustness
-        r1 = Ts.load('./robustness/robot_1.yaml')
-        r2 = Ts.load('./robustness/robot_2.yaml')
-        r3 = Ts.load('./robustness/robot_3_inv.yaml')       # robot_3.yaml
+        #r1 = Ts.load('./robustness/robot_1.yaml')
+        #r2 = Ts.load('./robustness/robot_2.yaml')
+        #r3 = Ts.load('./robustness/robot_3_inv.yaml')       # robot_3.yaml
 
         # CASE 2
         #ts_tuple = (r1, r2)
