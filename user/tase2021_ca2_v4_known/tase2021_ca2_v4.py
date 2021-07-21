@@ -46,24 +46,26 @@ def main():
         # norminal
         r1 = Ts.load('./robot_1.yaml')
         r2 = Ts.load('./robot_2.yaml')
-        r3 = Ts.load('./robot_3_larger.yaml')      # robot_3.yaml robot_3_larger.yaml   robot_3_inv_larger.yaml
+        r3 = Ts.load('./robot_3.yaml')                  # robot_3.yaml
+        r4 = Ts.load('./robot_4.yaml')                  # robot_4.yaml
 
         # robustness
         #r1 = Ts.load('./robustness/robot_1.yaml')
         #r2 = Ts.load('./robustness/robot_2.yaml')
-        #r3 = Ts.load('./robustness/robot_3_inv.yaml')       # robot_3.yaml
+        #r3 = Ts.load('./robustness/robot_3.yaml')       # robot_3.yaml
+        #r4 = Ts.load('./robustness/robot_4.yaml')
 
         # CASE 2
         #ts_tuple = (r1, r2)
-        ts_tuple = (r1, r2, r3)
-        formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
-                   '&& [](r1gather -> X(!r1gather U r1upload)) '
-                   '&& [](r2gather -> X(!r2gather U r2upload))')
-        opt_prop = set(['r1gather','r2gather'])
+        #ts_tuple = (r1, r2, r3, r4)
+        #formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
+        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
+        #           '&& [](r2gather -> X(!r2gather U r2upload))')
+        #opt_prop = set(['r1gather','r2gather'])
 
         # CASE 3
         #ts_tuple = (r1, r2)
-        #ts_tuple = (r1, r2, r3)
+        #ts_tuple = (r1, r2, r3, r4)
         #formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
         #           '&& [](r1gather -> X(!r1gather U r1upload)) '
         #           '&& [](r2gather -> X(!r2gather U r2upload)) '
@@ -73,16 +75,17 @@ def main():
 
         # CASE 4
         #ts_tuple = (r1, r2)
-        #ts_tuple = (r1, r2, r3)
-        #formula = ('[]<>gather && [](gather->(r1gather4 && r2gather2)) '
-        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
-        #           '&& [](r2gather -> X(!r2gather U r2upload))')
-        #opt_prop = set(['r1gather4','r2gather2'])
+        ts_tuple = (r1, r2, r3, r4)
+        formula = ('[]<>gather && [](gather->(r1gather2 && r2gather4)) '
+                   '&& [](r1gather -> X(!r1gather U r1upload1)) '
+                   '&& [](r2gather -> X(!r2gather U r2upload2))')
+        opt_prop = set(['r1gather2','r2gather4'])
 
         # collision avoidance
-        is_modifible = [True, True, False]
+        is_modifible = [True, True, False, False]
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
+
 
         #prefix_length_pre, prefixes, suffix_cycle_cost_pre, suffix_cycles, team_prefix, team_suffix_cycle = \
         #    ca.multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=True)
