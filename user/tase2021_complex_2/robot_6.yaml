@@ -1,0 +1,24 @@
+!Ts
+name: robot_6
+multi: true
+directed: true
+init: ['14']
+final: []
+graph:
+  nodes:
+    '11': {}
+    '12': {}
+    '14': {}
+    '15': {}
+    '16': {}
+    u2: {}
+
+  edges:
+  - ['12', '11', {control: fl,  weight: 1}]
+  - ['11',  u2,  {control: fl,  weight: 4}]
+  - [ u2,  '16', {control: fl,  weight: 1}]
+  - ['16', '15', {control: fl,  weight: 4}]
+  - ['15', '14', {control: fl,  weight: 1}]
+  - ['14', '12', {control: fl,  weight: 1}]
+
+

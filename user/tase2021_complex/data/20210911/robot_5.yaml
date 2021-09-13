@@ -1,0 +1,19 @@
+!Ts
+name: robot_5
+multi: true
+directed: true
+init: ['31']
+final: []
+graph:
+  nodes:
+
+    '31': {}
+    '32': {}
+    '33': {}
+    g2: {}
+
+  edges:
+  - ['32', '33', {control: fl,   weight: 2}]
+  - ['33',  g2,  {control: fl,   weight: 2}]
+  - [ g2,  '31', {control: fl,   weight: 2}]
+  - ['31', '32', {control: fr,   weight: 2}]

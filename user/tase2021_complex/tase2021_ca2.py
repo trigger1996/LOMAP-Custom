@@ -42,7 +42,7 @@ def main():
     Rho = namedtuple('Rho', ['lower', 'upper'])
     rhos = [Rho(lower=0.98, upper=1.04), Rho(lower=0.98, upper=1.04)]
 
-    with Timer('TASE 2021'):
+    with Timer('IJRR 2013 Case-Study 2'):
         # norminal
         r1 = Ts.load('./robot_1.yaml')
         r2 = Ts.load('./robot_2.yaml')

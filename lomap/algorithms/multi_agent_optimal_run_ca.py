@@ -635,8 +635,8 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
                                 last_run_k_nt = curr_run
                                 last_seq_k = i
 
-                                if next_run_k_nt[k] == last_run_j_nt[j] and next_run_j_nt[j] == last_run_k_nt[k]:
-                                    if last_run_j_nt != None and last_run_k_nt != None and next_run_j_nt != None and next_run_k_nt != None:
+                                if last_run_j_nt != None and last_run_k_nt != None and next_run_j_nt != None and next_run_k_nt != None:
+                                    if next_run_k_nt[k] == last_run_j_nt[j] and next_run_j_nt[j] == last_run_k_nt[k]:
                                         is_pairwise_collision = True
                                         pairwise_collision_list[last_seq_j][j] = [next_run_k_nt[k], next_seq_k, k]
                                         pairwise_collision_list[last_seq_k][k] = [next_run_j_nt[j], next_seq_j, j]
@@ -737,14 +737,22 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
 
                     if not is_traveling_state(team_state_curr[j]) and is_modifible[j]:
                         if is_modifible[j]:
-                            if team_state_last != None:
+                            if team_state_last != None and not is_traveling_state(team_state_last[j]):
                                 # avoid adding the same edge to reduce states
                                 if ts_tuple[j].g.edge[team_state_last[j]].get(team_state_last[j]) == None:
                                     ts_tuple[j].g.add_edge(team_state_last[j], team_state_last[j],
                                                            attr_dict={'weight': min_cost, 'control': 's'})
-                            if team_state_next != None:
+                            if team_state_next != None and not is_traveling_state(team_state_next[j]):
                                 if ts_tuple[j].g.edge[team_state_next[j]].get(team_state_next[j]) == None:
                                     ts_tuple[j].g.add_edge(team_state_next[j], team_state_next[j],
+                                                           attr_dict={'weight': min_cost, 'control': 's'})
+
+                            #if team_state_last != None and is_traveling_state(team_state_last[j]):
+                                # if team_state_last != None and is_traveling_state(team_state_last[j]):
+
+                            if team_state_next != None and is_traveling_state(team_state_next[j]):
+                                if ts_tuple[j].g.edge[list(team_state_next[j])[1]].get(list(team_state_next[j])[1]) == None:
+                                    ts_tuple[j].g.add_edge(list(team_state_next[j])[1], list(team_state_next[j])[1],
                                                            attr_dict={'weight': min_cost, 'control': 's'})
 
     ''' pairwise_collision '''
