@@ -1,0 +1,23 @@
+!Ts
+name: robot_1
+multi: true
+directed: true
+init: [u1]
+final: []
+graph:
+  nodes:
+    'S': {}
+    'G': {}
+    'A': {}
+    'B': {}
+    'C': {}
+    'D': {}
+  edges:
+  - ['S',  'A',  {control: u,  weight: 2}]
+  - ['S',  'B',  {control: u,  weight: 6}]
+  - ['A',  'D',  {control: u,  weight: 4}]
+  - ['B',  'D',  {control: u,  weight: 1}]
+  - ['A',  'C',  {control: u,  weight: 2}]
+  - ['D',  'C',  {control: u,  weight: 3}]
+  - ['D',  'G',  {control: u,  weight: 2}]
+  - ['D',  'G',  {control: u,  weight: 5}]
