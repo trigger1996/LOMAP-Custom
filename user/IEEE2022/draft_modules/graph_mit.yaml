@@ -20,4 +20,4 @@ graph:
   - ['A',  'C',  {control: u,  weight: 2}]
   - ['D',  'C',  {control: u,  weight: 3}]
   - ['D',  'G',  {control: u,  weight: 2}]
-  - ['D',  'G',  {control: u,  weight: 5}]
+  - ['B',  'G',  {control: u,  weight: 5}]
