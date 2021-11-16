@@ -12,8 +12,9 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 import plotting, env
 from lomap import Ts
+import networkx
 
-class LPAStar:
+class LPAstar(object):
     def __init__(self, s_start, s_goal, heuristic_type):
         self.s_start, self.s_goal = s_start, s_goal
         self.heuristic_type = heuristic_type
@@ -26,12 +27,12 @@ class LPAStar:
         self.x = self.Env.x_range
         self.y = self.Env.y_range
 
-        self.g, self.rhs, self.U = {}, {}, {}
+        self.g_xy, self.rhs, self.U = {}, {}, {}
 
         for i in range(self.Env.x_range):
             for j in range(self.Env.y_range):
                 self.rhs[(i, j)] = float("inf")
-                self.g[(i, j)] = float("inf")
+                self.g_xy[(i, j)] = float("inf")
 
         self.rhs[self.s_start] = 0
         self.U[self.s_start] = self.CalculateKey(self.s_start)
@@ -84,22 +85,22 @@ class LPAStar:
             s, v = self.TopKey()
 
             if v >= self.CalculateKey(self.s_goal) and \
-                    self.rhs[self.s_goal] == self.g[self.s_goal]:
+                    self.rhs[self.s_goal] == self.g_xy[self.s_goal]:
                 break
 
             self.U.pop(s)
             self.visited.add(s)
 
-            if self.g[s] > self.rhs[s]:
+            if self.g_xy[s] > self.rhs[s]:
 
                 # Condition: over-consistent (eg: deleted obstacles)
                 # So, rhs[s] decreased -- > rhs[s] < g[s]
-                self.g[s] = self.rhs[s]
+                self.g_xy[s] = self.rhs[s]
             else:
 
                 # Condition: # under-consistent (eg: added obstacles)
                 # So, rhs[s] increased --> rhs[s] > g[s]
-                self.g[s] = float("inf")
+                self.g_xy[s] = float("inf")
                 self.UpdateVertex(s)
 
             for s_n in self.get_neighbor(s):
@@ -115,13 +116,13 @@ class LPAStar:
 
             # Condition: cost of parent of s changed
             # Since we do not record the children of a state, we need to enumerate its neighbors
-            self.rhs[s] = min(self.g[s_n] + self.cost(s_n, s)
+            self.rhs[s] = min(self.g_xy[s_n] + self.cost(s_n, s)
                               for s_n in self.get_neighbor(s))
 
         if s in self.U:
             self.U.pop(s)
 
-        if self.g[s] != self.rhs[s]:
+        if self.g_xy[s] != self.rhs[s]:
 
             # Condition: current cost to come is different to that of last time
             # state s should be added into OPEN set (set U)
@@ -138,8 +139,8 @@ class LPAStar:
 
     def CalculateKey(self, s):
 
-        return [min(self.g[s], self.rhs[s]) + self.h(s),
-                min(self.g[s], self.rhs[s])]
+        return [min(self.g_xy[s], self.rhs[s]) + self.h(s),
+                min(self.g_xy[s], self.rhs[s])]
 
     def get_neighbor(self, s):
         """
@@ -216,7 +217,7 @@ class LPAStar:
             g_list = {}
             for x in self.get_neighbor(s):
                 if not self.is_collision(s, x):
-                    g_list[x] = self.g[x]
+                    g_list[x] = self.g_xy[x]
             s = min(g_list, key=g_list.get)
             path.append(s)
             if s == self.s_start:
@@ -242,19 +243,65 @@ class LPAStar:
         for x in visited:
             plt.plot(x[0], x[1], marker='s', color=color[self.count])
 
+class Ts_Grid(LPAstar, Ts):
+    def __init__(self, name, xy_start, xy_goal):
+        super(Ts, self).__init__(name)
+        super(Ts_Grid, self).__init__(xy_start, xy_goal, "Euclidean")
+        self.grid_to_Ts()
 
-class Ts_grid(Ts, LPAStar):
-    def __init__():
-        super(Ts, self).__init__()
-        super()
-        print(233)
+    def grid_to_Ts(self):
+        for x in range(0, self.Env.x_range):
+            for y in range(0, self.Env.y_range):
+                if not (x, y) in self.Env.obs:
+                    if (x, y) == self.s_start:
+                        self.g.add_node((x, y), attr_dict={'prop': ('start', 'F_start')})
+                    elif (x, y) == self.s_goal:
+                        self.g.add_node((x, y), attr_dict={'prop': ('goal',  'F_goal')})
+                    else:
+                        self.g.add_node((x, y))
+                    for x_adj in range(max(0, x - 1), min(x + 2, self.Env.x_range)):
+                        for y_adj in range(max(0, y - 1), min(y + 2, self.Env.y_range)):
+                            if not (x_adj, y_adj) in self.Env.obs and (x, y) != (x_adj, y_adj):
+                                dst = ((x_adj - x) ** 2 + (y_adj - y) ** 2) ** 0.5
+                                self.g.add_edge((x, y), (x_adj, y_adj), attr_dict={'weight': dst, 'control': ' '})
+        pass
+
+    def run(self):
+        self.Plot.plot_grid("Lifelong Planning A*")
+
+        self.ComputeShortestPath()
+        self.plot_path(self.extract_path())
+
+        path = self.extract_path()
+        dst = 0
+        for i in range(0, path.__len__()):
+            dx = list(path[i])[0] - list(path[i - 1])[0]
+            dy = list(path[i])[1] - list(path[i - 1])[1]
+            dst += (dx ** 2 + dy ** 2) ** 0.5
+        print(dst, "  ", path)
+
+        self.fig.canvas.mpl_connect('button_press_event', self.on_press)
+
+        plt.show()
 
 def main():
     x_start = (1, 1)
     x_goal = (15, 10)
 
-    lpastar = LPAStar(x_start, x_goal, "Euclidean")
+    lpastar = Ts_Grid("unicycle bot 1", x_start, x_goal)
+    ts_example = Ts_Grid.load('./user/IEEE2022/old/draft_modules/robot_1.yaml')
+
+    path = networkx.dijkstra_path(lpastar.g, lpastar.s_start, lpastar.s_goal)
+    dst = 0
+    for i in range(0, path.__len__()):
+        dx = list(path[i])[0] - list(path[i - 1])[0]
+        dy = list(path[i])[1] - list(path[i - 1])[1]
+        dst += (dx ** 2 + dy ** 2) ** 0.5
+    print(dst, "  ", path)
+
     lpastar.run()
+
+
 
 
 if __name__ == '__main__':
