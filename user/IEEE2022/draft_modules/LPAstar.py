@@ -266,7 +266,8 @@ class Ts_Grid(LPAstar, Ts):
                     for x_adj in range(max(0, x - 1), min(x + 2, self.Env.x_range)):
                         for y_adj in range(max(0, y - 1), min(y + 2, self.Env.y_range)):
                             if not (x_adj, y_adj) in self.Env.obs and (x, y) != (x_adj, y_adj):
-                                dst = ((x_adj - x) ** 2 + (y_adj - y) ** 2) ** 0.5
+                                #dst = ((x_adj - x) ** 2 + (y_adj - y) ** 2) ** 0.5
+                                dst = 1 # for less states in product TS
                                 self.g.add_edge(str((x, y)), str((x_adj, y_adj)), attr_dict={'weight': dst, 'control': ' '})
         pass
 

@@ -22,10 +22,13 @@ def main():
     bot_1 = Ts_Grid("unicycle bot 1", x_start_1, x_goal)
     bot_2 = Ts_Grid("unicycle bot 2", x_start_2, x_goal)
 
-    ts_example = Ts_Grid.load('./user/IEEE2022/old/draft_modules/robot_1.yaml')
+    #ts_example = Ts_Grid.load('./user/IEEE2022/old/draft_modules/robot_1.yaml')
 
     ts_tuple = (bot_1, bot_2)
-    ts_times_ts(ts_tuple)
+    product_ts = ts_times_ts(ts_tuple)
+
+    #product_ts.g[('(1, 1)', '(1, 1)')]
+
     print(233)
 
 
