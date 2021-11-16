@@ -287,3 +287,26 @@ class Ts_Grid(LPAstar, Ts):
 
         plt.show()
 
+
+def main():
+    x_start = (1, 1)
+    x_goal = (15, 10)
+
+    lpastar = Ts_Grid("unicycle bot 1", x_start, x_goal)
+    #ts_example = Ts_Grid.load('./user/IEEE2022/old/draft_modules/robot_1.yaml')
+
+    path = networkx.dijkstra_path(lpastar.g, lpastar.s_start, lpastar.s_goal)
+    dst = 0
+    for i in range(0, path.__len__()):
+        dx = list(path[i])[0] - list(path[i - 1])[0]
+        dy = list(path[i])[1] - list(path[i - 1])[1]
+        dst += (dx ** 2 + dy ** 2) ** 0.5
+    print(dst, "  ", path)
+
+    lpastar.run()
+
+
+
+
+if __name__ == '__main__':
+    main()
