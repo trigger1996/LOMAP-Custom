@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 import plotting, env
-
+from lomap import Ts
 
 class LPAStar:
     def __init__(self, s_start, s_goal, heuristic_type):
@@ -242,6 +242,12 @@ class LPAStar:
         for x in visited:
             plt.plot(x[0], x[1], marker='s', color=color[self.count])
 
+
+class Ts_grid(Ts, LPAStar):
+    def __init__():
+        super(Ts, self).__init__()
+        super()
+        print(233)
 
 def main():
     x_start = (1, 1)

@@ -6,6 +6,7 @@ Plot tools 2D
 import os
 import sys
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -64,9 +65,17 @@ class Plotting:
         obs_x = [x[0] for x in self.obs]
         obs_y = [x[1] for x in self.obs]
 
-        plt.plot(self.xI[0], self.xI[1], "bs")
+
+        ax = plt.plot(self.xI[0], self.xI[1], "bs")
         plt.plot(self.xG[0], self.xG[1], "gs")
-        plt.plot(obs_x, obs_y, "sk")
+
+        #plt.plot(obs_x, obs_y, "sk")
+        for obs_t in self.obs:
+            plt.gca().add_patch(plt.Rectangle(xy=(obs_t[0] - 0.5, obs_t[1] - 0.5),
+                                   width=1,height=1,
+                                   linewidth=0,fill=True,edgecolor='k',color=[0.1,0.1,0.1]))
+
+
         plt.title(name)
         plt.axis("equal")
 

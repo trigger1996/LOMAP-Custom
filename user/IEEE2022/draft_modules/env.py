@@ -35,17 +35,31 @@ class Env:
         for i in range(y):
             obs.add((x - 1, i))
 
-        '''
-        for i in range(10, 21):
-            obs.add((i, 15))
-        for i in range(15):
-            obs.add((20, i))
+        '''Obstacle 1'''
+        for i in range(3, 6):
+            for j in range(5, 8):
+                obs.add((i, j))
+        for i in range(6, 8):
+            for j in range(4, 8):
+                obs.add((i, j))
+        for i in range(3, 5):
+            for j in range(8, 10):
+                obs.add((i, j))
 
-        for i in range(15, 30):
-            obs.add((30, i))
-        for i in range(16):
-            obs.add((40, i))
-        '''
+        '''Obstacle 2'''
+        for i in range(9, 11):
+            for j in range(1, 4):
+                obs.add((i, j))
+        for i in range(10, 14):
+            for j in range(3, 6):
+                obs.add((i, j))
+
+
+        '''Obstacle 3'''
+        for i in range(10, 12):
+            for j in range(9, 11):
+                obs.add((i, j))
+
 
 
 
