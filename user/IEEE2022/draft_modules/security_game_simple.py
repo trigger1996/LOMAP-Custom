@@ -27,7 +27,12 @@ def main():
     ts_tuple = (bot_1, bot_2)
     product_ts = ts_times_ts(ts_tuple)
 
+    ''' Find vertices in product_TS which makes singleton collisions'''
     #product_ts.g[('(1, 1)', '(1, 1)')]
+
+    ''' Find vertices in product_TS which makes pairwise collisions'''
+
+    ''' Find vertices that will cause  cycles'''
 
     print(233)
 
