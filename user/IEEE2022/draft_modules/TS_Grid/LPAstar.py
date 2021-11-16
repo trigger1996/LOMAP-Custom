@@ -7,6 +7,7 @@ import os
 import sys
 import math
 import matplotlib.pyplot as plt
+import re
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -295,18 +296,20 @@ def main():
     lpastar = Ts_Grid("unicycle bot 1", x_start, x_goal)
     #ts_example = Ts_Grid.load('./user/IEEE2022/old/draft_modules/robot_1.yaml')
 
-    path = networkx.dijkstra_path(lpastar.g, lpastar.s_start, lpastar.s_goal)
+    path = networkx.dijkstra_path(lpastar.g, str(lpastar.s_start), str(lpastar.s_goal))
     dst = 0
+
+    pattern = re.compile(r'\d+')
     for i in range(0, path.__len__()):
-        dx = list(path[i])[0] - list(path[i - 1])[0]
-        dy = list(path[i])[1] - list(path[i - 1])[1]
+        xy_str_curr = pattern.findall(path[i])
+        xy_str_last = pattern.findall(path[i - 1])
+
+        dx = int(xy_str_curr[0]) - int(xy_str_last[0])
+        dy = int(xy_str_curr[1]) - int(xy_str_last[1])
         dst += (dx ** 2 + dy ** 2) ** 0.5
     print(dst, "  ", path)
 
     lpastar.run()
-
-
-
 
 if __name__ == '__main__':
     main()

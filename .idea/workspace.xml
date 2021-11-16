@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="830faa24-7f47-4234-bfc2-c786a4cb9c95" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/user/IEEE2022/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user/IEEE2022/draft_modules/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/LOMAP-Custom.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LOMAP-Custom.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user/IEEE2022/draft_modules/LPAstar.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/IEEE2022/draft_modules/LPAstar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/IEEE2022/draft_modules/TS_Grid/LPAstar.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/IEEE2022/draft_modules/TS_Grid/LPAstar.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +52,7 @@
       <recent name="$PROJECT_DIR$/user/IEEE2022" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Security_Game_Simple">
+  <component name="RunManager" selected="Python.TS_Grid_Demo">
     <configuration name="Security_Game_Simple" type="PythonConfigurationType" factoryName="Python">
       <module name="LOMAP-Custom" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -129,15 +128,21 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/user/IEEE2022/draft_modules/LPAstar.py</url>
-          <line>285</line>
+          <line>286</line>
           <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/user/IEEE2022/draft_modules/TS_Grid/LPAstar.py</url>
+          <line>302</line>
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="self.init.add([1, 2])" language="Python" />
-        <watch expression="str(self.s_start)" language="Python" />
+        <watch expression="re.match(r'[0-9]*', path[0])" language="Python" />
+        <watch expression="path[0]" language="Python" />
+        <watch expression="a.span()" language="Python" />
       </configuration>
     </watches-manager>
   </component>

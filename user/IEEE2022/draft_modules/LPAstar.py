@@ -7,6 +7,7 @@ import os
 import sys
 import math
 import matplotlib.pyplot as plt
+import re
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -286,4 +287,3 @@ class Ts_Grid(LPAstar, Ts):
         self.fig.canvas.mpl_connect('button_press_event', self.on_press)
 
         plt.show()
-
