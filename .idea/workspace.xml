@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="830faa24-7f47-4234-bfc2-c786a4cb9c95" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user/IEEE2022/draft_modules/LPAstar.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/IEEE2022/draft_modules/LPAstar.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user/IEEE2022/draft_modules/security_game_simple.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/IEEE2022/draft_modules/security_game_simple.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -137,26 +135,30 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/user/IEEE2022/draft_modules/security_game_simple.py</url>
-          <line>211</line>
+          <line>220</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/user/IEEE2022/draft_modules/security_game_simple.py</url>
-          <line>123</line>
+          <line>124</line>
           <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/user/IEEE2022/draft_modules/security_game_simple.py</url>
-          <line>199</line>
+          <line>205</line>
           <option name="timeStamp" value="55" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/user/IEEE2022/draft_modules/security_game_simple.py</url>
+          <line>131</line>
+          <option name="timeStamp" value="57" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="tgt_pt" language="Python" />
-        <watch expression="path_CF" language="Python" />
         <watch expression="xy_curr_2" language="Python" />
+        <watch expression="(x_t,y_t)" language="Python" />
       </configuration>
     </watches-manager>
   </component>

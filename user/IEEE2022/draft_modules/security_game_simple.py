@@ -109,9 +109,10 @@ def takeThird(elem):
     return elem[2]
 
 def main():
-    x_start_1 = (1, 1)
-    x_start_2 = (2, 10)
+    x_start_1 = (1, 1)      # default (1, 1)
+    x_start_2 = (2, 8)      # default (2, 10)
     x_goal = (15, 10)
+    expect_volume_CF = 1 # better be odd, default: 1, 3
 
     actual_path_F  = [x_start_1]
     actual_path_CF = [x_start_2]
@@ -125,6 +126,11 @@ def main():
         ''' Update bot 2 as obstacle '''
         Env_t = Env()
         Env_t.obs.add(xy_curr_2)
+        for x_t in range(list(xy_curr_2)[0] - (expect_volume_CF - 1) / 2, list(xy_curr_2)[0] + (expect_volume_CF - 1) / 2 + 1):
+            for y_t in range(list(xy_curr_2)[1] - (expect_volume_CF - 1) / 2, list(xy_curr_2)[1] + (expect_volume_CF - 1) / 2 + 1):
+                if x_t > 0 and x_t < Env_t.x_range and y_t > 0 and y_t < Env_t.y_range:
+                    Env_t.obs.add((x_t, y_t))
+
 
         ''' re-construct bot with their current position '''
         bot_1_t = Ts_Grid("unicycle bot 1 t", xy_curr_1, x_goal, enviro=Env_t)
