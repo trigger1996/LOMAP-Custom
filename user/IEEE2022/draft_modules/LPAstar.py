@@ -2,7 +2,7 @@
 LPA_star 2D
 @author: huiming zhou
 """
-
+import copy
 import os
 import sys
 import math
@@ -245,9 +245,13 @@ class LPAstar(object):
             plt.plot(x[0], x[1], marker='s', color=color[self.count])
 
 class Ts_Grid(LPAstar, Ts):
-    def __init__(self, name, xy_start, xy_goal):
+    def __init__(self, name, xy_start, xy_goal, enviro=None):
         super(Ts, self).__init__(name)
         super(Ts_Grid, self).__init__(xy_start, xy_goal, "Euclidean")
+
+        if enviro != None:
+            self.Env = copy.deepcopy(enviro)
+
         self.grid_to_Ts()
 
     def grid_to_Ts(self):
