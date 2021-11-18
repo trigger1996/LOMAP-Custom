@@ -66,7 +66,7 @@ class Plotting:
         obs_y = [x[1] for x in self.obs]
 
 
-        ax = plt.plot(self.xI[0], self.xI[1], "bs")
+        plt.plot(self.xI[0], self.xI[1], "bs")
         plt.plot(self.xG[0], self.xG[1], "gs")
 
         #plt.plot(obs_x, obs_y, "sk")
@@ -171,3 +171,50 @@ class Plotting:
               'blueviolet',
               ]
         return cl
+
+
+def plot_single_path(path, cl='r'):
+    path_x = [path[i][0] for i in range(len(path))]
+    path_y = [path[i][1] for i in range(len(path))]
+
+    plt.plot(path_x, path_y, linewidth='3', color=cl)
+
+    plt.pause(0.01)
+
+def plot_actual_path(actual_path_F, actual_path_CF, xI, xG, env, expect_volume = 1):
+    '''
+
+    :param actual_path_F:
+    :param actual_path_CF:
+    :param xI: Initial Positon
+    :param xG: Goal position
+    :param env: map
+    :return:
+    '''
+
+    '''  '''
+    for obs_t in env.obs:
+        plt.gca().add_patch(plt.Rectangle(xy=(obs_t[0] - 0.5, obs_t[1] - 0.5),
+                            width=1,height=1,
+                            linewidth=0,fill=True,edgecolor='k',color=[0.1,0.1,0.1]))
+
+    ''' path '''
+    plot_single_path(actual_path_F,  cl='r')
+    plot_single_path(actual_path_CF, cl='b')
+
+    ''' start '''
+    plt.plot(xI[0], xI[1], "bs")
+    ''' goal '''
+    plt.plot(xG[0], xG[1], "gs")
+
+    ''' current vehicle_F '''
+    xy_F  = actual_path_F[actual_path_F.__len__() - 1]
+    plt.plot(xy_F[0], xy_F[1], "rs")
+    ''' current vehicle_CF '''
+    xy_CF = actual_path_CF[actual_path_CF.__len__() - 1]
+    plt.gca().add_patch(plt.Rectangle(xy=(xy_CF[0] - 0.5 - int(expect_volume / 2), xy_CF[1] - 0.5 - int(expect_volume / 2)),
+                                      width=1 + expect_volume - 1, height=1 + expect_volume - 1,
+                                      linewidth=0, fill=True, edgecolor='k', color=[0.0, 0.0, 1], alpha=0.75))
+
+    plt.axis("equal")
+    plt.show()
