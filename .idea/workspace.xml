@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="830faa24-7f47-4234-bfc2-c786a4cb9c95" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user/IEEE2022/draft_modules/plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/IEEE2022/draft_modules/plotting.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user/IEEE2022/draft_modules/security_game_simple.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/IEEE2022/draft_modules/security_game_simple.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -136,22 +135,20 @@
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/user/IEEE2022/draft_modules/security_game_simple.py</url>
-          <line>253</line>
-          <option name="timeStamp" value="69" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/user/IEEE2022/draft_modules/plotting.py</url>
           <line>195</line>
           <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/user/IEEE2022/draft_modules/security_game_simple.py</url>
+          <line>264</line>
+          <option name="timeStamp" value="72" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="pos[0] &lt;= region[3]" language="Python" />
-        <watch expression="region" language="Python" />
-        <watch expression="[actual_path_F[i][0] for i in range(len(actual_path_F))]" language="Python" />
+        <watch expression="abs(list(xy_curr_1)[0] - list(xy_curr_2)[0]) &gt;= 1 or abs(list(xy_curr_1)[1] - list(xy_curr_2)[1]) &gt;= 1" language="Python" />
       </configuration>
     </watches-manager>
   </component>

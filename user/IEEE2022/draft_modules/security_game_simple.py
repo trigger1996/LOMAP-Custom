@@ -149,6 +149,7 @@ def main():
         x_goal_t = x_goal
         while (abs(list(xy_curr_1)[0] - list(xy_curr_2)[0]) >= 1 or abs(list(xy_curr_1)[1] - list(xy_curr_2)[1]) >= 1) and\
             not (is_goal_arrived and in_region(xy_curr_1, start_region)):
+
             ''' Update bot 2 as obstacle '''
             Env_t = Env()
             Env_t.obs.add(xy_curr_2)
@@ -167,7 +168,16 @@ def main():
             bot_2_t = Ts_Grid("unicycle bot 2 t", xy_curr_2, x_goal_t)
             plt.close('all')
 
-            opt_path_F = networkx.dijkstra_path(bot_1_t.g, str(xy_curr_1), str(x_goal_t))
+            try:
+                opt_path_F = networkx.dijkstra_path(bot_1_t.g, str(xy_curr_1), str(x_goal_t))
+            except networkx.exception.NetworkXNoPath as e:
+                print("\033[1;35;40m" + "[WARNING]: " + str(e) + "\033[0m")
+                print("\033[1;35;40m" + "[WARNING]: Perhaps route to goal region is blocked by virtual volume \033[0m")
+
+                Env_t = Env()
+                Env_t.obs.add(xy_curr_2)
+                bot_1_t = Ts_Grid("unicycle bot 1 t", xy_curr_1, x_goal_t, enviro=Env_t)
+                opt_path_F = networkx.dijkstra_path(bot_1_t.g, str(xy_curr_1), str(x_goal_t))
 
             # build up product_TS and branching such that only states in optimal path of vehicle-F are listed
             F_index = 0
@@ -249,9 +259,10 @@ def main():
 
             '''Clear redundant variables'''
             del Env_t, bot_1_t, bot_2_t
-    except networkx.exception.NetworkXNoPath as e:
+    except KeyError as e:
         # https://blog.csdn.net/ever_peng/article/details/91492491
-        print("\033[1;35;40m" + "[ERROR]: " + str(e) + "\033[0m")
+        print("\033[1;36;40m" + "[ERROR]: " + str(e) + "\033[0m")
+        pass
 
     ''' print results '''
     if is_goal_arrived and in_region(xy_curr_1, start_region):
