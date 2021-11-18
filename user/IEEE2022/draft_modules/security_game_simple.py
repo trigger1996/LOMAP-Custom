@@ -110,9 +110,9 @@ def takeThird(elem):
 
 def main():
     x_start_1 = (1, 1)      # default (1, 1)
-    x_start_2 = (2, 8)      # default (2, 10)
+    x_start_2 = (10, 8)      # default (2, 10)
     x_goal = (15, 10)
-    expect_volume_CF = 1 # better be odd, default: 1, 3
+    expect_volume_CF = 1 # better be odd, default: 1, alternative, 3, 5
 
     actual_path_F  = [x_start_1]
     actual_path_CF = [x_start_2]
