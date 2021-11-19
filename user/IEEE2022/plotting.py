@@ -6,7 +6,6 @@ Plot tools 2D
 import os
 import sys
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -200,7 +199,11 @@ def plot_actual_path(actual_path_F, actual_path_CF, xI, xG, env, expect_volume =
 
     ''' path '''
     plot_single_path(actual_path_F,  cl='r')
-    plot_single_path(actual_path_CF, cl='b')
+    if type(actual_path_CF[0]) == list:
+        for path_t in actual_path_CF:
+            plot_single_path(path_t, cl='b')
+    else:
+        plot_single_path(actual_path_CF, cl='b')
 
     ''' start '''
     plt.plot(xI[0], xI[1], "bs")
@@ -211,10 +214,18 @@ def plot_actual_path(actual_path_F, actual_path_CF, xI, xG, env, expect_volume =
     xy_F  = actual_path_F[actual_path_F.__len__() - 1]
     plt.plot(xy_F[0], xy_F[1], "rs")
     ''' current vehicle_CF '''
-    xy_CF = actual_path_CF[actual_path_CF.__len__() - 1]
-    plt.gca().add_patch(plt.Rectangle(xy=(xy_CF[0] - 0.5 - int(expect_volume / 2), xy_CF[1] - 0.5 - int(expect_volume / 2)),
-                                      width=1 + expect_volume - 1, height=1 + expect_volume - 1,
-                                      linewidth=0, fill=True, edgecolor='k', color=[0.0, 0.0, 1], alpha=0.75))
+    if type(actual_path_CF[0]) == list:
+        for path_t in actual_path_CF:
+            xy_CF = path_t[path_t.__len__() - 1]
+            plt.gca().add_patch(
+                plt.Rectangle(xy=(xy_CF[0] - 0.5 - int(expect_volume / 2), xy_CF[1] - 0.5 - int(expect_volume / 2)),
+                              width=1 + expect_volume - 1, height=1 + expect_volume - 1,
+                              linewidth=0, fill=True, edgecolor='k', color=[0.0, 0.0, 1], alpha=0.75))
+    else:
+        xy_CF = actual_path_CF[actual_path_CF.__len__() - 1]
+        plt.gca().add_patch(plt.Rectangle(xy=(xy_CF[0] - 0.5 - int(expect_volume / 2), xy_CF[1] - 0.5 - int(expect_volume / 2)),
+                                          width=1 + expect_volume - 1, height=1 + expect_volume - 1,
+                                          linewidth=0, fill=True, edgecolor='k', color=[0.0, 0.0, 1], alpha=0.75))
 
     plt.axis("equal")
     plt.show()

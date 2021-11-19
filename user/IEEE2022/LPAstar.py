@@ -7,13 +7,12 @@ import os
 import sys
 import math
 import matplotlib.pyplot as plt
-import re
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 import plotting, env
 from lomap import Ts
-import networkx
+
 
 class LPAstar(object):
     def __init__(self, s_start, s_goal, heuristic_type):

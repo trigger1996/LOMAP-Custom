@@ -6,15 +6,13 @@ import copy
 import os
 import sys
 import re
-import math
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-import plotting, env
+import plotting
 from lomap import Ts
 import itertools as it
-from lomap.algorithms.product import ts_times_ts
 import networkx
 from LPAstar import Ts_Grid
 from env import Env
@@ -123,65 +121,87 @@ def node_str_to_list(val):
     pattern = re.compile(r'\d+')
     return [int(pattern.findall(val)[0]), int(pattern.findall(val)[1])]
 
+def node_str_to_tuple(val):
+    pattern = re.compile(r'\d+')
+    return (int(pattern.findall(val)[0]), int(pattern.findall(val)[1]))
+
+def is_collision_with_CF(xy_curr_F, xy_curr_CF):
+    '''
+
+    :param xy_curr_F:
+    :param xy_curr_CF: list, position of all Vehicle_CF
+    :return:
+    '''
+    for xy_CF_t in xy_curr_CF:
+        if abs(list(xy_curr_F)[0] - list(xy_CF_t)[0]) < 1 or abs(list(xy_curr_F)[1] - list(xy_CF_t)[1]) < 1:
+            True
+
+    return False
+
 def takeThird(elem):
     return elem[2]
 
 def main():
+
     start_region = [1, 1, 1, 1]         # [x_min, x_max, y_min, y_max]
     goal_region  = [15, 15, 10, 10]
 
-    x_start_1 = (1, 1)      # default (1, 1)
-    x_start_2 = (3, 10)     # default (2, 10)
-    x_goal = (15, 10)
-    expect_volume_CF = 3    # better be odd, default: 1, alternative, 3, 5
+    xy_start_F  = (1, 1)                # default (1, 1)
+    xy_start_CF = [(2, 10)]             # default [(2, 10), (10, 8)]
+    xy_goal = (15, 10)
+    expect_volume_CF = 1    # better be odd, default: 1, alternative, 3, 5
+
+    end_turn = 50
+    turn = 0
 
     is_goal_arrived = False
 
-    actual_path_F  = [x_start_1]
-    actual_path_CF = [x_start_2]
+    actual_path_F  = [xy_start_F]
+    actual_path_CF = [copy.deepcopy(xy_start_CF)]
 
-    bot_1 = Ts_Grid("unicycle bot 1", x_start_1, x_goal)
-    bot_2 = Ts_Grid("unicycle bot 2", x_start_2, x_goal)
+    plt.close('all')
 
     try:
-        xy_curr_1 = x_start_1
-        xy_curr_2 = x_start_2
-        x_goal_t = x_goal
-        while (abs(list(xy_curr_1)[0] - list(xy_curr_2)[0]) >= 1 or abs(list(xy_curr_1)[1] - list(xy_curr_2)[1]) >= 1) and\
-            not (is_goal_arrived and in_region(xy_curr_1, start_region)):
+        xy_curr_F  = xy_start_F
+        xy_curr_CF = xy_start_CF
+        xy_goal_t = xy_goal
+        while not is_collision_with_CF(xy_curr_F, xy_curr_CF) and not (is_goal_arrived and in_region(xy_curr_F, start_region)) and turn < end_turn:
 
-            ''' Update bot 2 as obstacle '''
+            ''' Update bot CF as obstacle '''
             Env_t = Env()
-            Env_t.obs.add(xy_curr_2)
-            for x_t in range(list(xy_curr_2)[0] - (expect_volume_CF - 1) / 2, list(xy_curr_2)[0] + (expect_volume_CF - 1) / 2 + 1):
-                for y_t in range(list(xy_curr_2)[1] - (expect_volume_CF - 1) / 2, list(xy_curr_2)[1] + (expect_volume_CF - 1) / 2 + 1):
-                    if x_t > 0 and x_t < Env_t.x_range and y_t > 0 and y_t < Env_t.y_range:
-                        Env_t.obs.add((x_t, y_t))
+
+            for xy_CF_t in xy_curr_CF:
+                # grid of vehicle
+                Env_t.obs.add(xy_CF_t)
+                # grid of expect volume
+                for x_t in range(list(xy_CF_t)[0] - (expect_volume_CF - 1) / 2, list(xy_CF_t)[0] + (expect_volume_CF - 1) / 2 + 1):
+                    for y_t in range(list(xy_CF_t)[1] - (expect_volume_CF - 1) / 2, list(xy_CF_t)[1] + (expect_volume_CF - 1) / 2 + 1):
+                        if x_t > 0 and x_t < Env_t.x_range and y_t > 0 and y_t < Env_t.y_range:
+                            if (x_t, y_t) != xy_CF_t:         # to solve the problem that F in the virtual volume
+                                Env_t.obs.add((x_t, y_t))
 
             ''' If bot 1 arrived target region, change goal '''
-            if not is_goal_arrived and in_region(xy_curr_1, goal_region):
-                x_goal_t = x_start_1
+            if not is_goal_arrived and in_region(xy_curr_F, goal_region):
+                xy_goal_t = xy_start_F
                 is_goal_arrived = True
 
             ''' re-construct bot with their current position '''
-            bot_1_t = Ts_Grid("unicycle bot 1 t", xy_curr_1, x_goal_t, enviro=Env_t)
-            bot_2_t = Ts_Grid("unicycle bot 2 t", xy_curr_2, x_goal_t)
+            bot_F_t = Ts_Grid("unicycle bot 1 t", xy_curr_F, xy_goal_t, enviro=Env_t)
+            bot_CF_t = []
+            for i in range(0, xy_curr_CF.__len__()):
+                bot_CF_t.append(Ts_Grid("unicycle bot 2 t", xy_curr_CF[i], xy_goal_t))
             plt.close('all')
 
             try:
-                opt_path_F = networkx.dijkstra_path(bot_1_t.g, str(xy_curr_1), str(x_goal_t))
+                opt_path_F = networkx.dijkstra_path(bot_F_t.g, str(xy_curr_F), str(xy_goal_t))
             except networkx.exception.NetworkXNoPath as e:
                 print("\033[1;35;40m" + "[WARNING]: " + str(e) + "\033[0m")
                 print("\033[1;35;40m" + "[WARNING]: Perhaps route to goal region is blocked by virtual volume \033[0m")
 
-                Env_t = Env()
-                Env_t.obs.add(xy_curr_2)
-                bot_1_t = Ts_Grid("unicycle bot 1 t", xy_curr_1, x_goal_t, enviro=Env_t)
-                opt_path_F = networkx.dijkstra_path(bot_1_t.g, str(xy_curr_1), str(x_goal_t))
 
             # build up product_TS and branching such that only states in optimal path of vehicle-F are listed
             F_index = 0
-            ts_tuple = (bot_1_t, bot_2_t)
+            ts_tuple = (bot_F_t, ) + tuple(bot_CF_t)
             product_ts = ts_times_ts_branching(ts_tuple, F_index, opt_path_F)
 
             ''' Find vertices in product_TS which makes singleton collisions'''
@@ -237,42 +257,55 @@ def main():
             if min(cost_s_without_F[min_index]) <= list(cost_s[min_index])[F_index]:
                 tgt_pt.append([stop_pos[min_index], cost_s[min_index], min(cost_s_without_F[min_index])])
 
-            # sort available collision point by cost
-            tgt_pt.sort(key=takeThird, reverse=False)
-
             ''' Find vertices in product_TS which makes pairwise collisions'''
 
             ''' Find vertices that will cause cycles'''
 
-            ''' Update route for F & CF '''
-            path_CF = networkx.dijkstra_path(bot_2_t.g, list(bot_2_t.init)[0], list(tgt_pt[0][0])[1])
+            # sort available collision point by cost
+            tgt_pt.sort(key=takeThird, reverse=False)
 
-            pattern = re.compile(r'\d+')
-            xy_curr_1 = (int(pattern.findall(opt_path_F[1])[0]), int(pattern.findall(opt_path_F[1])[1]))
-            xy_curr_2 = (int(pattern.findall(path_CF[1])[0]),    int(pattern.findall(path_CF[1])[1]))
-            actual_path_F.append(xy_curr_1)
-            actual_path_CF.append(xy_curr_2)
+            ''' Update route for F & CF '''
+            env_t_CF = Env()
+            path_CF = []
+            for bot_t in bot_CF_t:
+                path_CF.append(networkx.dijkstra_path(bot_t.g, list(bot_t.init)[0], list(tgt_pt[0][0])[1]))
+
+
+            # updated actual path
+            # update next step
+            xy_curr_F = node_str_to_tuple(opt_path_F[1])
+            actual_path_F.append(xy_curr_F)
+            for i in range(0, path_CF.__len__()):
+                xy_curr_CF[i] = node_str_to_tuple(path_CF[i][1])
+                # update next step
+                actual_path_CF[i].append(copy.deepcopy(xy_curr_CF[i]))
 
             '''for debugging'''
             #print(opt_path_F)
             print(actual_path_F, actual_path_CF)
 
             '''Clear redundant variables'''
-            del Env_t, bot_1_t, bot_2_t
+            del Env_t, bot_F_t, bot_CF_t
+
+            ''' update current turn number '''
+            turn += 1
     except KeyError as e:
         # https://blog.csdn.net/ever_peng/article/details/91492491
-        print("\033[1;36;40m" + "[ERROR]: " + str(e) + "\033[0m")
+        print("\033[1;36;40m" + "[ERROR]: " + str(e) + " F is in the expect volume of CF" + "\033[0m")
         pass
 
     ''' print results '''
-    if is_goal_arrived and in_region(xy_curr_1, start_region):
+    if is_goal_arrived and in_region(xy_curr_F, start_region):
         print("[Info] Vehicle_F wins!")
-    elif abs(list(xy_curr_1)[0] - list(xy_curr_2)[0]) <= 1 or abs(list(xy_curr_1)[1] - list(xy_curr_2)[1]) <= 1:
+    elif is_collision_with_CF(xy_curr_F, xy_curr_CF):
         print("[Info] Vehicle_CF wins!")
+    elif turn > end_turn:
+        print("[Info] Maximum time reached, check results!")
+
 
     ''' plot path '''
     plt.close()
-    plotting.plot_actual_path(actual_path_F, actual_path_CF, x_start_1, x_goal, bot_1.Env, expect_volume_CF)
+    plotting.plot_actual_path(actual_path_F, actual_path_CF, xy_start_F, xy_goal, Env(), expect_volume_CF)
 
 if __name__ == '__main__':
     main()
