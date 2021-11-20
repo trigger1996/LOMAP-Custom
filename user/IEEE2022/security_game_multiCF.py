@@ -17,6 +17,10 @@ import networkx
 from LPAstar import Ts_Grid
 from env import Env
 
+from operator import itemgetter, attrgetter
+
+def distance_euclidan(p1, p2):
+    return ((p1[0] - p2[0]) ** (p1[0] - p2[0]) + (p1[1] - p2[1]) ** 2) ** 0.5
 
 def ts_times_ts_branching(ts_tuple, F_index, opt_path):
     '''TODO:
@@ -100,6 +104,17 @@ def ts_times_ts_branching(ts_tuple, F_index, opt_path):
                 product_ts.g.add_edge(cur_state, next_state,
                                 attr_dict={'weight': w_min, 'control': control})
 
+    '''
+    for state in product_ts.g:
+        for i in range(0, list(state).__len__()):
+            for j in range(0, list(state).__len__()):
+                if i != j and list(state)[i] == list(state[j]) and i != F_index and j != F_index:
+                    try:
+                        product_ts.g.remove_node(state)
+                    except:
+                        pass
+    '''
+
     # Return ts_1 x ts_2 x ...
     return product_ts
 
@@ -138,8 +153,8 @@ def is_collision_with_CF(xy_curr_F, xy_curr_CF):
 
     return False
 
-def takeThird(elem):
-    return elem[2]
+def takeFourth(elem):
+    return (elem[3], elem[1])
 
 def main():
 
@@ -147,7 +162,7 @@ def main():
     goal_region  = [15, 15, 10, 10]
 
     xy_start_F  = (1, 1)                # default (1, 1)
-    xy_start_CF = [(2, 10)]             # default [(2, 10), (10, 8)]
+    xy_start_CF = [(3, 10), (12, 7)]    # default [(2, 10), (10, 8)]
     xy_goal = (15, 10)
     expect_volume_CF = 1    # better be odd, default: 1, alternative, 3, 5
 
@@ -157,7 +172,9 @@ def main():
     is_goal_arrived = False
 
     actual_path_F  = [xy_start_F]
-    actual_path_CF = [copy.deepcopy(xy_start_CF)]
+    actual_path_CF = []
+    for i in range(0, xy_start_CF.__len__()):
+        actual_path_CF.append([copy.deepcopy(xy_start_CF[i])])
 
     plt.close('all')
 
@@ -206,70 +223,69 @@ def main():
 
             ''' Find vertices in product_TS which makes singleton collisions'''
             # Find all available collision points
-            stop_pos = []
+            intercept_pos = []
             for pos_xy in product_ts.g.node.keys():
+                is_all_in_region = True
+                is_in_start_or_goal = False
                 for i in range(0, list(pos_xy).__len__()):
-                    if i != F_index and list(pos_xy)[i] == list(pos_xy)[F_index]:
+                    if i != F_index:
                         if in_region(node_str_to_list(list(pos_xy)[i]), start_region) or\
                            in_region(node_str_to_list(list(pos_xy)[i]), goal_region):  # forced, not allow CF to get to goal region
-                            break
-                        stop_pos.append(pos_xy)
+                            is_in_start_or_goal = True
+                        if not in_region(node_str_to_list(list(pos_xy)[i]),
+                                  [node_str_to_list(list(pos_xy)[F_index])[0] - list(pos_xy).__len__() / 2,
+                                   node_str_to_list(list(pos_xy)[F_index])[0] + list(pos_xy).__len__() / 2,
+                                   node_str_to_list(list(pos_xy)[F_index])[1] - list(pos_xy).__len__() / 2,
+                                   node_str_to_list(list(pos_xy)[F_index])[1] + list(pos_xy).__len__() / 2]):
+                            is_all_in_region = False
+                if is_all_in_region and not is_in_start_or_goal :
+                    intercept_pos.append([pos_xy])
 
-            # calculate costs to collision points
-            cost_s = []
-            for pos_xy in stop_pos:
-                cost_t = []
-                for i in range(0, list(pos_xy).__len__()):
-                    val = networkx.dijkstra_path_length(list(ts_tuple)[i].g, list(list(ts_tuple)[i].init)[0], pos_xy[i])
-                    cost_t.append(val)
-                cost_s.append(cost_t)
+            # format [node_in_product_ts, cost_in_product_ts, cost_list_in_individual_ts, how_many_arrived_simultaneously, [is_arrived_simultaneously]]
+            for intercept_t in intercept_pos:
+                is_arrived_simultaneously = [False for index in intercept_t[0]]     # initialize list with all false
+                cost_list = [1e6 for index in intercept_t[0]]
+                #cost_in_product_ts = networkx.dijkstra_path_length(product_ts.g, product_ts.init.keys()[0],
+                #                                                   intercept_t[0])
+                #cost_in_product_ts = max(cost_list)
+                num_arrived_simultaneously = 0
+                for i in range(0, list(intercept_t[0]).__len__()):
+                    cost_list[i] = networkx.dijkstra_path_length(list(ts_tuple)[i].g, list(list(ts_tuple)[i].init)[0],
+                                                                 intercept_t[0][i])
 
-            # find the collision point with minimum cost && vehicle-CF can arrive simultaneously or earlier
-            cost_s_without_F = copy.deepcopy(cost_s)
-            for i in range(0, cost_s_without_F.__len__()):
-                cost_s_without_F[i].pop(F_index)
+                    if i != F_index and list(intercept_t[0])[i] == list(intercept_t[0])[F_index]:
+                        is_arrived_simultaneously[i] = True
+                        num_arrived_simultaneously += 1
 
-            # first for point which can arrive simultaneously
-            min_val = 1e6
-            min_index = 0
-            tgt_pt = []
-            for i in range(0, cost_s.__len__()):
-                for j in range(0, list(cost_s[i]).__len__()):
-                    if j != F_index and min(cost_s_without_F[i]) == list(cost_s[i])[F_index] and min_val >= min(cost_s_without_F[i]):
-                        # requirement 2 ensures CF will arrive simultaneously
-                        # requirement 3 finds the minimum value
-                        min_index = i
-                        min_val = min(cost_s_without_F[i])
-            # check whether the min_index is valid
-            if min(cost_s_without_F[min_index]) == list(cost_s[min_index])[F_index]:
-                tgt_pt.append([stop_pos[min_index], cost_s[min_index], min(cost_s_without_F[min_index])])
+                cost_in_product_ts = max(cost_list)                 # to speed up the process
 
-            # second for point which can arrive earlier
-            min_val = 1e6
-            min_index = 0
-            for i in range(0, cost_s.__len__()):
-                for j in range(0, list(cost_s[i]).__len__()):
-                    if j != F_index and  min(cost_s_without_F[i]) <= list(cost_s[i])[F_index] and min_val >= min(cost_s_without_F[i]):
-                        # requirement 2 ensures CF will arrive earlier
-                        # requirement 3 finds the minimum value
-                        min_val = min(cost_s_without_F[i])
-                        min_index = i
-            if min(cost_s_without_F[min_index]) <= list(cost_s[min_index])[F_index]:
-                tgt_pt.append([stop_pos[min_index], cost_s[min_index], min(cost_s_without_F[min_index])])
+                intercept_t.append(-cost_in_product_ts)             # minus for better sorting below
+                intercept_t.append(cost_list)
+                intercept_t.append(num_arrived_simultaneously)
+                intercept_t.append(is_arrived_simultaneously)
+
+            # sort available collision point by num_simultaneously_arrived
+            intercept_pos.sort(key=itemgetter(3,1), reverse=True)
 
             ''' Find vertices in product_TS which makes pairwise collisions'''
 
             ''' Find vertices that will cause cycles'''
 
-            # sort available collision point by cost
-            tgt_pt.sort(key=takeThird, reverse=False)
 
             ''' Update route for F & CF '''
-            env_t_CF = Env()
+            target_node = intercept_pos[0][0]
+            node_inaccesible = []
             path_CF = []
-            for bot_t in bot_CF_t:
-                path_CF.append(networkx.dijkstra_path(bot_t.g, list(bot_t.init)[0], list(tgt_pt[0][0])[1]))
+            for i in range(0, bot_CF_t.__len__()):
+                for node_t in node_inaccesible:
+                    try:
+                        bot_CF_t[i].g.remove_node(node_t)
+                    except KeyError as e:
+                        print(e)
+                path_CF.append(networkx.dijkstra_path(bot_CF_t[i].g, list(bot_CF_t[i].init)[0], list(target_node)[i]))
 
+                for j in range(0, path_CF[path_CF.__len__() - 1].__len__() - 1):
+                    node_inaccesible.append(path_CF[path_CF.__len__() - 1][j])
 
             # updated actual path
             # update next step
@@ -281,7 +297,6 @@ def main():
                 actual_path_CF[i].append(copy.deepcopy(xy_curr_CF[i]))
 
             '''for debugging'''
-            #print(opt_path_F)
             print(actual_path_F, actual_path_CF)
 
             '''Clear redundant variables'''
