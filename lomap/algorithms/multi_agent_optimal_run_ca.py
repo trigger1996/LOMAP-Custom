@@ -25,7 +25,7 @@ import traceback
 import logging
 from lomap.algorithms.product_ca import ts_times_ts
 from lomap.algorithms.product_ca import ts_times_ts_ca
-from lomap.algorithms.multi_agent_optimal_run import optimal_run as optimal_run_pp
+from lomap.algorithms.optimal_run import optimal_run as optimal_run_pp
 
 import copy
 

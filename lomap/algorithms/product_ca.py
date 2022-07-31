@@ -1116,7 +1116,9 @@ def ts_times_ts_ca(ts_tuple):
         for i in range(0, ts_tuple.__len__()):
             state_i = state[i]
             if is_traveling_state(state_i):
-                for next_state in product_ts.g.edge[state]:
+                #for next_state in product_ts.g.edge[state]:
+                for next_state in product_ts.g.in_edges(state):
+                    next_state = next_state[0]
                     for j in range(0, ts_tuple.__len__()):
                         if i == j:
                             continue
@@ -1186,29 +1188,52 @@ def ts_times_ts_ca(ts_tuple):
                                     if route_nt_to_nt.__len__() == 1:
                                         edge_to_remove.append([route_nt_to_nt[0], route_nt_to_nt[0]])
                                     else:
-                                        if [route_nt_to_nt[0], route_nt_to_nt[1]] not in edge_to_remove:
-                                            edge_to_remove.append([route_nt_to_nt[0], route_nt_to_nt[1]])
-                                        if [route_nt_to_nt[route_nt_to_nt.__len__() - 2],
-                                            route_nt_to_nt[route_nt_to_nt.__len__() - 1]] not in edge_to_remove:
-                                            edge_to_remove.append([route_nt_to_nt[route_nt_to_nt.__len__() - 2],
-                                                                   route_nt_to_nt[route_nt_to_nt.__len__() - 1]])
+                                        is_route_end_2_end = True
+                                        # OK:
+                                        # 24            25
+                                        # (24, 25, 1)   24
+                                        # 25            24
+                                        # BAD:
+                                        # 24            25
+                                        # (24, 25, 1)   23
+                                        # 25            24
+                                        for m in range(1, route_nt_to_nt.__len__() - 1):
+                                            for state_t in route_nt_to_nt[m]:
+                                                if not is_traveling_state(state_t) or \
+                                                   (state_t != state[m] or state_t != next_state[m]):
+                                                    is_route_end_2_end = False
+                                                    break
+
+                                        if is_route_end_2_end:
+                                            if [route_nt_to_nt[0], route_nt_to_nt[1]] not in edge_to_remove:
+                                                edge_to_remove.append([route_nt_to_nt[0], route_nt_to_nt[1]])
+                                            if [route_nt_to_nt[route_nt_to_nt.__len__() - 2],
+                                                route_nt_to_nt[route_nt_to_nt.__len__() - 1]] not in edge_to_remove:
+                                                edge_to_remove.append([route_nt_to_nt[route_nt_to_nt.__len__() - 2],
+                                                                       route_nt_to_nt[route_nt_to_nt.__len__() - 1]])
 
 
                                 # route_nt_to_nt
 
+    product_ts.g.remove_nodes_from(state_to_remove)
+    '''
     for state in state_to_remove:
         try:
             product_ts.g.remove_node(state)
         except:
             # print("[expection] node", state, "is previously removed")
             pass
+    '''
 
+    product_ts.g.remove_edges_from(edge_to_remove)
+    '''
     for edge in edge_to_remove:
         try:
             product_ts.g.remove_edge(edge[0], edge[1])
         except:
             # print("[expection] edge", edge, "is previously removed")
             pass
+    '''
 
     #for state in state_to_remove:
     #    print(state)

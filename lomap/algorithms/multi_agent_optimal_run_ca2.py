@@ -25,7 +25,7 @@ import traceback
 import logging
 from lomap.algorithms.product_ca import ts_times_ts
 from lomap.algorithms.product_ca import ts_times_ts_ca
-from lomap.algorithms.multi_agent_optimal_run import optimal_run as optimal_run_pp
+from lomap.algorithms.optimal_run2 import optimal_run as optimal_run_pp
 
 # Logger configuration
 logger = logging.getLogger(__name__)
@@ -1247,11 +1247,11 @@ def multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, min_co
 
     ''' rear_end_collision '''
     if is_rear_end_collision:
-        233
+        pass
 
     ''' Re-try '''
-    if is_singleton_collision or is_pairwise_collision or is_rear_end_collision:
-    #if 0:
+    #if is_singleton_collision or is_pairwise_collision or is_rear_end_collision:
+    if True:
         # Construct the team_ts while removing collision points and re-try
         team_ts = ts_times_ts_ca(ts_tuple)
 

@@ -475,7 +475,7 @@ def min_bottleneck_cycle(g, s, f):
 
     #
     # for speeding up
-    #product_automata_2 = networkx_to_igraph(g)
+    product_automata_2 = networkx_to_igraph(g)
     #
     #s_index_list = [ product_automata_2.vs.find(nx_name=s_index).index for s_index in list(set(s)) ]
     #f_index_list = [ product_automata_2.vs.find(nx_name=f_index).index for f_index in list(set(f)) ]
@@ -484,7 +484,8 @@ def min_bottleneck_cycle(g, s, f):
     # Compute shortest S->S and S->F paths
     logger.info('S->S+F')
     #d = subset_to_subset_dijkstra_path_value(g, s, s|f, degen_paths = False)
-    #d = product_automata_2.shortest_paths_nx_no_degenerated_path(list(s), list(s | f), weights='weight')
+    d = product_automata_2.shortest_paths_nx_no_degenerated_path(list(s), list(s | f), weights='weight')
+    '''
     jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(s), 1, '0', (g, s|f, 'sum', False, 'weight'), data_source)
     d = dict()
     for i in range(0,len(jobs)):
@@ -492,6 +493,7 @@ def min_bottleneck_cycle(g, s, f):
         jobs[i]=''
     del jobs
     logger.info('Collected results for S->S+F')
+    '''
 
     # Create S->S, S->F dict of dicts
     g_s_edges = []
@@ -517,14 +519,16 @@ def min_bottleneck_cycle(g, s, f):
 
     # Compute shortest F->S paths
     logger.info('F->S')
-    #d_f_to_s = product_automata_2.shortest_paths_nx(list(f), list(s), weights='weight')
+    d_f_to_s = product_automata_2.shortest_paths_nx(list(f), list(s), weights='weight')
     #d_f_to_s = subset_to_subset_dijkstra_path_value(g, f, s, degen_paths = True)
+    '''
     jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(f), 1, '1', (g, s, 'sum', True, 'weight'), data_source)
     d_f_to_s = dict()
     for i in range(0,len(jobs)):
         d_f_to_s.update(jobs[i]())
         jobs[i]=''
     del jobs
+    '''
     logger.info('Collected results for F->S')
 
     # Compute shortest S-bottleneck paths between verices in s
@@ -563,11 +567,11 @@ def min_bottleneck_cycle(g, s, f):
         logger.info('Extracting Path*')
         (ff, s1, s2) = cycle_star
         # This is the F->S1 path
-        (cost_ff_to_s1, path_ff_to_s1) = source_to_target_dijkstra(g, ff, s1, degen_paths = True, cutoff = d_f_to_s[ff][s1])
-        #(cost_ff_to_s1, path_ff_to_s1) = product_automata_2.shortest_path_vertex_2_vertex(source=ff, target=s1, weights='weight')
+        #(cost_ff_to_s1, path_ff_to_s1) = source_to_target_dijkstra(g, ff, s1, degen_paths = True, cutoff = d_f_to_s[ff][s1])
+        (cost_ff_to_s1, path_ff_to_s1) = product_automata_2.shortest_path_vertex_2_vertex(source=ff, target=s1, weights='weight')
         # This is the S2->F path
-        (cost_s2_to_ff, path_s2_to_ff) = source_to_target_dijkstra(g, s2, ff, degen_paths = True, cutoff = d_s_to_f[s2][ff])
-        #(cost_s2_to_ff, path_s2_to_ff) = product_automata_2.shortest_path_vertex_2_vertex(source=s2, target=ff, weights='weight')
+        #(cost_s2_to_ff, path_s2_to_ff) = source_to_target_dijkstra(g, s2, ff, degen_paths = True, cutoff = d_s_to_f[s2][ff])
+        (cost_s2_to_ff, path_s2_to_ff) = product_automata_2.shortest_path_vertex_2_vertex(source=s2, target=ff, weights='weight')
 
         if s1 == s2 and ff != s1:
             # The path will be F->S1==S2->F
@@ -584,8 +588,8 @@ def min_bottleneck_cycle(g, s, f):
             for i in range(1,len(bot_path_s1_to_s2)):
                 source = bot_path_s1_to_s2[i-1]
                 target = bot_path_s1_to_s2[i]
-                cost_segment, path_segment = source_to_target_dijkstra(g, source, target, degen_paths = False)
-                #(cost_segment, path_segment) = product_automata_2.shortest_path_vertex_2_vertex_no_degen(source=source, target=target, weights='weight')
+                #cost_segment, path_segment = source_to_target_dijkstra(g, source, target, degen_paths = False)
+                (cost_segment, path_segment) = product_automata_2.shortest_path_vertex_2_vertex_no_degen(source=source, target=target, weights='weight')
                 path_s1_to_s2 = path_s1_to_s2[0:-1] + path_segment
                 cost_s1_to_s2 += cost_segment
             assert(len_star == cost_ff_to_s1 + cost_s1_to_s2 + cost_s2_to_ff)

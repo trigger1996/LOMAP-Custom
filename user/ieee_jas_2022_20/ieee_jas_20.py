@@ -69,10 +69,8 @@ def main():
         '''
 
         #ts_tuple = (r1, r2)
-
         formula = ('[](gather -> (!gather U upload))')
         opt_prop = set(['gather'])
-
         '''
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
@@ -81,7 +79,6 @@ def main():
                    '&& !(r1gather3 && r2gather3) && !(r1gather4 && r2gather4))')
         opt_prop = set(['r1gather','r2gather'])
         '''
-
         # collision avoidance
         is_modifible = [True, True, True, False, False, False, False, False, False]
         logger.info('Formula: %s', formula)
