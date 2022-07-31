@@ -1,0 +1,14 @@
+!Ts
+name: robot_11
+multi: true
+directed: true
+init: [g8]
+final: []
+graph:
+  nodes:
+    g8: {}
+    g5: {}
+
+  edges:
+  - [g8,  g5,  {control: lf,  weight: 1}]
+  - [g5,  g8, {control: ufl, weight: 1}]

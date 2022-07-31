@@ -435,6 +435,61 @@ def networkx_to_igraph(g):
 
     return graph
 
+def shortest_paths_nx(source, g, target, weights=None, mode='out'):
+
+    s_index_list = [ g.vs['nx_name'].index(source_index) for source_index in list(set(source)) ]
+    f_index_list = [ g.vs['nx_name'].index(f_index)      for f_index in list(set(target)) ]
+
+    dist_list = g.shortest_paths_dijkstra(source=s_index_list, target=f_index_list, weights=weights, mode=mode)
+
+    d = {}
+    for source_t in source:
+        d_t = {}
+        index_i = source.index(source_t)
+        for target_t in target:
+            d_t.update({target_t: dist_list[index_i][target.index(target_t)]})
+
+        d.update({source_t: d_t})
+
+    return d
+
+def shortest_paths_nx_no_degenerated_path(source, g, target, weights=None, mode='out'):
+
+    s_index_list = [ g.vs['nx_name'].index(source_index) for source_index in list(set(source))]
+    f_index_list = [ g.vs['nx_name'].index(f_index) for f_index in list(set(target))]
+
+    dist_list = g.shortest_paths_dijkstra(source=s_index_list, target=f_index_list, weights=weights, mode=mode)
+
+    d = {}
+    for source_t in source:
+        d_t = {}
+        index_i = source.index(source_t)
+        for target_t in target:
+            d_t.update({target_t: dist_list[index_i][target.index(target_t)]})
+
+        d.update({source_t: d_t})
+
+    # find parent vertices v in bfs results, then use min(s->v + v->s) to solve the min cycle, where s in source
+    for source_id_t in s_index_list:
+        parent_node_list = g.bfs(source_id_t)[2]
+        parent_list_t = []
+        for j in range(0, parent_node_list.__len__()):
+            if parent_node_list[j] == source_id_t and j != source_id_t:
+                parent_list_t.append(j)
+        dist_s_v = g.shortest_paths_dijkstra(source=source_id_t, target=parent_list_t, weights='weight')
+        dist_v_s = g.shortest_paths_dijkstra(source=parent_list_t, target=source_id_t, weights='weight')
+
+        for i in range(0, parent_list_t.__len__()):
+            # list(source)[s_index_list.index(source_id_t)] node name for node id: source_id_t
+            source_vertex = list(source)[s_index_list.index(source_id_t)]
+            dist_cycle = dist_s_v[0][i] + dist_v_s[i][0]
+            if d[source_vertex][source_vertex] == 0:
+                d[source_vertex][source_vertex] = dist_cycle
+            else:
+                d[source_vertex][source_vertex] = min(d[source_vertex][source_vertex], dist_cycle)
+
+    return d
+
 def min_bottleneck_cycle(g, s, f):
     """ Returns the minimum bottleneck cycle from s to f in graph g.
 
@@ -471,7 +526,7 @@ def min_bottleneck_cycle(g, s, f):
                         'Parallel Python not installed!')
 
     # Start job server
-    job_server = pp.Server(ncpus=10, ppservers=pp_servers, secret='trivial')
+    job_server = pp.Server(ncpus=14, ppservers=pp_servers, secret='trivial')
 
     #
     # for speeding up
@@ -484,16 +539,18 @@ def min_bottleneck_cycle(g, s, f):
     # Compute shortest S->S and S->F paths
     logger.info('S->S+F')
     #d = subset_to_subset_dijkstra_path_value(g, s, s|f, degen_paths = False)
-    d = product_automata_2.shortest_paths_nx_no_degenerated_path(list(s), list(s | f), weights='weight')
+    #d = product_automata_2.shortest_paths_nx_no_degenerated_path(list(s), list(s | f), weights='weight')
     '''
-    jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(s), 1, '0', (g, s|f, 'sum', False, 'weight'), data_source)
+    jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(s), 1, '0', (g, s | f, 'sum', False, 'weight'), data_source)
+    '''
+    jobs = job_dispatcher(job_server, shortest_paths_nx_no_degenerated_path, list(s), 1, '0', (product_automata_2, list(s | f), 'weight'), data_source)
     d = dict()
     for i in range(0,len(jobs)):
         d.update(jobs[i]())
         jobs[i]=''
     del jobs
     logger.info('Collected results for S->S+F')
-    '''
+
 
     # Create S->S, S->F dict of dicts
     g_s_edges = []
@@ -519,16 +576,18 @@ def min_bottleneck_cycle(g, s, f):
 
     # Compute shortest F->S paths
     logger.info('F->S')
-    d_f_to_s = product_automata_2.shortest_paths_nx(list(f), list(s), weights='weight')
+    #d_f_to_s = product_automata_2.shortest_paths_nx(list(f), list(s), weights='weight')
     #d_f_to_s = subset_to_subset_dijkstra_path_value(g, f, s, degen_paths = True)
     '''
     jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(f), 1, '1', (g, s, 'sum', True, 'weight'), data_source)
+    '''
+    jobs = job_dispatcher(job_server, shortest_paths_nx, list(f), 1, '1', (product_automata_2, list(s), 'weight'), data_source)
     d_f_to_s = dict()
     for i in range(0,len(jobs)):
         d_f_to_s.update(jobs[i]())
         jobs[i]=''
     del jobs
-    '''
+
     logger.info('Collected results for F->S')
 
     # Compute shortest S-bottleneck paths between verices in s
