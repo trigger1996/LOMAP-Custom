@@ -32,7 +32,8 @@ from collections import namedtuple
 
 # custom packages
 import view
-import lomap.algorithms.multi_agent_optimal_run_ca as ca
+import lomap.algorithms.multi_agent_optimal_run_ca  as ca
+import lomap.algorithms.multi_agent_optimal_run_ca2 as ca2
 
 # Logger configuration
 logger = logging.getLogger(__name__)
@@ -43,57 +44,58 @@ def main():
     rhos = [Rho(lower=0.98, upper=1.04), Rho(lower=0.98, upper=1.04)]
 
     with Timer('IJRR 2013 Case-Study 2'):
-        # norminal
-        r1 = Ts.load('./robot_1.yaml')
-        r2 = Ts.load('./robot_2.yaml')
-        r3 = Ts.load('./robot_3_inv_larger.yaml')      # robot_3.yaml robot_3_inv.yaml   robot_3_inv_larger.yaml
 
-        # robustness
-        #r1 = Ts.load('./robustness/robot_1.yaml')
-        #r2 = Ts.load('./robustness/robot_2.yaml')
-        #r3 = Ts.load('./robustness/robot_3_inv.yaml')       # robot_3.yaml
 
-        # CASE 2
+        r1 = Ts.load('./transition_system/robot_1.yaml')
+        r2 = Ts.load('./transition_system/robot_2.yaml')
+        r3 = Ts.load('./transition_system/robot_3.yaml')
+
+        r15 = Ts.load('./transition_system/robot_15.yaml')
+        r16 = Ts.load('./transition_system/robot_16.yaml')
+        r17 = Ts.load('./transition_system/robot_17.yaml')
+        r18 = Ts.load('./transition_system/robot_18.yaml')
+        r19 = Ts.load('./transition_system/robot_19.yaml')
+        r20 = Ts.load('./transition_system/robot_20.yaml')
+
+
+
+        ts_tuple = (r1, r2, r3, r15, r16, r17, r18, r19, r20)
+        '''
+        formula = ('[]<>gather && [](gather->(r1gather && r2gather && r3gather)) '
+                   '&& [](r1gather -> X(!r1gather U r1upload)) '
+                   '&& [](r2gather -> X(!r2gather U r2upload)) '
+                   '&& [](r3gather -> X(!r3gather U r3upload))')
+        opt_prop = set(['r1gather','r2gather','r3gather'])
+        '''
+
         #ts_tuple = (r1, r2)
-        #ts_tuple = (r1, r2, r3)
-        #formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
-        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
-        #           '&& [](r2gather -> X(!r2gather U r2upload))')
-        #opt_prop = set(['r1gather','r2gather'])
 
-        # CASE 3
-        #ts_tuple = (r1, r2)
-        ts_tuple = (r1, r2, r3)
+        formula = ('[](gather -> (!gather U upload))')
+        opt_prop = set(['gather'])
+
+        '''
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
                    '&& [](r2gather -> X(!r2gather U r2upload)) '
                    '&& [](!(r1gather1 && r2gather1) && !(r1gather2 && r2gather2)'
                    '&& !(r1gather3 && r2gather3) && !(r1gather4 && r2gather4))')
         opt_prop = set(['r1gather','r2gather'])
-
-        # CASE 4
-        #ts_tuple = (r1, r2)
-        #ts_tuple = (r1, r2, r3)
-        #formula = ('[]<>gather && [](gather->(r1gather4 && r2gather2)) '
-        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
-        #           '&& [](r2gather -> X(!r2gather U r2upload))')
-        #opt_prop = set(['r1gather4','r2gather2'])
+        '''
 
         # collision avoidance
-        is_modifible = [True, True, False]
+        is_modifible = [True, True, True, False, False, False, False, False, False]
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)
 
-        prefix_length_pre, prefixes, suffix_cycle_cost_pre, suffix_cycles, team_prefix, team_suffix_cycle = \
-            ca.multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=True)
-
         prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
-            ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible, is_pp=True)
+            ca.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible=is_modifible,
+                                          min_cost = 1, additional_goback_cost=1, is_pp=True)
+        #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
+        #    ca2.multi_agent_optimal_run_ca(ts_tuple, formula, opt_prop, is_modifible=is_modifible,
+        #                                  min_cost = 1, additional_goback_cost=1, is_pp=True)
         #prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, team_prefix, team_suffix_cycle = \
         #    ca.multi_agent_optimal_run(ts_tuple, formula, opt_prop)
 
-        logger.info('[Pre-deleted] Cost: %d', suffix_cycle_cost_pre)
-        logger.info('[Pre-deleted] Prefix length: %d', prefix_length_pre)
         logger.info('Cost: %d', suffix_cycle_cost)
         logger.info('Prefix length: %d', prefix_length)
         # Find the controls that will produce this run

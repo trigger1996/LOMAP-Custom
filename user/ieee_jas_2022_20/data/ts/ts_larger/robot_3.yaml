@@ -1,0 +1,86 @@
+!Ts
+name: robot_3
+multi: true
+directed: true
+init: [u3]
+final: []
+graph:
+  nodes:
+
+    '40': {}
+    '41': {}
+    '42': {}
+    '51': {}
+    '52': {}
+    '53': {}
+    '54': {}
+    '55': {}
+    '56': {}
+    '57': {}
+    '58': {}
+    '31': {}
+    '32': {}
+    '33': {}
+    '34': {}
+    '35': {}
+    '36': {}
+    '37': {}
+    '38': {}
+    '39': {}
+
+    g5:
+      prop: !!set {gather: null, gather5: null, r1gather: null, r1gather5: null}
+    g6:
+      prop: !!set {gather: null, gather6: null, r1gather: null, r1gather6: null}
+    g7:
+      prop: !!set {gather: null, gather7: null, r1gather: null, r1gather7: null}
+    g8:
+      prop: !!set {gather: null, gather8: null, r1gather: null, r1gather8: null}
+    u3:
+      prop: !!set {r1upload: null, r1upload3: null, upload: null, upload4: null}
+    u4:
+      prop: !!set {r1upload: null, r1upload4: null, upload: null, upload4: null}
+
+  edges:
+
+
+  - ['58',  g8,  {control: lf,  weight: 1}]
+  - ['58', '51', {control: f,   weight: 1}]
+  - ['54', '55', {control: f,   weight: 1}]
+  - ['54',  g6,  {control: lf,  weight: 1}]
+  - ['55', '56', {control: lf,  weight: 1}]
+  - ['55', '36',  {control: f,   weight: 1}]
+  - ['56', '57', {control: f,   weight: 1}]
+  - ['56',  g7,  {control: lf,  weight: 1}]
+  - ['57', '33',  {control: fr,  weight: 1}]
+  - ['57', '58', {control: lf,  weight: 1}]
+  - ['51', '42', {control: fr,  weight: 1}]
+  - ['51', '52', {control: lf,  weight: 1}]
+  - ['52',  g5,  {control: lf,  weight: 1}]
+  - ['52', '53', {control: f,   weight: 1}]
+  - ['53', '39',  {control: f,   weight: 1}]
+  - ['53', '54', {control: lf,  weight: 1}]
+  - [u3,   '34',  {control: ufl, weight: 1}]
+  - [u4,   '40', {control: ufl, weight: 1}]
+  - ['31',  '32',  {control: rf,  weight: 1}]
+  - ['33',  '34',  {control: f,   weight: 1}]
+  - ['32',  '33',  {control: f,   weight: 1}]
+  - ['32',  '51', {control: rfr, weight: 1}]
+  - ['35',  '57', {control: rfr, weight: 1}]
+  - ['35',  '36',  {control: f,   weight: 1}]
+  - ['34',   u3,  {control: f,   weight: 1}]
+  - ['34',  '35',  {control: rf,  weight: 1}]
+  - ['37',  '38',  {control: rf,  weight: 1}]
+  - ['36',  '37',  {control: f,   weight: 1}]
+  - ['39',  '40', {control: f,   weight: 1}]
+  - ['38',  '39',  {control: f,   weight: 1}]
+  - ['38',  '55', {control: rfr, weight: 1}]
+  - [g8,   '58', {control: ufl, weight: 1}]
+  - [g7,   '56', {control: ufl, weight: 1}]
+  - [g6,   '54', {control: ufl, weight: 1}]
+  - [g5,   '52', {control: ufl, weight: 1}]
+  - ['41', '42', {control: f,   weight: 1}]
+  - ['41', '53', {control: rfr, weight: 1}]
+  - ['40', '41', {control: rf,  weight: 1}]
+  - ['40',  u4,  {control: f,   weight: 1}]
+  - ['42', '31',  {control: f,   weight: 1}]

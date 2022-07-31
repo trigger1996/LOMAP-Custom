@@ -33,6 +33,7 @@ from lomap.classes import Buchi
 from lomap.algorithms.product import ts_times_buchi
 from lomap.algorithms.dijkstra import (source_to_target_dijkstra,
                                        subset_to_subset_dijkstra_path_value)
+import igraph as ig
 
 # Logger configuration
 logger = logging.getLogger(__name__)
@@ -214,6 +215,226 @@ def job_dispatcher(job_server, func, arg_to_split, chunk_size, data_id, data, da
 
     return jobs
 
+class Graph2(ig.Graph):
+    def __init__(self, *args, **kwds):
+        super(Graph2, self).__init__(*args, **kwds)
+
+    def add_edges_by_name(self, edge_list, attributes=None):
+        es = []
+        for edge_t in edge_list:
+            #es.append((self.vs.find(nx_name=edge_t[0]).index, self.vs.find(nx_name=edge_t[1]).index))
+            es.append((self.vs['nx_name'].index(edge_t[0]), self.vs['nx_name'].index(edge_t[1])))
+
+        super(Graph2, self).add_edges(es, attributes)
+
+    def shortest_paths_nx(self, source=None, target=None, weights=None, mode='out'):
+        #s_index_list = [self.vs.find(nx_name=source_index).index for source_index in list(set(source))]
+        #f_index_list = [self.vs.find(nx_name=f_index).index for f_index in list(set(target))]
+        s_index_list = [ self.vs['nx_name'].index(source_index) for source_index in list(set(source)) ]
+        f_index_list = [ self.vs['nx_name'].index(f_index)      for f_index in list(set(target)) ]
+
+        dist_list = super(Graph2, self).shortest_paths_dijkstra(source=s_index_list, target=f_index_list, weights=weights, mode=mode)
+
+        d = {}
+        for source_t in source:
+            d_t = {}
+            index_i = source.index(source_t)
+            for target_t in target:
+                d_t.update({target_t: dist_list[index_i][target.index(target_t)]})
+
+            d.update({source_t: d_t})
+
+        return d
+
+    def shortest_paths_nx_no_degenerated_path(self, source=None, target=None, weights=None, mode='out'):
+        # s_index_list = [self.vs.find(nx_name=source_index).index for source_index in list(set(source))]
+        # f_index_list = [self.vs.find(nx_name=f_index).index for f_index in list(set(target))]
+        s_index_list = [self.vs['nx_name'].index(source_index) for source_index in list(set(source))]
+        f_index_list = [self.vs['nx_name'].index(f_index) for f_index in list(set(target))]
+
+        dist_list = super(Graph2, self).shortest_paths_dijkstra(source=s_index_list, target=f_index_list,
+                                                                weights=weights, mode=mode)
+
+        d = {}
+        for source_t in source:
+            d_t = {}
+            index_i = source.index(source_t)
+            for target_t in target:
+                d_t.update({target_t: dist_list[index_i][target.index(target_t)]})
+
+            d.update({source_t: d_t})
+
+        # find parent vertices v in bfs results, then use min(s->v + v->s) to solve the min cycle, where s in source
+        for source_id_t in s_index_list:
+            parent_node_list = self.bfs(source_id_t)[2]
+            parent_list_t = []
+            for j in range(0, parent_node_list.__len__()):
+                if parent_node_list[j] == source_id_t and j != source_id_t:
+                    parent_list_t.append(j)
+            dist_s_v = self.shortest_paths_dijkstra(source=source_id_t, target=parent_list_t, weights='weight')
+            dist_v_s = self.shortest_paths_dijkstra(source=parent_list_t, target=source_id_t, weights='weight')
+
+            for i in range(0, parent_list_t.__len__()):
+                # list(source)[s_index_list.index(source_id_t)] node name for node id: source_id_t
+                source_vertex = list(source)[s_index_list.index(source_id_t)]
+                dist_cycle = dist_s_v[0][i] + dist_v_s[i][0]
+                if d[source_vertex][source_vertex] == 0:
+                    d[source_vertex][source_vertex] = dist_cycle
+                else:
+                    d[source_vertex][source_vertex] = min(d[source_vertex][source_vertex], dist_cycle)
+
+        return d
+
+    def shortest_path_vertex_2_vertex(self, source=None, target=None, weights=None, mode='out'):
+        s_index = self.vs['nx_name'].index(source)
+        f_index = self.vs['nx_name'].index(target)
+
+        path_t = super(Graph2, self).get_shortest_paths(s_index, to=f_index, weights=weights, output='vpath')
+        cost_t = super(Graph2, self).shortest_paths_dijkstra(source=s_index, target=f_index, weights=weights, mode=mode)
+
+        path_name_list = []
+        for vertex in path_t[0]:
+            path_name_list.append(self.vs['nx_name'][vertex])
+
+        return (cost_t[0][0], path_name_list)
+
+    def shortest_path_vertex_2_vertex_no_degen(self, source=None, target=None, weights=None, mode='out'):
+        if source != target:
+            return self.shortest_path_vertex_2_vertex(source, target, weights, mode)
+        else:
+            s_index = self.vs['nx_name'].index(source)
+
+            parent_node_list = self.bfs(s_index)[2]
+            parent_list_t = []
+            for j in range(0, parent_node_list.__len__()):
+                if parent_node_list[j] == s_index and j != s_index:
+                    parent_list_t.append(j)
+
+            dist_list = []
+            dist_min_index = 0
+            for i in range(0, parent_list_t.__len__()):
+                dist_s_v = self.shortest_paths_dijkstra(source=s_index, target=parent_list_t, weights='weight')
+                dist_v_s = self.shortest_paths_dijkstra(source=parent_list_t, target=s_index, weights='weight')
+                dist_list.append(dist_v_s[0][0] + dist_s_v[0][0])
+
+                if dist_list[dist_min_index] > dist_list[i]:
+                    dist_min_index = i
+
+            path_t = super(Graph2, self).get_shortest_paths(s_index, to=parent_list_t[dist_min_index], weights=weights,
+                                                            output='vpath')
+            path_name_list = []
+            for vertex in path_t[0]:
+                path_name_list.append(self.vs['nx_name'][vertex])
+            # path_name_list.append(source)
+
+        return (dist_list[dist_min_index], path_name_list)
+
+    def s_bottleneck_length(self, source_set, target_set, weights='weight'):
+
+        import heapq
+
+        all_dist = {}  # dictionary of final distances from source_set to target_set
+
+        # Path length is (max edge length, total edge length)
+        for source in source_set:
+            dist = {}  # dictionary of final distances from source
+            fringe = []  # use heapq with (bot_dist,dist,label) tuples
+
+            # Don't allow degenerate paths
+            # Add all neighbors of source to start the algorithm
+            seen = dict()
+            for edge_t in self.es.select(_source=self.vs.find(nx_name=source)):
+                vw_dist = edge_t[weights]
+                seen[edge_t.target] = (vw_dist, vw_dist)
+                heapq.heappush(fringe, (vw_dist, vw_dist, edge_t.target))
+
+            # source: v     target: w -> edge_t.target
+            while fringe:
+                (d_bot, d_sum, v) = heapq.heappop(fringe)
+
+                if v in dist:
+                    continue  # Already searched this node.
+
+                dist[self.vs[v]['nx_name']] = (d_bot, d_sum)  # Update distance to this node
+
+                for edge_t in self.es.select(_source=v):
+                    vw_dist_bot = max(dist[self.vs[v]['nx_name']][0], edge_t[weights])
+                    vw_dist_sum = dist[self.vs[v]['nx_name']][1] + edge_t[weights]
+                    if self.vs[edge_t.target]['nx_name'] in dist:
+                        if vw_dist_bot < dist[self.vs[edge_t.target]['nx_name']][0]:
+                            raise ValueError('Contradictory paths found:', 'negative weights?')
+                    elif edge_t.target not in seen or vw_dist_bot < seen[edge_t.target][0] \
+                            or (vw_dist_bot == seen[edge_t.target][0] \
+                                and vw_dist_sum < seen[edge_t.target][1]):
+                        seen[edge_t.target] = (vw_dist_bot, vw_dist_sum)
+                        heapq.heappush(fringe, (vw_dist_bot, vw_dist_sum, edge_t.target))
+
+            # Remove the entries that we are not interested in
+            for key in dist.keys():
+                if key not in target_set:
+                    dist.pop(key)
+
+            # Add inf cost to target nodes not in dist
+            for t in target_set:
+                if t not in dist.keys():
+                    dist[t] = (float('inf'), float('inf'))
+
+            # Save the distance info for this source
+            all_dist[source] = dist
+
+        return all_dist
+
+
+def networkx_to_igraph(g):
+    """Converts the graph from networkx
+
+    Vertex names will be converted to "nx_name" attribute and the vertices
+    will get new ids from 0 up (as standard in igraph).
+
+    @param g: networkx Graph or DiGraph
+    """
+    import networkx as nx
+
+    # Graph attributes
+    gattr = dict(g.graph)
+
+    # Nodes
+    vnames = list(g.node)
+    vattr = {'nx_name': vnames}
+    vcount = len(vnames)
+    vd = {v: i for i, v in enumerate(vnames)}
+
+    # NOTE: we do not need a special class for multigraphs, it is taken
+    # care for at the edge level rather than at the graph level.
+    graph = Graph2(
+        n=vcount,
+        directed=g.is_directed(),
+        graph_attrs=gattr,
+        vertex_attrs=vattr)
+
+    # Node attributes
+    for v, datum in g.node.items():
+        for key, val in datum.items():
+            graph.vs[vd[v]][key] = val
+
+    # Edges and edge attributes
+    # NOTE: we need to do both together to deal well with multigraphs
+    # Each e might have a length of 2 (graphs) or 3 (multigraphs, the
+    # third element is the "color" of the edge)
+    '''
+    for start, end, datum in g.edges(data=True):
+        eid = graph.add_edge(vd[start], vd[end])
+        for key, val in datum.items():
+            eid[key] = val
+    '''
+
+    edge_list = [(vd[start], vd[end]) for start, end, datum in g.edges(data=True)]
+    graph.add_edges(edge_list)
+    weight_list = [ datum['weight'] for start, end, datum in g.edges(data=True) ]
+    graph.es['weight'] = weight_list
+
+    return graph
+
 def min_bottleneck_cycle(g, s, f):
     """ Returns the minimum bottleneck cycle from s to f in graph g.
 
@@ -250,11 +471,21 @@ def min_bottleneck_cycle(g, s, f):
                         'Parallel Python not installed!')
 
     # Start job server
-    job_server = pp.Server(ppservers=pp_servers, secret='trivial')
+    job_server = pp.Server(ncpus=10, ppservers=pp_servers, secret='trivial')
+
+    #
+    # for speeding up
+    product_automata_2 = networkx_to_igraph(g)
+    #
+    s_index_list = [ product_automata_2.vs.find(nx_name=s_index).index for s_index in list(set(s)) ]
+    f_index_list = [ product_automata_2.vs.find(nx_name=f_index).index for f_index in list(set(f)) ]
+
 
     # Compute shortest S->S and S->F paths
     logger.info('S->S+F')
     #d = subset_to_subset_dijkstra_path_value(g, s, s|f, degen_paths = False)
+    d = product_automata_2.shortest_paths_nx_no_degenerated_path(list(s), list(s | f), weights='weight')
+    '''
     jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(s), 1, '0', (g, s|f, 'sum', False, 'weight'), data_source)
     d = dict()
     for i in range(0,len(jobs)):
@@ -262,6 +493,7 @@ def min_bottleneck_cycle(g, s, f):
         jobs[i]=''
     del jobs
     logger.info('Collected results for S->S+F')
+    '''
 
     # Create S->S, S->F dict of dicts
     g_s_edges = []
@@ -287,13 +519,16 @@ def min_bottleneck_cycle(g, s, f):
 
     # Compute shortest F->S paths
     logger.info('F->S')
+    d_f_to_s = product_automata_2.shortest_paths_nx(list(f), list(s), weights='weight')
     #d_f_to_s = subset_to_subset_dijkstra_path_value(g, f, s, degen_paths = True)
+    '''
     jobs = job_dispatcher(job_server, subset_to_subset_dijkstra_path_value, list(f), 1, '1', (g, s, 'sum', True, 'weight'), data_source)
     d_f_to_s = dict()
     for i in range(0,len(jobs)):
         d_f_to_s.update(jobs[i]())
         jobs[i]=''
     del jobs
+    '''
     logger.info('Collected results for F->S')
 
     # Compute shortest S-bottleneck paths between verices in s
@@ -332,9 +567,12 @@ def min_bottleneck_cycle(g, s, f):
         logger.info('Extracting Path*')
         (ff, s1, s2) = cycle_star
         # This is the F->S1 path
-        (cost_ff_to_s1, path_ff_to_s1) = source_to_target_dijkstra(g, ff, s1, degen_paths = True, cutoff = d_f_to_s[ff][s1])
+        #(cost_ff_to_s1, path_ff_to_s1) = source_to_target_dijkstra(g, ff, s1, degen_paths = True, cutoff = d_f_to_s[ff][s1])
+        (cost_ff_to_s1, path_ff_to_s1) = product_automata_2.shortest_path_vertex_2_vertex(source=ff, target=s1, weights='weight')
         # This is the S2->F path
-        (cost_s2_to_ff, path_s2_to_ff) = source_to_target_dijkstra(g, s2, ff, degen_paths = True, cutoff = d_s_to_f[s2][ff])
+        #(cost_s2_to_ff, path_s2_to_ff) = source_to_target_dijkstra(g, s2, ff, degen_paths = True, cutoff = d_s_to_f[s2][ff])
+        (cost_s2_to_ff, path_s2_to_ff) = product_automata_2.shortest_path_vertex_2_vertex(source=s2, target=ff, weights='weight')
+
         if s1 == s2 and ff != s1:
             # The path will be F->S1==S2->F
             path_star = path_ff_to_s1[0:-1] + path_s2_to_ff
@@ -350,7 +588,8 @@ def min_bottleneck_cycle(g, s, f):
             for i in range(1,len(bot_path_s1_to_s2)):
                 source = bot_path_s1_to_s2[i-1]
                 target = bot_path_s1_to_s2[i]
-                cost_segment, path_segment = source_to_target_dijkstra(g, source, target, degen_paths = False)
+                #cost_segment, path_segment = source_to_target_dijkstra(g, source, target, degen_paths = False)
+                (cost_segment, path_segment) = product_automata_2.shortest_path_vertex_2_vertex_no_degen(source=source, target=target, weights='weight')
                 path_s1_to_s2 = path_s1_to_s2[0:-1] + path_segment
                 cost_s1_to_s2 += cost_segment
             assert(len_star == cost_ff_to_s1 + cost_s1_to_s2 + cost_s2_to_ff)
