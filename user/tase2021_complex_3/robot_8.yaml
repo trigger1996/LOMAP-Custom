@@ -1,0 +1,16 @@
+!Ts
+name: robot_8
+multi: true
+directed: true
+init: ['31']
+final: []
+graph:
+  nodes:
+    '31': {}
+    '32': {}
+    '33': {}
+
+  edges:
+  - ['32', '31', {control: uf,  weight: 1}]
+  - ['33', '32', {control: fr,  weight: 2}]
+  - ['31', '33', {control: rfr, weight: 2}]

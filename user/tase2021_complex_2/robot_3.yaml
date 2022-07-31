@@ -8,6 +8,7 @@ graph:
   nodes:
     '11': {}
     '12': {}
+    '13': {}
 
   edges:
   - ['12', '11', {control: uf,  weight: 1}]

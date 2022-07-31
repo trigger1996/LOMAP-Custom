@@ -31,7 +31,6 @@ from six.moves import zip
 from lomap.classes import Fsa, Markov, Model, Ts, Timer
 from functools import reduce
 
-
 # Logger configuration
 logger = logging.getLogger(__name__)
 #logger.addHandler(logging.NullHandler())
@@ -1102,6 +1101,7 @@ def ts_times_ts_ca(ts_tuple):
                 product_ts.g.add_edge(cur_state, next_state,
                                       attr_dict={'weight': w_min, 'control': control})
 
+    logger.info('Finished construction of team TS, number: %d, edge: %d', product_ts.g.node.__len__(), product_ts.g.edge.__len__())
     # singleton collisions
     for state in product_ts.g.node:
         state_list = list(state)
@@ -1110,6 +1110,8 @@ def ts_times_ts_ca(ts_tuple):
                 if i != j and state_list[i] == state_list[j] and not is_traveling_state(state_list[i]):
                     if state not in state_to_remove:
                         state_to_remove.append(state)
+
+    print("calculating singleton collisions to remove:" + str(state_to_remove.__len__()) + " / " + str(list(product_ts.g.node).index(state)) + " / " + str(product_ts.g.node.__len__()))
 
     # pairwise collisions
     for state in product_ts.g.node:
@@ -1124,20 +1126,20 @@ def ts_times_ts_ca(ts_tuple):
                         if is_traveling_state(next_state_j) and \
                                 is_traveling_states_intersect(state_i, next_state_j):
                             next_state_i_nt = find_next_non_traveling_state_in_product_ts(product_ts, state, i)
-                            route_to_i_nt = copy.deepcopy(route_to_nt)
-                            del route_to_nt[:]
+                            #route_to_i_nt = copy.deepcopy(route_to_nt)
+                            #del route_to_nt[:]
 
                             next_state_j_nt = find_next_non_traveling_state_in_product_ts(product_ts, next_state, j)
-                            route_to_j_nt = copy.deepcopy(route_to_nt)
-                            del route_to_nt[:]
+                            #route_to_j_nt = copy.deepcopy(route_to_nt)
+                            #del route_to_nt[:]
 
                             last_state_i_nt = find_last_non_traveling_state_in_product_ts(product_ts, state, i)
-                            route_from_i_nt = copy.deepcopy(route_from_nt)
-                            del route_from_nt[:]
+                            #route_from_i_nt = copy.deepcopy(route_from_nt)
+                            #del route_from_nt[:]
 
                             last_state_j_nt = find_last_non_traveling_state_in_product_ts(product_ts, next_state, j)
-                            route_from_j_nt = copy.deepcopy(route_from_nt)
-                            del route_from_nt[:]
+                            #route_from_j_nt = copy.deepcopy(route_from_nt)
+                            #del route_from_nt[:]
 
                             if last_state_i_nt != None and next_state_j_nt != None and next_state_i_nt != None and last_state_j_nt != None:
                                 if last_state_i_nt[i] == next_state_j_nt[j] and last_state_j_nt[j] == next_state_i_nt[i]:
@@ -1193,8 +1195,11 @@ def ts_times_ts_ca(ts_tuple):
                                             edge_to_remove.append([route_nt_to_nt[route_nt_to_nt.__len__() - 2],
                                                                    route_nt_to_nt[route_nt_to_nt.__len__() - 1]])
 
-
                                 # route_nt_to_nt
+
+
+    print("calculating pairwise collisions to remove:" + str(edge_to_remove.__len__()) + " / " + str(list(product_ts.g.node).index(state)) + " / " + str(product_ts.g.edge.__len__()))
+
 
     for state in state_to_remove:
         try:
@@ -1203,12 +1208,18 @@ def ts_times_ts_ca(ts_tuple):
             # print("[expection] node", state, "is previously removed")
             pass
 
+    print("removing node:", str(list(state_to_remove).index(state)), " / ", str(state_to_remove.__len__()))
+
     for edge in edge_to_remove:
         try:
+            #product_ts.g.remove_node(edge[0])
+            #product_ts.g.remove_node(edge[1])
             product_ts.g.remove_edge(edge[0], edge[1])
         except:
             # print("[expection] edge", edge, "is previously removed")
             pass
+
+    print("removing edge: " + str(list(edge_to_remove).index(edge)) + " / " + str(edge_to_remove.__len__()) + " / " + str(product_ts.g.edge.__len__()))
 
     #for state in state_to_remove:
     #    print(state)

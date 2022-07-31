@@ -104,8 +104,69 @@ Linux (Ubuntu)
 
 6. Test if the setup worked properly:
   * Navigate to `/lomap/lomap/tests`
-  * Run any of the Python test files
-    * Ex. `python test_automata.py`
+    * Run any of the Python test files
+      * Ex. `python test_automata.py`
+
+7. Addition of Pypy
+
+    7.1. 首先下载pypy3安装包（使用apt安装的pypy安装不上pip）
+    https://www.pypy.org/download.html#
+
+    7.2. 解压安装包
+    ```bash
+    tar -xvf pypy3.6-v7.3.1-linux64.tar.bz2 && tar -xvf pypy3.6-v7.3.1-linux64.tar
+    ```
+   
+    7.3. 将解压文件复制到/usr/lib/
+    ```bash
+    mv pypy3.6-v7.3.1-linux64 /usr/lib/
+    ```
+   
+    7.4. 将pypy加入环境变量
+    ```bash
+    export PATH=/usr/lib/pypy3.6-v7.3.1-linux64/bin:$PATH
+    ```
+   
+    7.5. 安装pypy的pip
+    ```bash
+    pypy -m ensurepip
+    ```
+
+    7.6. 使用pypy的pip
+    ```bash
+    pypy -m pip install pymysql
+    ```
+    7.7. 使用pypy
+    ```bash
+    pypy t.py
+    ```
+
+8. for python3.6.9
+
+    ```bash
+    git clone https://github.com/wjakob/tbb.git
+    cd tbb/build/
+    cmake ..
+    make -j4
+    sudo make install
+    ```
+   
+    ```bash
+    sudo apt install llvm-9*
+    pip install llvmlite==0.36.0
+    git clone https://github.com/numba/numba
+    cd path/to/numba
+    python3 setup.py install 
+    ```
+   
+    Failed using pypy with numba: legacy-install-failure
+    ```bash
+    ./pypy3 -m ensurepip
+    ./pypy3 -m pip install matplotlib==2.2.3 six networkx==1.11 pyyaml
+    ./pypy3 -m pip install llvmlite==0.36.0
+    cd ~/src/lib/numba.pypy
+    ```
+
 
 ### Common Issues:
 1. ```python

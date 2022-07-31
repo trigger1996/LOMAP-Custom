@@ -17,11 +17,17 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from __future__ import print_function
+import heapq
+from numba import jit, cuda
 
 __all__ = ['subset_to_subset_dijkstra_path_value', 'source_to_target_dijkstra',
 		'dijkstra_to_all']
 
+#def takeFirst(elem):
+#    return -elem[0]
+takeFirst = lambda elem : -elem[0]
 
+#@jit
 def subset_to_subset_dijkstra_path_value(source_set, G, target_set,
 					combine_fn='sum', degen_paths=False, weight_key='weight'):
 	"""
@@ -63,8 +69,6 @@ def subset_to_subset_dijkstra_path_value(source_set, G, target_set,
 	(overflows and roundoff errors can cause problems).
 	Input is assumed to be a MultiDiGraph with singleton edges.
 	"""
-	import heapq
-
 	all_dist = {} # dictionary of final distances from source_set to target_set
 
 	if combine_fn == 'sum':
@@ -78,7 +82,8 @@ def subset_to_subset_dijkstra_path_value(source_set, G, target_set,
 				# Allow degenerate paths
 				# Add zero length path from source to source
 				seen = {source:0}
-				heapq.heappush(fringe,(0,source))
+				#heapq.heappush(fringe,(0,source))
+				fringe.append((0, source))
 			else:
 				# Don't allow degenerate paths
 				# Add all neighbors of source to start the algorithm
@@ -86,10 +91,13 @@ def subset_to_subset_dijkstra_path_value(source_set, G, target_set,
 				for _, w, edgedata in G.edges_iter([source], data=True):
 					vw_dist = edgedata[weight_key]
 					seen[w] = vw_dist
-					heapq.heappush(fringe,(vw_dist,w))
+					#heapq.heappush(fringe,(vw_dist,w))
+					fringe.append((vw_dist, w))
 
 			while fringe:
-				(d,v)=heapq.heappop(fringe)
+				#(d,v)=heapq.heappop(fringe)
+				fringe.sort(key=takeFirst)
+				(d,v) = fringe.pop()
 
 				if v in dist:
 					continue # Already searched this node.
@@ -104,12 +112,18 @@ def subset_to_subset_dijkstra_path_value(source_set, G, target_set,
 											'negative weights?')
 					elif w not in seen or vw_dist < seen[w]:
 						seen[w] = vw_dist
-						heapq.heappush(fringe,(vw_dist,w))
+						#heapq.heappush(fringe,(vw_dist,w))
+						fringe.append((vw_dist, w))
+
 
 			# Remove the entries that we are not interested in
-			for key in dist.keys():
+			#for key in dist.keys():
+			#	if key not in target_set:
+			#		dist.pop(key)
+			for key in list(dist.keys()):
 				if key not in target_set:
-					dist.pop(key)
+					del dist[key]
+
 
 			# Add inf cost to target nodes not in dist
 			for t in target_set:
@@ -179,7 +193,7 @@ def subset_to_subset_dijkstra_path_value(source_set, G, target_set,
 	return all_dist
 
 
-
+#@jit
 def dijkstra_to_all(G, source, degen_paths = False, weight_key='weight'):
 	"""
 	Compute shortest paths and lengths in a weighted graph G.
@@ -255,7 +269,7 @@ def dijkstra_to_all(G, source, degen_paths = False, weight_key='weight'):
 
 	return (dist, paths)
 
-
+#@jit
 def source_to_target_dijkstra(G, source, target, combine_fn='sum',
 						degen_paths=False, cutoff=None, weight_key='weight'):
 	"""
@@ -308,7 +322,7 @@ def source_to_target_dijkstra(G, source, target, combine_fn='sum',
 	are negative or are floating point numbers
 	(overflows and roundoff errors can cause problems).
 	"""
-	import heapq
+	#import heapq
 
 	dist = {}	# dictionary of final distances
 	fringe=[] # use heapq with (distance,label) tuples
@@ -323,7 +337,8 @@ def source_to_target_dijkstra(G, source, target, combine_fn='sum',
 				# Add zero length path from source to source
 				paths = {source:[source]}	# dictionary of paths
 				seen = {source:0}
-				heapq.heappush(fringe,(0,source))
+				#heapq.heappush(fringe,(0,source))
+				fringe.append((0, source))
 		else:
 			# Don't allow degenerate paths
 			# Add all neighbors of source to start the algorithm
@@ -333,10 +348,13 @@ def source_to_target_dijkstra(G, source, target, combine_fn='sum',
 				vw_dist = edgedata[weight_key]
 				paths[w] = [source, w]
 				seen[w] = vw_dist
-				heapq.heappush(fringe,(vw_dist,w))
+				#heapq.heappush(fringe,(vw_dist,w))
+				fringe.append((vw_dist, w))
 
 		while fringe:
-			(d,v)=heapq.heappop(fringe)
+			#(d,v)=heapq.heappop(fringe)
+			fringe.sort(key=takeFirst)
+			(d, v) = fringe.pop()
 
 			if v in dist:
 				continue # already searched this node.
@@ -357,7 +375,8 @@ def source_to_target_dijkstra(G, source, target, combine_fn='sum',
 				elif w not in seen or vw_dist < seen[w]:
 					seen[w] = vw_dist
 					paths[w] = paths[v]+[w]
-					heapq.heappush(fringe,(vw_dist,w))
+					#heapq.heappush(fringe,(vw_dist,w))
+					fringe.append((vw_dist, w))
 
 		# Add inf cost to target if not in dist
 		if target not in dist.keys():

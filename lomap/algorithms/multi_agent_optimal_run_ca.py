@@ -29,6 +29,8 @@ from lomap.algorithms.multi_agent_optimal_run import optimal_run as optimal_run_
 
 import copy
 
+from numba import jit, cuda
+
 # Logger configuration
 logger = logging.getLogger(__name__)
 
@@ -404,8 +406,8 @@ def pretty_print(agent_cnt, prefix, suffix):
     hdr_line_1 = ''
     hdr_line_2 = ''
     for i in range(0, agent_cnt):
-        hdr_line_1 += string.ljust('Robot-%d' % (i + 1), 20)
-        hdr_line_2 += string.ljust('-------', 20)
+        hdr_line_1 += str.ljust('Robot-%d' % (i + 1), 20)
+        hdr_line_2 += str.ljust('-------', 20)
     logger.info(hdr_line_1)
     logger.info(hdr_line_2)
 
@@ -413,14 +415,14 @@ def pretty_print(agent_cnt, prefix, suffix):
     for s in prefix:
         line = ''
         for ss in s:
-            line += string.ljust('%s' % (ss,), 20)
+            line += str.ljust('%s' % (ss,), 20)
         logger.info(line)
 
     logger.info('*** Suffix: ***')
     for s in suffix:
         line = ''
         for ss in s:
-            line += string.ljust('%s' % (ss,), 20)
+            line += str.ljust('%s' % (ss,), 20)
         logger.info(line)
 
 
@@ -495,14 +497,14 @@ def multi_agent_optimal_run_ca_pre(ts_tuple, formula, opt_prop, is_pp=False):
 
     return (prefix_length, prefixes, suffix_cycle_cost, suffix_cycles, prefix_on_team_ts, suffix_cycle_on_team_ts)
 
-
+@jit
 def is_traveling_state(curr_run):
     if type(curr_run) == str:
         return False        # str
     else:
         return True         # traveling state: tuple
 
-
+@jit
 def is_traveling_states_intersect(state_1, state_2):
     if is_traveling_state(state_1) and is_traveling_state(state_2):
         state_1_src = list(state_1)[0]
@@ -516,6 +518,7 @@ def is_traveling_states_intersect(state_1, state_2):
     else:
         return False
 
+@jit
 def find_last_non_traveling_state(team_run, agent_id, current_run_seq):
     # find last indivdual state expect for travelling
     for k in range(1, current_run_seq):
@@ -524,6 +527,7 @@ def find_last_non_traveling_state(team_run, agent_id, current_run_seq):
             return [team_state_last, current_run_seq - k]
     return [None, None]
 
+@jit
 def find_next_non_traveling_state(team_run, agent_id, current_run_seq):
     # find next indivdual state expect for travelling
     for k in range(1, team_run.__len__() - current_run_seq):

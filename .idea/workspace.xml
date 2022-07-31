@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="830faa24-7f47-4234-bfc2-c786a4cb9c95" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_1-1.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_1-2.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_1.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_10.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_11.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_2-1.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_2.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_3-1.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_3-2.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_3.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_4-1.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_4.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_5.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_6.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_7.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_8.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/tase2021_complex_3/robot_9.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/LOMAP-Custom.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LOMAP-Custom.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user/IEEE2022/security_game_multiCF.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/IEEE2022/security_game_multiCF.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/activate" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/activate.csh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/activate.fish" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/activate.ps1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/activate_this.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/easy_install" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/easy_install-2.7" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/pip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/pip2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/pip2.7" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/python" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/python2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/python2.7" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/bin/wheel" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lomap/algorithms/dijkstra.py" beforeDir="false" afterPath="$PROJECT_DIR$/lomap/algorithms/dijkstra.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lomap/algorithms/multi_agent_optimal_run_ca.py" beforeDir="false" afterPath="$PROJECT_DIR$/lomap/algorithms/multi_agent_optimal_run_ca.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lomap/algorithms/product_ca.py" beforeDir="false" afterPath="$PROJECT_DIR$/lomap/algorithms/product_ca.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lomap/classes/ts.py" beforeDir="false" afterPath="$PROJECT_DIR$/lomap/classes/ts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/tase2021_complex_2/robot_3.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/user/tase2021_complex_2/robot_3.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/tase2021_complex_2/tase2021_ca2_complex_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/tase2021_complex_2/tase2021_ca2_complex_2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,21 +56,34 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/lomap/algorithms/dijkstra.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/lomap/algorithms/multi_agent_optimal_run_ca.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/lomap/algorithms/product_ca.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/user/tase2021_complex_3/tase2021_ca2_complex_3.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file:///usr/lib/python3.6/functools.py" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="20zbhZMNAyhmhac6hsL59VC0Cwp" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/user/IEEE2022/security_game_multiCF.py" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
-  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;last_opened_file_path&quot;: &quot;/home/ubuntu484/src/YWZheng/LOMAP-Custom_Python3&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;two.files.diff.last.used.file&quot;: &quot;/home/ubuntu484/src/YWZheng/LOMAP-Custom_Python3/lomap/algorithms/optimal_run.py&quot;
+  }
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/user" />
+      <recent name="$PROJECT_DIR$/user/tase2021_complex_3/data" />
+      <recent name="$PROJECT_DIR$/user/tase2021_complex_3" />
       <recent name="$PROJECT_DIR$/user/IEEE2022" />
       <recent name="$PROJECT_DIR$/user/IEEE2022/draft_modules/LPAstar_demo" />
     </key>
@@ -65,7 +92,7 @@
       <recent name="$PROJECT_DIR$/user/IEEE2022/draft_modules" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Security_Game_MultiCF">
+  <component name="RunManager" selected="Python.ijrr2013_ca2">
     <configuration name="Security_Game_MultiCF" type="PythonConfigurationType" factoryName="Python">
       <module name="LOMAP-Custom" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -129,10 +156,76 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="ijrr2013_ca2" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="LOMAP-Custom" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/usr/bin/python3.6" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/user/ieee_jas_2022_20" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/user/ieee_jas_2022_20/ijrr2013_ca2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="tase2021_ca2_complex_2" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="LOMAP-Custom" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/usr/local/lib/pypy2.7-v7.3.9-linux64/bin/pypy2.7" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/user/tase2021_complex_2" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/user/tase2021_complex_2/tase2021_ca2_complex_2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="tase2021_ca2_complex_3" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="LOMAP-Custom" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/user/tase2021_complex_3" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/user/tase2021_complex_3/tase2021_ca2_complex_3.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
-      <item itemvalue="Python.TS_Grid_Demo" />
-      <item itemvalue="Python.Security_Game_Simple" />
       <item itemvalue="Python.Security_Game_MultiCF" />
+      <item itemvalue="Python.Security_Game_Simple" />
+      <item itemvalue="Python.TS_Grid_Demo" />
+      <item itemvalue="Python.ijrr2013_ca2" />
+      <item itemvalue="Python.tase2021_ca2_complex_2" />
+      <item itemvalue="Python.tase2021_ca2_complex_3" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -156,7 +249,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -246,13 +338,83 @@
           <line>112</line>
           <option name="timeStamp" value="117" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/user/tase2021_complex_3/tase2021_ca2_complex_3.py</url>
+          <line>117</line>
+          <option name="timeStamp" value="118" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/user/tase2021_complex_3/view_complex_3.py</url>
+          <line>350</line>
+          <option name="timeStamp" value="120" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/user/tase2021_complex_2/tase2021_ca2_complex_2.py</url>
+          <line>27</line>
+          <option name="timeStamp" value="167" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/.local/lib/python2.7/site-packages/networkx/classes/multidigraph.py</url>
+          <line>482</line>
+          <option name="timeStamp" value="202" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$USER_HOME$/.local/lib/python2.7/site-packages/networkx/classes/multidigraph.py</url>
+          <line>475</line>
+          <option name="timeStamp" value="205" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lomap/algorithms/product_ca.py</url>
+          <line>1028</line>
+          <option name="timeStamp" value="207" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lomap/algorithms/product_ca.py</url>
+          <line>1149</line>
+          <option name="timeStamp" value="209" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lomap/algorithms/product_ca.py</url>
+          <line>1113</line>
+          <option name="timeStamp" value="210" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lomap/classes/ts.py</url>
+          <line>38</line>
+          <option name="timeStamp" value="233" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lomap/algorithms/dijkstra.py</url>
+          <line>99</line>
+          <option name="timeStamp" value="253" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lomap/algorithms/dijkstra.py</url>
+          <line>93</line>
+          <option name="timeStamp" value="256" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/user/tase2021_complex_3/tase2021_ca2_complex_3.py</url>
+          <line>73</line>
+          <option name="timeStamp" value="257" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lomap/algorithms/optimal_run.py</url>
+          <line>183</line>
+          <option name="timeStamp" value="258" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lomap/algorithms/optimal_run.py</url>
+          <line>257</line>
+          <option name="timeStamp" value="260" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="intercept_pos" language="Python" />
-        <watch expression="node_str_to_tuple(opt_path_F[1])" language="Python" />
-        <watch expression="node_str_to_tuple(path_CF[i][1])" language="Python" />
+        <watch expression="e" language="Python" />
+        <watch expression="fringe.__len__()" language="Python" />
+        <watch expression="G.node.__len__()" language="Python" />
       </configuration>
     </watches-manager>
   </component>

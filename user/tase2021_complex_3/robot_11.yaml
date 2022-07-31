@@ -1,0 +1,19 @@
+!Ts
+name: robot_11
+multi: true
+directed: true
+init: [u4]
+final: []
+graph:
+  nodes:
+    u1: {}
+    u2: {}
+    u3: {}
+    u4: {}
+
+  edges:
+
+  - [ u2,   u4,  {control: rfr, weight: 3}]
+  - [ u4,   u3,  {control: f,   weight: 2}]
+  - [ u3,   u1,  {control: rfr, weight: 3}]
+  - [ u1,   u2,  {control: f,   weight: 2}]

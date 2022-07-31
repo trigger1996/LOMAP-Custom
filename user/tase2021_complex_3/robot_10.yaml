@@ -1,0 +1,22 @@
+!Ts
+name: robot_10
+multi: true
+directed: true
+init: ['43']
+final: []
+graph:
+  nodes:
+    '41': {}
+    '42': {}
+    '43': {}
+    '44': {}
+    '45': {}
+    u4:  {}
+
+  edges:
+  - ['45', '41', {control: ufr, weight: 1}]
+  - ['41',  u4,  {control: rfl, weight: 4}]
+  - [ u4,  '42', {control: rfr, weight: 1}]
+  - ['42', '43', {control: f,   weight: 1}]
+  - ['43', '44', {control: rf,  weight: 1}]
+  - ['44', '45', {control: rf,  weight: 2}]

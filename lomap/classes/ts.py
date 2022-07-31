@@ -36,7 +36,7 @@ class Ts(Model): #TODO: make independent of graph type
         If there are multiple controls for an edge, returns the first one.
         """
         controls = [];
-        for s, t in it.izip(run[:-1], run[1:]):
+        for s, t in list(zip(run[:-1], run[1:])):           # it.izip(run[:-1], run[1:])
             # The the third zero index for choosing the first parallel
             # edge in the multidigraph
             controls.append(self.g[s][t][0].get('control', None))

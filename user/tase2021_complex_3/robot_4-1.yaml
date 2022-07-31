@@ -1,0 +1,83 @@
+!Ts
+name: robot_4
+multi: true
+directed: true
+init: [u4]
+final: []
+graph:
+  nodes:
+    '11': {}
+    '12': {}
+    '13': {}
+    '14': {}
+    '15': {}
+    '16': {}
+
+
+    '41': {}
+    '42': {}
+    '43': {}
+    '44': {}
+    '45': {}
+    '46': {}
+
+    g2:
+      prop: !!set {gather: null, gather2: null, r4gather: null, r4gather2: null}
+    g6:
+      prop: !!set {gather: null, gather6: null, r4gather: null, r4gather6: null}
+
+    u1:
+      prop: !!set {r4upload: null, r4upload1: null, upload: null, upload1: null}
+    u2:
+      prop: !!set {r4upload: null, r4upload2: null, upload: null, upload2: null}
+    u3:
+      prop: !!set {r4upload: null, r4upload3: null, upload: null, upload3: null}
+    u4:
+      prop: !!set {r4upload: null, r4upload4: null, upload: null, upload4: null}
+
+  edges:
+  - [ u2,  '11', {control: rfr, weight: 4}]
+  - ['11',  u2,  {control: lfr, weight: 4}]
+  - ['16',  u2,  {control: rfl, weight: 1}]
+
+  - ['11', '12', {control: f,   weight: 1}]
+  - ['12', '11', {control: uf,  weight: 1}]
+  - ['12', '13', {control: lfr, weight: 2}]
+  - ['13', '11', {control: lfl, weight: 2}]
+  - ['13',  g1,  {control: f,   weight: 1}]
+  - [ g1,  '13', {control: ufu, weight: 2}]
+
+  - ['12', '14', {control: rf,  weight: 1}]
+  - ['14', '15', {control: rf,  weight: 1}]
+  - ['15', '16', {control: rf,  weight: 4}]
+  - ['16', '15', {control: ufu, weight: 4}]
+  - ['15',  g2,  {control: lf,  weight: 1}]
+  - [ g2,  '15', {control: ufl, weight: 1}]
+
+  - [ u4,  '41', {control: lfl, weight: 4}]
+  - ['41',  u4,  {control: rfl, weight: 4}]
+  - ['42',  u4,  {control: lfr, weight: 1}]
+  - [ u3,   u4,  {control: f,   weight: 2}]
+  - [ u4,   u3,  {control: f,   weight: 2}]
+
+  - ['41', '45', {control: lf,  weight: 1}]
+  - ['45', '41', {control: ufr, weight: 1}]
+  - ['41', '46', {control: rf,  weight: 3}]
+  - ['46', '45', {control: lf,  weight: 2}]
+  - ['45', '44', {control: lf,  weight: 2}]
+  - ['44', '45', {control: rf,  weight: 2}]
+  - ['44', '43', {control: lf,  weight: 1}]
+  - ['43', '44', {control: rf,  weight: 1}]
+  - ['43', '42', {control: lf,  weight: 1}]
+  - ['42', '43', {control: f,   weight: 1}]
+  - ['44',  g6,  {control: rf,  weight: 1}]
+  - [ g6,  '44', {control: ufr, weight: 1}]
+
+  - [ u1,   u2,  {control: f,   weight: 2}]
+  - [ u2,   u1,  {control: f,   weight: 2}]
+  - [ u2,   u4,  {control: rfr, weight: 3}]
+  - [ u4,   u2,  {control: lfr, weight: 3}]
+  - [ u1,   u3,  {control: lfr, weight: 3}]
+  - [ u3,   u1,  {control: rfr, weight: 3}]
+  - [ u3,   u4,  {control: f,   weight: 2}]
+  - [ u4,   u3,  {control: f,   weight: 2}]
