@@ -56,6 +56,7 @@ Linux (Ubuntu)
     pip install pyyaml
     pip install pp # Optional
     apt install cmake
+    pip install python-igraph==0.8.3
     ```
 
   * Note: Ensure that Python 2.7 is installed.
