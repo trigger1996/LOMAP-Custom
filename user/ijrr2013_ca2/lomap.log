@@ -1,0 +1,4 @@
+INFO __main__ - Formula: []<>gather && [](gather->(r1gather && r2gather)) && [](r1gather -> X(!r1gather U r1upload)) && [](r2gather -> X(!r2gather U r2upload)) && [](!(r1gather1 && r2gather1) && !(r1gather2 && r2gather2)&& !(r1gather3 && r2gather3) && !(r1gather4 && r2gather4))
+INFO __main__ - opt_prop: set(['r2gather', 'r1gather'])
+INFO lomap.algorithms.optimal_run - T has 20664 states
+INFO lomap.classes.timer - IJRR 2013 Case-Study 2 took 4776.421 ms.

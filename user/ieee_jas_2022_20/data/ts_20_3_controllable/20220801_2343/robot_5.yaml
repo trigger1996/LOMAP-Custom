@@ -1,8 +1,8 @@
 !Ts
-name: robot_6
+name: robot_5
 multi: true
 directed: true
-init: ['26']
+init: [g4]
 final: []
 graph:
   nodes:
@@ -33,5 +33,5 @@ graph:
     u1: {}
     u2: {}
   edges:
-  - ['26',  g3,  {control: lf,  weight: 1}]
-  - [g3,   '26', {control: ufl, weight: 1}]
+  - ['28',  g4,  {control: lf,  weight: 1}]
+  - [g4,   '28', {control: ufl, weight: 1}]

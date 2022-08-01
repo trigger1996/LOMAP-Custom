@@ -2,7 +2,7 @@
 name: robot_6
 multi: true
 directed: true
-init: ['26']
+init: ['24']
 final: []
 graph:
   nodes:
@@ -33,5 +33,5 @@ graph:
     u1: {}
     u2: {}
   edges:
-  - ['26',  g3,  {control: lf,  weight: 1}]
-  - [g3,   '26', {control: ufl, weight: 1}]
+  - ['24',  g2,  {control: lf,  weight: 1}]
+  - [g2,   '24', {control: ufl, weight: 1}]

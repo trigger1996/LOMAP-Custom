@@ -2,7 +2,7 @@
 name: robot_12
 multi: true
 directed: true
-init: [g6]
+init: [g7]
 final: []
 graph:
   nodes:

@@ -2,7 +2,7 @@
 name: robot_8
 multi: true
 directed: true
-init: [g8]
+init: [g5]
 final: []
 graph:
   nodes:
@@ -10,5 +10,5 @@ graph:
     g5: {}
 
   edges:
-  - ['58',  g8,  {control: lf,  weight: 1}]
-  - [g8,   '58', {control: ufl, weight: 1}]
+  - ['52',  g5,  {control: lf,  weight: 1}]
+  - [g5,   '52', {control: ufl, weight: 1}]

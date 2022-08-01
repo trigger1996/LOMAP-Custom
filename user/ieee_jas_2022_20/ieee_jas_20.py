@@ -45,6 +45,11 @@ def main():
 
     with Timer('IJRR 2013 Case-Study 2'):
 
+        # 2 controllable, for testing
+        #ts_tuple = (r1, r2)
+        is_modifible = [True, True]
+
+        # 3 controllable, 17 uncontrollable
         r1 = Ts.load('./transition_system/robot_1.yaml')
         r2 = Ts.load('./transition_system/robot_2.yaml')
         r3 = Ts.load('./transition_system/robot_3.yaml')
@@ -64,34 +69,55 @@ def main():
         r17 = Ts.load('./transition_system/robot_17.yaml')
         r18 = Ts.load('./transition_system/robot_18.yaml')
         r19 = Ts.load('./transition_system/robot_19.yaml')
-        r20 = Ts.load('./transition_system/robot_20.yaml')
-        r21 = Ts.load('./transition_system/robot_21.yaml')
+        r20 = Ts.load('./transition_system/robot_20.yaml')        
+        ts_tuple = (r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20)
+        is_modifible = [True,  True,  True,  False, False,
+                        False, False, False, False, False,
+                        False, False, False, False, False,
+                        False, False, False, False, False]
+        #formula = ('[]<>gather && [](gather->(r1gather && r2gather && r3gather)) '
+        #           '&& [](r1gather -> X(!r1gather U r1upload)) '
+        #           '&& [](r2gather -> X(!r2gather U r2upload)) '
+        #           '&& [](r3gather -> X(!r3gather U r3upload))')
+        #opt_prop = set(['r1gather','r2gather','r3gather'])
 
-        #ts_tuple = (r1, r2)
-        is_modifible = [True, True]
+        formula = ('[]<>gather && [](gather->(r1gather && r2gather && r3gather))')
+        opt_prop = set(['r1gather','r2gather','r3gather'])
 
-        #ts_tuple = (r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20)
-        #is_modifible = [True,  True,  True,  False, False,
-        #                False, False, False, False, False,
-        #                False, False, False, False, False,
-        #                False, False, False, False, False]
 
+        # 2 controllable, 18 uncontrollable
+        '''
+        r1 = Ts.load('./data/ts_20_2_controllable/robot_1.yaml')
+        r2 = Ts.load('./data/ts_20_2_controllable/robot_2.yaml')
+        #r3 = Ts.load('./data/ts_20_2_controllable/robot_3.yaml')
+        r4 = Ts.load('./data/ts_20_2_controllable/robot_4.yaml')
+        r5 = Ts.load('./data/ts_20_2_controllable/robot_5.yaml')
+        r6 = Ts.load('./data/ts_20_2_controllable/robot_6.yaml')
+        r7 = Ts.load('./data/ts_20_2_controllable/robot_7.yaml')
+        r8 = Ts.load('./data/ts_20_2_controllable/robot_8.yaml')
+        r9 = Ts.load('./data/ts_20_2_controllable/robot_9.yaml')
+        r10 = Ts.load('./data/ts_20_2_controllable/robot_10.yaml')
+        r11 = Ts.load('./data/ts_20_2_controllable/robot_11.yaml')
+        r12 = Ts.load('./data/ts_20_2_controllable/robot_12.yaml')
+        r13 = Ts.load('./data/ts_20_2_controllable/robot_13.yaml')
+        r14 = Ts.load('./data/ts_20_2_controllable/robot_14.yaml')
+        r15 = Ts.load('./data/ts_20_2_controllable/robot_15.yaml')
+        r16 = Ts.load('./data/ts_20_2_controllable/robot_16.yaml')
+        r17 = Ts.load('./data/ts_20_2_controllable/robot_17.yaml')
+        r18 = Ts.load('./data/ts_20_2_controllable/robot_18.yaml')
+        r19 = Ts.load('./data/ts_20_2_controllable/robot_19.yaml')
+        r20 = Ts.load('./data/ts_20_2_controllable/robot_20.yaml')
+        r21 = Ts.load('./data/ts_20_2_controllable/robot_21.yaml')
         ts_tuple = (r1, r2, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21)
         is_modifible = [True,  True,  False, False, False,
                         False, False, False, False, False,
                         False, False, False, False, False,
                         False, False, False, False, False]
-
+        '''
         '''
         #formula = ('[](gather -> (!gather U upload))')
         #opt_prop = set(['gather'])
         '''
-        '''
-        formula = ('[]<>gather && [](gather->(r1gather && r2gather && r3gather)) '
-                   '&& [](r1gather -> X(!r1gather U r1upload)) '
-                   '&& [](r2gather -> X(!r2gather U r2upload)) '
-                   '&& [](r3gather -> X(!r3gather U r3upload))')
-        opt_prop = set(['r1gather','r2gather','r3gather'])
         '''
         formula = ('[]<>gather && [](gather->(r1gather && r2gather)) '
                    '&& [](r1gather -> X(!r1gather U r1upload)) '
@@ -99,6 +125,7 @@ def main():
                     #'&& [](!(r1gather1 && r2gather1) && !(r1gather2 && r2gather2)'
                     #'&& !(r1gather3 && r2gather3) && !(r1gather4 && r2gather4))')
         opt_prop = set(['r1gather','r2gather'])
+        '''
 
         logger.info('Formula: %s', formula)
         logger.info('opt_prop: %s', opt_prop)

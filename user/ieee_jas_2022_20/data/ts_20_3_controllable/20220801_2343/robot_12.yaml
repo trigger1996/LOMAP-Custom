@@ -1,0 +1,18 @@
+!Ts
+name: robot_12
+multi: true
+directed: true
+init: ['52']
+final: []
+graph:
+  nodes:
+    '41': {}
+    '53': {}
+    '52': {}
+
+
+  edges:
+  - ['41',  '53', {control: lf,  weight: 1}]
+  - ['53',  '52', {control: ufl, weight: 1}]
+  - ['52',  '41', {control: ufl, weight: 1}]
+

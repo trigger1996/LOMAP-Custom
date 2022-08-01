@@ -53,10 +53,6 @@ graph:
     s2: {}
     s3: {}
     s4: {}
-    s5: {}
-    s6: {}
-    s7: {}
-    s8: {}
 
     g1:
       prop: !!set {gather: null, gather1: null, r1gather: null, r1gather1: null}
@@ -126,28 +122,19 @@ graph:
   - ['10',  u2,  {control: f,   weight: 1}]
   - ['12', '1',  {control: f,   weight: 1}]
 
-  - ['34', s5,  {control: rf,  weight: 1}]
-  - [s5,   s1,  {control: rf,  weight: 1}]
+  - ['34', s1,  {control: rf,  weight: 1}]
   - [s1,   '7',  {control: rf,  weight: 1}]
   - ['8',  s2,  {control: rf,  weight: 1}]
-  - [s2,   s6,  {control: rf,  weight: 1}]
-  - [s6,  '33',  {control: rf,  weight: 1}]
-  - ['32', s7,  {control: rf,  weight: 1}]
-  - [s7,   s3,  {control: rf,  weight: 1}]
+  - [s2,  '33',  {control: rf,  weight: 1}]
+  - ['32', s3,  {control: rf,  weight: 1}]
   - [s3,  '9',  {control: rf,  weight: 1}]
   - ['10', s4,  {control: rf,  weight: 1}]
-  - [s4,   s8,  {control: rf,  weight: 1}]
-  - [s8, '31',  {control: rf,  weight: 1}]
+  - [s4, '31',  {control: rf,  weight: 1}]
 
   - [s1, s2,  {control: rf,  weight: 1}]
   - [s2, s1,  {control: rf,  weight: 1}]
   - [s3, s4,  {control: rf,  weight: 1}]
   - [s4, s3,  {control: rf,  weight: 1}]
-
-  - [s5, s6,  {control: rf,  weight: 1}]
-  - [s6, s5,  {control: rf,  weight: 1}]
-  - [s7, s8,  {control: rf,  weight: 1}]
-  - [s8, s7,  {control: rf,  weight: 1}]
 
   - ['58',  g8,  {control: lf,  weight: 1}]
   - ['58', '51', {control: f,   weight: 1}]

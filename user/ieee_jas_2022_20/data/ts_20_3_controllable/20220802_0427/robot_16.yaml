@@ -1,0 +1,19 @@
+!Ts
+name: robot_16
+multi: true
+directed: true
+init: ['12']
+final: []
+graph:
+  nodes:
+    '1': {}
+    '12': {}
+    '2': {}
+    '21': {}
+
+  edges:
+
+  - ['1',  '2',  {control: rf,  weight: 1}]
+  - ['2',  '21', {control: rfr, weight: 1}]
+  - ['21', '12', {control: f,   weight: 1}]
+  - ['12', '1',  {control: f,   weight: 1}]

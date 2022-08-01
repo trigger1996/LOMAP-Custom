@@ -1,0 +1,18 @@
+!Ts
+name: robot_20
+multi: true
+directed: true
+init: ['37']
+final: []
+graph:
+  nodes:
+    '55': {}
+    '36': {}
+    '37': {}
+    '38': {}
+
+  edges:
+  - ['55', '36',  {control: f,   weight: 1}]
+  - ['36',  '37',  {control: f,   weight: 1}]
+  - ['37',  '38',  {control: rf,  weight: 1}]
+  - ['38',  '55', {control: rfr, weight: 1}]
